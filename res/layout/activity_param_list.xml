@@ -1,0 +1,157 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="fill_parent"
+    android:background="#000000"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".ParamListActivity" >
+
+    <TextView
+        android:id="@+id/tvProfileName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:paddingBottom="10dp"
+        android:shadowColor="#00FF00"
+        android:shadowDx="5"
+        android:shadowDy="5"
+        android:shadowRadius="5"
+        android:text="Profile / Param"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#ffffff" />
+
+    <LinearLayout
+        android:id="@+id/paramListLayout"
+        android:layout_width="match_parent"
+        android:layout_height="89dp"
+        android:orientation="vertical" >
+
+        <com.code4bones.notummobile.HorizontalListView
+            android:id="@+id/vwParamList"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/gradient_param_list" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/paramControlsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp" >
+
+        <LinearLayout
+            android:id="@+id/linearLayout1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/tvParamDate"
+            android:gravity="right"
+            android:orientation="horizontal" >
+
+            <ImageButton
+                android:id="@+id/ibValueDec"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/trans_bgr"
+                android:paddingRight="10dp"
+                android:src="@drawable/arrowdown" />
+
+            <ImageButton
+                android:id="@+id/ibValueInc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/trans_bgr"
+                android:paddingRight="10dp"
+                android:src="@drawable/arrowup" />
+
+            <ImageButton
+                android:id="@+id/ibValueApply"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/trans_bgr"
+                android:paddingRight="5dp"
+                android:src="@drawable/plus" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/ibSelectDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignTop="@+id/linearLayout1"
+            android:background="@drawable/trans_bgr"
+            android:src="@drawable/cal" />
+
+        <TextView
+            android:id="@+id/tvParamDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/ibSelectDate"
+            android:text="Small Text"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="#ffffff" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="39dp"
+        android:layout_marginTop="30dp"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/tvStartValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="#faff00" />
+
+        <ProgressBar
+            android:id="@+id/pbProgress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/tvEndValue"
+            android:layout_toRightOf="@+id/tvStartValue"
+            android:max="100" />
+
+        <TextView
+            android:id="@+id/tvEndValue"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:text="255"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="#faff00" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/graphLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <FrameLayout
+            android:id="@+id/chartFrame"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="@drawable/gradient_param_list" >
+        </FrameLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/progressLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+    </RelativeLayout>
+
+</LinearLayout>

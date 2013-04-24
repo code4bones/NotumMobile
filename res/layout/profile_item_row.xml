@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="120dp"
+    android:layout_marginBottom="3dp"
+    android:layout_marginLeft="5dp"
+    android:layout_marginTop="5dp"
+    android:background="@drawable/profile_cell_shape"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/tvParamName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:drawableBottom="@drawable/line_shape"
+        android:paddingBottom="5dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="2dp"
+        android:shadowColor="#000000"
+        android:shadowDx="4"
+        android:shadowDy="4"
+        android:shadowRadius="4"
+        android:text="Profile Name"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#FFFFFF" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <ImageView
+            android:id="@+id/ivProfileIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:paddingRight="5dp"
+            android:src="@drawable/profile_icon" />
+
+        <com.code4bones.notummobile.FlowLayout
+            android:id="@+id/cvTagsView"
+            android:layout_width="fill_parent"
+            android:layout_height="68dp"
+            android:layout_marginRight="20dp"
+            android:layout_weight="0.92"
+            android:paddingLeft="5dp" />
+    </LinearLayout>
+ 
+</LinearLayout>

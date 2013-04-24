@@ -1,0 +1,6 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/itemParamListAdd" android:title="Добавить"></item>
+    <item android:id="@+id/itemParamListEdit" android:title="Редактировать"></item>
+    <item android:id="@+id/itemParamListHist" android:title="Детализация"></item>
+
+</menu>

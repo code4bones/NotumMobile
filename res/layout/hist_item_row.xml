@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ImageButton
+        android:id="@+id/ibHistSelectDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="14dp"
+        android:src="@drawable/cal" />
+
+    <TextView
+        android:id="@+id/tvHistDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/ibHistSelectDate"
+        android:layout_toRightOf="@+id/ibHistSelectDate"
+        android:text="14, april"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="#FFFA00" />
+
+    <TextView
+        android:id="@+id/tvHistDiff"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/tvHistDate"
+        android:layout_marginRight="17dp"
+        android:text="+ 10,30"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#FFFA00" />
+
+    <ProgressBar
+        android:id="@+id/pbHistProgress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/ibHistSelectDate"
+        android:layout_below="@+id/ibHistSelectDate"
+        android:layout_toLeftOf="@+id/ibHistDecValue" />
+
+    <TextView
+        android:id="@+id/tvHistTargetValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/tvHistStartValue"
+        android:layout_alignBottom="@+id/tvHistStartValue"
+        android:layout_alignRight="@+id/pbHistProgress"
+        android:text="100 kg"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="#FFFA00" />
+
+    <ImageButton
+        android:id="@+id/ibHistDecValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvHistValue"
+        android:layout_toLeftOf="@+id/ibHistIncValue"
+        android:src="@drawable/arrowdown" />
+
+    <TextView
+        android:id="@+id/tvHistStartValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/pbHistProgress"
+        android:layout_below="@+id/pbHistProgress"
+        android:text="0 kg"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="#FFFA00" />
+
+    <ImageButton
+        android:id="@+id/ibHistIncValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/ibHistDecValue"
+        android:src="@drawable/arrowup" />
+
+    <TextView
+        android:id="@+id/tvHistValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tvHistDate"
+        android:layout_below="@+id/tvHistDiff"
+        android:layout_toLeftOf="@+id/tvHistDiff"
+        android:text="55,100 kg"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#00FF00" />
+
+</RelativeLayout>
