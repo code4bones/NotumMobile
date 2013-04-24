@@ -13,20 +13,26 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.widget.EditText;
+import android.widget.ImageButton;
 
 import com.code4bones.utils.NetLog;
 
-public class ProfileEntry extends Object implements Serializable {
+public class ProfileEntry extends Object implements Parcelable {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
 	
-	public static final String PROFILE_NAME = "profileName";
-	public static final String PROFILE_ICON = "profileIcon";
-	public static final String PROFILE_ID   = "profileId";
+	//public static final String PROFILE_NAME = "profileName";
+	//public static final String PROFILE_ICON = "profileIcon";
+	//public static final String PROFILE_ID   = "profileId";
+	
+	public static final String PROFILE_ENTRY = "profileEntry";
 	
 	public long   profileId;
 	public String profileName;
@@ -47,24 +53,16 @@ public class ProfileEntry extends Object implements Serializable {
 		NetLog.v("Got %s bytes %d",this.profileName,blob.length);
 	}
 	
-	public ProfileEntry(Context context,Intent data) {
-		super();
-		// new record
+	public ProfileEntry() {
 		this.profileId = -1;
-		this.profileName = data.getStringExtra(PROFILE_NAME);
-		String iconPath = data.getStringExtra(PROFILE_ICON);
-		Uri uri = Uri.parse(iconPath);
-		InputStream is;
-		try {
-			is = context.getContentResolver().openInputStream(uri);
-			Bitmap image = BitmapFactory.decodeStream(is);
-			this.profileIcon = Bitmap.createScaledBitmap(image, 64, 64, false);
-			NetLog.v("New ProfileEntry(%s,%s)",this.profileName,this.profileIcon);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		this.profileName = "...";
 	}
+	
+	public void collectData(ProfileActivity a) {
+		this.profileName = a.profileName.getText().toString();
+		this.profileIcon = ((BitmapDrawable)a.profileIcon.getDrawable()).getBitmap();
+	}
+	
 	
 	public int populateParams(SQLiteDatabase db) {
 		String sProfile = String.valueOf(this.profileId);
@@ -100,14 +98,27 @@ public class ProfileEntry extends Object implements Serializable {
 		return mParams.toArray(new ParamEntry[]{});
 	}
 	
-	public void Save(Context context,SQLiteDatabase db) throws FileNotFoundException {
+	public void Delete(SQLiteDatabase db) {
+		SQLiteStatement ins = null;
+		long rows = 0;
+		if ( this.profileId == -1 )
+			return;
+		ins = db.compileStatement("delete from profiles where _id = ?");
+		ins.clearBindings();
+		ins.bindLong(1, this.profileId);
+		//rows = ins.executeUpdateDelete();
+		ins.execute();
+		NetLog.v("Param with id %d,deleted ( %d )",this.profileId,rows);
+	}
+	
+	public void Save(SQLiteDatabase db) throws FileNotFoundException {
 		SQLiteStatement ins = null;
 		long rows = 0;
 		
 		if ( this.profileId == -1 )
 			ins = db.compileStatement("insert into profiles(name,image) values(?,?)");
 		else
-			ins = db.compileStatement("update profiles name = ?,image = ? where _id = ?");
+			ins = db.compileStatement("update profiles set name = ?,image = ? where _id = ?");
 		
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		profileIcon.compress(Bitmap.CompressFormat.PNG, 100, bos);
@@ -120,10 +131,39 @@ public class ProfileEntry extends Object implements Serializable {
 			this.profileId = ins.executeInsert();
 			NetLog.v("New Profile Added %s ( ID = %d )", this.profileName,this.profileId);
 		} else {
-			
+			ins.bindLong(3, this.profileId);
 			//rows = ins.executeUpdateDelete();
 			ins.execute();
 			NetLog.v("Profile Updated %s ( affected %d ),ID = %d",this.profileName,rows,this.profileId);
 		}
+	}
+
+	public ProfileEntry(Parcel in) {
+		this.profileId = in.readLong();
+		this.profileName = in.readString();
+		this.profileIcon = in.readParcelable(Bitmap.class.getClassLoader());
+	}
+	
+	public static final Parcelable.Creator<ProfileEntry> CREATOR = new Parcelable.Creator<ProfileEntry>() {
+		public ProfileEntry createFromParcel(Parcel in) {
+		    return new ProfileEntry(in);
+		}
+	
+		public ProfileEntry[] newArray(int size) {
+		    return new ProfileEntry[size];
+		}
+	};
+	
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel out, int arg1) {
+		out.writeLong(this.profileId);
+		out.writeString(this.profileName);
+		out.writeParcelable(this.profileIcon, arg1);
 	}
 }

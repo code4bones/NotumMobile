@@ -58,8 +58,9 @@ public class ProfileList {
 		return dbHelper.getWritableDatabase();
 	}
 
-	public void populateProfiles() {
+	public int populateProfiles() {
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
+		mList.clear();
 		Cursor curs = db.rawQuery("select * from profiles",new String[]{});
 		if ( curs.moveToFirst()) {
 			do {
@@ -70,6 +71,7 @@ public class ProfileList {
 				curs.close();
 		}
 		NetLog.Toast(mContext, "Loaded %d Profiles", mList.size());
+		return mList.size();
 	}
 	
 	public ProfileEntry[] toArray() {
@@ -86,9 +88,8 @@ public class ProfileList {
 	
 	public ProfileEntry add(ProfileEntry entry) {
 		mList.add(entry);
-		NetLog.v("ProfileList(%d)",mList.size());
 		try {
-			entry.Save(mContext, dbHelper.getWritableDatabase());
+			entry.Save(dbHelper.DB());
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -111,7 +112,7 @@ public class ProfileList {
 	public void Save() {
 		for ( ProfileEntry entry : mList ) {
 			try {
-				entry.Save(mContext, dbHelper.getWritableDatabase());
+				entry.Save(dbHelper.DB());
 			} catch (FileNotFoundException e) {
 				NetLog.v("Cannot save Profile for %s", entry.profileName);
 			}

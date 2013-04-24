@@ -39,7 +39,7 @@ public class ProfileListAdapter extends ArrayAdapter<ProfileEntry> {
 		}
 		
 		public void update(ProfileEntry entry) {
-			icon.setImageBitmap(Utils.getRoundedCornerBitmap(entry.profileIcon));
+			icon.setImageBitmap(entry.profileIcon);
 			name.setText(entry.profileName);
 			tags.removeAllViews();
 			

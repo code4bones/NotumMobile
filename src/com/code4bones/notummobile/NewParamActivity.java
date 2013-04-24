@@ -82,7 +82,7 @@ public class NewParamActivity extends Activity implements OnDateSetListener {
 		this.findViewById(R.id.bnDelete).setOnClickListener(mOnClick);
 		this.findViewById(R.id.ibParamStartDate).setOnClickListener(mOnClick);
 		this.findViewById(R.id.ibParamEndDate).setOnClickListener(mOnClick);
-		this.findViewById(R.id.bnStepDec).setOnClickListener(mOnClick);
+		this.findViewById(R.id.bnProfileSave).setOnClickListener(mOnClick);
 		this.findViewById(R.id.bnStepInc).setOnClickListener(mOnClick);
 		
 		
@@ -221,7 +221,7 @@ public class NewParamActivity extends Activity implements OnDateSetListener {
 			case R.id.ibParamEndDate:
 				selectParamDate(v.getId());
 				break;
-			case R.id.bnStepDec:
+			case R.id.bnProfileSave:
 			case R.id.bnStepInc:
 				updateParamStep(v.getId());
 				break;

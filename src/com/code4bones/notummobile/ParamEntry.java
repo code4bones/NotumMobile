@@ -31,7 +31,6 @@ public class ParamEntry extends Object implements Parcelable {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 6172506447065668460L;
 	
 	// history entries
 	transient List<HistEntry> mList = new ArrayList<HistEntry>();

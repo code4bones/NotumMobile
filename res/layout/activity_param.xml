@@ -160,7 +160,7 @@
                         android:src="@drawable/arrowup" />
 
                     <ImageButton
-                        android:id="@+id/bnStepDec"
+                        android:id="@+id/bnProfileSave"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentTop="true"
@@ -173,8 +173,8 @@
                             android:id="@+id/tvStep"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignBaseline="@+id/bnStepDec"
-                            android:layout_alignBottom="@+id/bnStepDec"
+                            android:layout_alignBaseline="@+id/bnProfileSave"
+                            android:layout_alignBottom="@+id/bnProfileSave"
                             android:layout_alignParentLeft="true"
                             android:text="Не ограниченно"
                             android:textAppearance="?android:attr/textAppearanceSmall" />

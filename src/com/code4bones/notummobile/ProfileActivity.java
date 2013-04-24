@@ -4,9 +4,11 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import com.code4bones.utils.NetLog;
+import com.code4bones.utils.Utils;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -25,17 +27,33 @@ public class ProfileActivity extends Activity {
 	public static final int EDIT_PROFILE = 1;
 	public static final int NEW_PROFILE = 2;
 	
-	private EditText profileName;
-	private ImageButton profileIcon;
+	public EditText profileName;
+	public ImageButton profileIcon;
 	private String imagePath;
+	
+	public ProfileEntry mProfile; 
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_profile);
 		
+		this.setTitle("Изменение Профиля");
+		
+		Intent data = this.getIntent();
+		mProfile = data.getParcelableExtra(ProfileEntry.PROFILE_ENTRY);
+		
 		this.profileName = (EditText)this.findViewById(R.id.etParamName);
 		this.profileIcon = (ImageButton)this.findViewById(R.id.ibParamIcon);
+		
+		if ( mProfile != null  ) {
+			NetLog.v("Edit %d",mProfile.profileId);
+			this.profileIcon.setImageBitmap(mProfile.profileIcon);
+			this.profileName.setText(mProfile.profileName);
+		} else {
+			this.profileIcon.setImageResource(R.drawable.camera);
+			this.profileName.setText("Новый профиль...");
+		}
 		
 		// PICK A PHOTO
 		this.profileIcon.setOnClickListener(new OnClickListener() {
@@ -48,33 +66,45 @@ public class ProfileActivity extends Activity {
 		});
 		
 		// SAVE A PROFILE
-		Button save = (Button)this.findViewById(R.id.bnStepDec);
-		save.setOnClickListener( new OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				Intent i = new Intent();
-				i.putExtra(ProfileEntry.PROFILE_NAME, profileName.getText().toString());
-				i.putExtra(ProfileEntry.PROFILE_ICON, imagePath);
-				setResult(RESULT_OK,i);
-				finish();
-			}
-			
-		});
+		this.findViewById(R.id.bnProfileCancel).setOnClickListener(mOnClick);
+		this.findViewById(R.id.bnProfileSave).setOnClickListener(mOnClick);
+		Button bnDelete = (Button)this.findViewById(R.id.bnProfileDelete);
+		bnDelete.setOnClickListener( mOnClick );
+		bnDelete.setEnabled(this.mProfile != null);
 	}
 
+	private OnClickListener mOnClick = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			Intent i = new Intent();
+			if ( v.getId() == R.id.bnProfileDelete ) {
+				mProfile.Delete(ProfileList.getInstance().getDB());
+				setResult(RESULT_OK,i);
+			} else if ( v.getId() == R.id.bnProfileSave ) {
+				if ( ProfileActivity.this.mProfile == null )
+					ProfileActivity.this.mProfile = new ProfileEntry();
+				
+				ProfileActivity.this.mProfile.collectData(ProfileActivity.this);
+				i.putExtra(ProfileEntry.PROFILE_ENTRY, ProfileActivity.this.mProfile);
+				setResult(RESULT_OK,i);
+			}
+			finish();
+		}
+		
+	}; 
+	
 	@Override
 	public void onActivityResult(int reqCode,int resCode,Intent data) {
-		if ( reqCode != SELECT_PHOTO )
+		if ( reqCode != SELECT_PHOTO || resCode != RESULT_OK )
 			return;
 		Uri imageUri = data.getData();
 		imagePath = imageUri.toString();
 		try {
 			NetLog.v("Somethig selected %s",imagePath);
-
 			InputStream is = getContentResolver().openInputStream(imageUri);
 			Bitmap image = BitmapFactory.decodeStream(is);
 			Bitmap scaled = Bitmap.createScaledBitmap(image, 64, 64, false);
-			profileIcon.setImageBitmap(scaled);
+			profileIcon.setImageBitmap(Utils.getRoundedCornerBitmap(scaled));
 		} catch (FileNotFoundException e) {
 			NetLog.v("File Not Found");
 			e.printStackTrace();

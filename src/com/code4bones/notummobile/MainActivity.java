@@ -43,7 +43,7 @@ public class MainActivity extends Activity {
 	
 	public static final LogInit _logInit = new LogInit();
 	/* Profile List */
-	public static ProfileList mProfiles = null;//ProfileList.getInstance();
+	public static ProfileList mProfiles = null;
 	
 	/* Controls */
 	private ListView lvProfiles;
@@ -54,29 +54,12 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		
 		mProfiles = ProfileList.getInstance(this);
 		NetLog.v("We are started");
 		
-		// Setup profiles from Database
-		
-		mProfiles.populateProfiles();
-		
-		
-		/* Setup Controls */
-		
-		// LIST VIEW
 		lvProfiles = (ListView)this.findViewById(R.id.mainListView);
-		ProfileEntry mItems[] = mProfiles.toArray();
-		NetLog.v("List view items %d", mItems.length);
-		ProfileListAdapter plAdapter = new ProfileListAdapter(this,mItems); 
-		// header
-		//View view = (View)this.getLayoutInflater().inflate(R.layout.profile_header_row, null);
-		//lvProfiles.addHeaderView(view);
-		lvProfiles.setAdapter(plAdapter);
-		
-		lvProfiles.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
+		lvProfiles.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> aview, View arg1, int itemPos,
 					long index) {
@@ -84,10 +67,34 @@ public class MainActivity extends Activity {
 				showProfileParams(entry);
 			}
 		});
+
+		lvProfiles.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+					int arg2, long index) {
+				ProfileEntry entry = mProfiles.getAt(index);
+				editProfile(entry,ProfileActivity.EDIT_PROFILE);
+				return false;
+			}
 		
+		});
+		
+		updateList();
 	}
      
-
+	public void updateList() {
+		if ( mProfiles.populateProfiles() == 0 ) {
+			editProfile(null,ProfileActivity.NEW_PROFILE);
+		} else {
+			ProfileEntry mItems[] = mProfiles.toArray();
+			NetLog.v("List view items %d", mItems.length);
+			ProfileListAdapter plAdapter = new ProfileListAdapter(this,mItems); 
+			lvProfiles.setAdapter(plAdapter);
+		}
+	}
+	
+	
 	@Override
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
 		// Restore the previously serialized current dropdown position.
@@ -105,12 +112,17 @@ public class MainActivity extends Activity {
 		return true;
 	}
 
+	public void editProfile(ProfileEntry entry,int code) {
+		Intent in = new Intent(this,ProfileActivity.class);
+		in.putExtra(ProfileEntry.PROFILE_ENTRY, entry);
+		this.startActivityForResult(in, code);
+	}
+	
 	@Override 
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch ( item.getItemId() ) {
 		case R.id.add_profile:
-			Intent _int = new Intent(this,ProfileActivity.class);
-			this.startActivityForResult(_int, ProfileActivity.NEW_PROFILE);
+			this.editProfile(null, ProfileActivity.NEW_PROFILE);
 			break;
 		}
 		return true;
@@ -118,31 +130,38 @@ public class MainActivity extends Activity {
 	
 	@Override
 	public void onActivityResult(int requestCode,int resultCode,Intent data) {
+		if ( resultCode != RESULT_OK ) {
+			updateList();
+			return;
+		}
 		switch ( requestCode ) {
 		case ProfileActivity.NEW_PROFILE: // New Profile
-			if ( resultCode == RESULT_OK )
+				saveProfile(data);
+			break;
+		case ProfileActivity.EDIT_PROFILE: // Edit Profile
+			NetLog.v("Profile updated");
 				saveProfile(data);
 			break;
 		}
+	}
+
+	private void saveProfile(Intent data) {
+		ProfileEntry entry = data.getParcelableExtra(ProfileEntry.PROFILE_ENTRY);
+		if ( entry != null ) 
+			mProfiles.add(entry);
+		else
+			NetLog.v("DELETE");
+		updateList();
 	}
 	
 	private void showProfileParams(ProfileEntry entry) {
 		NetLog.v("Starting profile params editing ( %s )",entry.profileName);
 		Intent i = new Intent(this,ParamListActivity.class);
-		i.putExtra(ProfileEntry.PROFILE_NAME, entry.profileName);
-		i.putExtra(ProfileEntry.PROFILE_ID,entry.profileId);
+		i.putExtra(ProfileEntry.PROFILE_ENTRY, entry);
 		mProfiles.setProfile(entry);
 		this.startActivityForResult(i, 22);
 	}
 	
-	private void saveProfile(Intent data) {
-		if ( data == null ) {
-			NetLog.v("saveProfile(Intent == nill");
-			return;
-		}
-		ProfileEntry entry = new ProfileEntry(this,data);
-		mProfiles.add(entry);
-	}
 
 
 }
