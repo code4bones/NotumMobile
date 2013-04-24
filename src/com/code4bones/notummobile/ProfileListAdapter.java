@@ -38,21 +38,32 @@ public class ProfileListAdapter extends ArrayAdapter<ProfileEntry> {
 			row.setTag(this);
 		}
 		
+		public TextView createLabel(String msg,int shape) {
+			TextView t = new TextView(view.getContext());
+            t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+			t.setText(msg);
+            t.setShadowLayer(6, 6, 6, Color.BLACK);
+            t.setTextColor(Color.WHITE);
+            t.setBackgroundResource(shape);
+            t.setSingleLine(true);
+            return t;
+		}
+		
 		public void update(ProfileEntry entry) {
 			icon.setImageBitmap(entry.profileIcon);
+			
 			name.setText(entry.profileName);
 			tags.removeAllViews();
 			
-			entry.populateParams(ProfileList.getInstance().getDB());
-			for ( ParamEntry param : entry.mParams ) {
-				TextView t = new TextView(view.getContext());
-	            t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-				t.setText(param.name);
-	            t.setShadowLayer(6, 6, 4, Color.BLACK);
-	            t.setTextColor(Color.BLUE);
-	            t.setBackgroundResource(R.drawable.profile_badge_shape);
-	            t.setSingleLine(true);
-	            tags.addView(t, new TagsView.LayoutParams(2, 2));			}
+			if ( entry.populateParams(ProfileList.getInstance().getDB()) > 0 ) {
+				for ( ParamEntry param : entry.mParams ) {
+					TextView t = createLabel(param.name,R.drawable.profile_badge_shape);
+		            tags.addView(t, new TagsView.LayoutParams(2, 2));			
+		            }
+			} else {
+				TextView t = createLabel("Нет данных",R.drawable.profile_badge_shape_notdata);
+				tags.addView(t,new TagsView.LayoutParams(2,2));
+			}
 		}
 	}
 	

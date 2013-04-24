@@ -8,6 +8,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
@@ -19,6 +20,7 @@ public class HistListAdapter extends ArrayAdapter<HistEntry> {
 	HistEntry mList[] = null;
 	Context mContext = null;
 	ParamEntry mParamEntry = null;
+	OnClickListener mOnClick = null;
 	
 	static class Holder {
 		
@@ -47,6 +49,9 @@ public class HistListAdapter extends ArrayAdapter<HistEntry> {
 			
 			tvDiff.setBackgroundResource(R.drawable.diff_label_shape);
 		
+			ibDate.setTag(e);
+			ibDec.setTag(e);
+			ibInc.setTag(e);
 		}
 		
 		public void update(ParamEntry pe,HistEntry e,HistEntry p) {
@@ -75,10 +80,11 @@ public class HistListAdapter extends ArrayAdapter<HistEntry> {
 		}
 	};
 	
-	public HistListAdapter(Context context, ParamEntry paramEntry) {
+	public HistListAdapter(Context context, ParamEntry paramEntry,OnClickListener onClick) {
 		super(context, R.layout.hist_item_row, paramEntry.toArray());
 		mContext = context;
 		mParamEntry = paramEntry;
+		mOnClick = onClick;
 		mList = this.mParamEntry.toArray();
 	}
 	
@@ -92,6 +98,9 @@ public class HistListAdapter extends ArrayAdapter<HistEntry> {
 			LayoutInflater inf = ((Activity)mContext).getLayoutInflater();
 			row = inf.inflate(R.layout.hist_item_row,parent,false);
 			holder = new Holder(row,entry);
+			holder.ibDate.setOnClickListener(mOnClick);
+			holder.ibDec.setOnClickListener(mOnClick);
+			holder.ibInc.setOnClickListener(mOnClick);
 		} else { // convertView is alerady assigned
 			holder = (Holder)row.getTag();
 		}

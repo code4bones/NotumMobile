@@ -70,7 +70,7 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		setContentView(R.layout.activity_param_list);
 		mProfile = mProfiles.getCurrentProfile();
 		
-		this.setTitle(mProfile.profileName);
+		this.setTitle("Просмотр \"" + mProfile.profileName+"\"");
 		
 		mTvParamName = (TextView)this.findViewById(R.id.tvProfileName);
 		mTvParamDate = (TextView)this.findViewById(R.id.tvParamDate);
@@ -301,13 +301,14 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.param_list, menu);
+		getMenuInflater().inflate(R.menu.param_list, menu);	
 		return true;
 	}
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		Intent res;
+		
 		switch ( item.getItemId() ) {
 		case R.id.itemParamListAdd:
 			res = new Intent(this,NewParamActivity.class);
@@ -319,6 +320,7 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 			this.startActivityForResult(res, NewParamActivity.HIST);
 			break;
 		case R.id.itemParamListEdit:
+			this.editParam(this.mProfile.currentParam());
 			break;
 		}
 		return true;

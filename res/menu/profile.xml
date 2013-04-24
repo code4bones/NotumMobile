@@ -1,8 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-
-    <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"/>
+    <item android:id="@+id/itemProfileCancel" android:title="Отмена"></item>
+    <item android:id="@+id/itemProfileDelete" android:title="Удалить"></item>
+    <item android:id="@+id/itemProfileSave" android:title="Сохранить"></item>
+    <item android:id="@+id/itemProfileSelectPhoto" android:title="Выбрать Снимок"></item>
 
 </menu>

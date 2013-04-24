@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -59,9 +60,7 @@ public class ProfileActivity extends Activity {
 		this.profileIcon.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				Intent intent = new Intent(Intent.ACTION_PICK);
-				intent.setType("image/*");
-				startActivityForResult(intent,SELECT_PHOTO);
+				SelectPhoto();
 			}
 		});
 		
@@ -76,22 +75,38 @@ public class ProfileActivity extends Activity {
 	private OnClickListener mOnClick = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			Intent i = new Intent();
 			if ( v.getId() == R.id.bnProfileDelete ) {
-				mProfile.Delete(ProfileList.getInstance().getDB());
-				setResult(RESULT_OK,i);
+				DeleteProfile();
 			} else if ( v.getId() == R.id.bnProfileSave ) {
-				if ( ProfileActivity.this.mProfile == null )
-					ProfileActivity.this.mProfile = new ProfileEntry();
-				
-				ProfileActivity.this.mProfile.collectData(ProfileActivity.this);
-				i.putExtra(ProfileEntry.PROFILE_ENTRY, ProfileActivity.this.mProfile);
-				setResult(RESULT_OK,i);
-			}
-			finish();
+				SaveProfile();
+			} else
+				finish();
 		}
 		
 	}; 
+
+	public void DeleteProfile() {
+		Intent i = new Intent();
+		mProfile.Delete(ProfileList.getInstance().getDB());
+		setResult(RESULT_OK,i);
+		finish();
+	}
+	
+	public void SaveProfile() {
+		Intent i = new Intent();
+		if ( mProfile == null )
+			mProfile = new ProfileEntry();
+		mProfile.collectData(ProfileActivity.this);
+		i.putExtra(ProfileEntry.PROFILE_ENTRY, ProfileActivity.this.mProfile);
+		setResult(RESULT_OK,i);
+		finish();
+	}
+	
+	public void SelectPhoto() {
+		Intent intent = new Intent(Intent.ACTION_PICK);
+		intent.setType("image/*");
+		startActivityForResult(intent,SELECT_PHOTO);
+	}
 	
 	@Override
 	public void onActivityResult(int reqCode,int resCode,Intent data) {
@@ -114,9 +129,33 @@ public class ProfileActivity extends Activity {
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.profile, menu);
 		return true;
 	}
 
+	@Override
+	public boolean onPrepareOptionsMenu (Menu menu) {
+		MenuItem item = menu.findItem(R.id.itemProfileDelete); 
+		item.setVisible(mProfile != null);
+	    return true;
+	}	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch ( item.getItemId() ) {
+		case R.id.itemProfileCancel:
+			finish();
+			break;
+		case R.id.itemProfileSave:
+			SaveProfile();
+			break;
+		case R.id.itemProfileDelete:
+			DeleteProfile();
+			break;
+		case R.id.itemProfileSelectPhoto:
+			SelectPhoto();
+			break;
+		}
+		return false;
+	}
+	
 }
