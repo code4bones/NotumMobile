@@ -114,14 +114,21 @@ public class HistListAdapter extends ArrayAdapter<HistEntry> {
 		if ( row == null ) {
 			LayoutInflater inf = ((Activity)mContext).getLayoutInflater();
 			row = inf.inflate(R.layout.hist_item_row,parent,false);
+/*
 			holder = new Holder(row,entry);
 			holder.ibDate.setOnClickListener(mOnClick);
 			holder.ibDec.setOnClickListener(mOnClick);
 			holder.ibInc.setOnClickListener(mOnClick);
 			holder.chkDelete.setOnClickListener(mOnClick);
+*/
 		} else { // convertView is alerady assigned
-			holder = (Holder)row.getTag();
+			//holder = (Holder)row.getTag();
 		}
+		holder = new Holder(row,entry);
+		holder.ibDate.setOnClickListener(mOnClick);
+		holder.ibDec.setOnClickListener(mOnClick);
+		holder.ibInc.setOnClickListener(mOnClick);
+		holder.chkDelete.setOnClickListener(mOnClick);
 		
 		HistEntry prevHist = null;
 		if ( position < mList.length-1 )
