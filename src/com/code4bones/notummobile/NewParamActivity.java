@@ -3,6 +3,7 @@ package com.code4bones.notummobile;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -11,9 +12,12 @@ import com.code4bones.utils.NetLog;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -47,8 +51,6 @@ public class NewParamActivity extends Activity implements OnDateSetListener {
 	
 	public String imagePath;
 	public ImageButton ibIcon;
-//	public ImageButton ibStartDate;
-//	public ImageButton ibEndDate;
 	public EditText    etName;
 	public TextView    tvStartDate;
 	public TextView	   tvEndDate;
@@ -58,23 +60,28 @@ public class NewParamActivity extends Activity implements OnDateSetListener {
 	public EditText	   etCurrentVal;
 	public EditText    etTargetVal;
 	public DatePickerDialog mDatePicker;
-	
+	public ProfileEntry mProfile;
 	public boolean     mFirstParam = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_param);
-		
+	
 		mActivity = this;
 		Intent data = this.getIntent();
 		mFirstParam = data.getBooleanExtra(NewParamActivity.NEW_LIST, false);
 		mParamEntry = data.getParcelableExtra(NewParamActivity.PARAM_ENTRY);
 
+		ProfileList pl = ProfileList.getInstance();
+		mProfile = pl.getCurrentProfile();
+
+		this.setTitle("Редактирование Параметра");
+		
 		this.findViewById(R.id.bnDelete).setEnabled(mParamEntry != null);
 		if ( mParamEntry == null ) {
-			ProfileList pl = ProfileList.getInstance();
-			mParamEntry = new ParamEntry(this,pl.getCurrentProfile().profileId);
+			//ProfileList pl = ProfileList.getInstance();
+			mParamEntry = new ParamEntry(this,mProfile.profileId);
 		}
 		mParamEntry.mContext = this;
 		
@@ -85,10 +92,11 @@ public class NewParamActivity extends Activity implements OnDateSetListener {
 		this.findViewById(R.id.ibParamEndDate).setOnClickListener(mOnClick);
 		this.findViewById(R.id.bnProfileSave).setOnClickListener(mOnClick);
 		this.findViewById(R.id.bnStepInc).setOnClickListener(mOnClick);
-		
+		this.findViewById(R.id.ibParamTemplate).setOnClickListener(mOnClick);
 		
 		this.ibIcon = (ImageButton)this.findViewById(R.id.ibParamIcon); 
 		this.etName = (EditText)this.findViewById(R.id.etParamName);
+		
 		this.tvStartDate = (TextView)this.findViewById(R.id.tvStartDate);
 		this.tvEndDate = (TextView)this.findViewById(R.id.tvEndDate);
 		this.tvStep = (TextView)this.findViewById(R.id.tvStep);
@@ -97,6 +105,17 @@ public class NewParamActivity extends Activity implements OnDateSetListener {
 		this.etCurrentVal = (EditText)this.findViewById(R.id.etParamCurrentValue);
 		this.etTargetVal = (EditText)this.findViewById(R.id.etTargetValue);
 		
+		this.etName.setBackgroundResource(R.drawable.edit_text_shape);
+		this.etName.setTag("Наименование наблюдения");
+		this.etIncVal.setBackgroundResource(R.drawable.edit_text_shape);
+		this.etIncVal.setTag("Единица Прироста");
+		this.etCurrentVal.setBackgroundResource(R.drawable.edit_text_shape);
+		this.etCurrentVal.setTag("Текущее значение");
+		this.etTargetVal.setBackgroundResource(R.drawable.edit_text_shape);
+		this.etTargetVal.setTag("Желаемое значение");
+		this.etMeasure.setBackgroundResource(R.drawable.edit_text_shape);
+		this.etMeasure.setTag("Единица измерения");
+		//this.etMeasure.setLines(1);
 		
 		ibIcon.setOnClickListener(mOnClick);
 	
@@ -105,7 +124,9 @@ public class NewParamActivity extends Activity implements OnDateSetListener {
 	}
 
 	public void setupControlValues(ParamEntry e) {
-		this.ibIcon.setImageBitmap(e.image);
+		if ( e.image != null )
+			this.ibIcon.setImageBitmap(e.image);
+			
 		this.etName.setText(e.name);
 		this.tvStartDate.setText(e.startDate.toGMTString());
 		this.tvStartDate.setTag(e.startDate);
@@ -221,6 +242,24 @@ public class NewParamActivity extends Activity implements OnDateSetListener {
 		
 	}
 	
+	public void selectTemplate() {
+       
+		final ArrayList<ParamEntry> params = new ArrayList<ParamEntry>();
+		params.add(ParamEntry.makeTemplate(mProfile.profileId, "Рост", "См."));
+		params.add(ParamEntry.makeTemplate(mProfile.profileId, "Вес", "Кг."));
+		params.add(ParamEntry.makeTemplate(mProfile.profileId, "Обьем талии", "См."));
+		
+		AlertDialog.Builder dlg = new AlertDialog.Builder(this);
+		dlg.setAdapter(new TemplateAdapter(this,params), new AlertDialog.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				setupControlValues(params.get(which));
+			}
+		});
+		dlg.setTitle("Шаблоны");
+		dlg.create().show();
+	}
+	
 	// SAVE or CANCEL EVENTS
 	private OnClickListener mOnClick = new OnClickListener() {
 
@@ -228,8 +267,8 @@ public class NewParamActivity extends Activity implements OnDateSetListener {
 		public void onClick(View v) {
 			switch ( v.getId() ) {
 			case R.id.bnSave:
-				mParamEntry.collectData(NewParamActivity.this);
-				deleteOrSaveParam(true,NewParamActivity.this.mFirstParam);
+				if ( mParamEntry.collectData(NewParamActivity.this) )
+					deleteOrSaveParam(true,NewParamActivity.this.mFirstParam);
 				break;
 			case R.id.bnDelete:
 				deleteOrSaveParam(false,true);
@@ -249,6 +288,9 @@ public class NewParamActivity extends Activity implements OnDateSetListener {
 			case R.id.bnProfileSave:
 			case R.id.bnStepInc:
 				updateParamStep(v.getId());
+				break;
+			case R.id.ibParamTemplate:
+				selectTemplate();
 				break;
 			}
 		}

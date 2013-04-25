@@ -85,6 +85,13 @@ public class ParamEntry extends Object implements Parcelable {
 		}
 	};
 	
+	public static ParamEntry makeTemplate(long profileId,String name,String measure) {
+		ParamEntry e = new ParamEntry(profileId);
+		e.name = name;
+		e.measure = measure;
+		return e;
+	}
+	
 	public ParamEntry(long profileId) {
 		this.paramId = -1;
 		this.profileId = profileId;
@@ -136,22 +143,26 @@ public class ParamEntry extends Object implements Parcelable {
 		return s;
 	}
 	
-	public void collectData(Activity v) {
+	public boolean collectData(NewParamActivity activity) {
 		
-		
-		this.mActivity = (NewParamActivity)v;
+		this.mActivity = activity;
 		this.mContext  = mActivity.getBaseContext();
-		
-		this.name = getText(R.id.etParamName);
-		this.measure = getText(R.id.etMeasure);
-		
-		this.startVal = getNumber(R.id.etParamCurrentValue);
-		this.targetVal = getNumber(R.id.etTargetValue);
-		
-		this.incVal = getNumber(R.id.etIncVal);
-		
-		this.image = ((BitmapDrawable)mActivity.ibIcon.getDrawable()).getBitmap();
+		try {
+			this.name = getText(R.id.etParamName,true);
+			this.measure = getText(R.id.etMeasure,true);
+			
+			this.startVal = getNumber(R.id.etParamCurrentValue,true);
+			this.targetVal = getNumber(R.id.etTargetValue,true);
+			
+			this.incVal = getNumber(R.id.etIncVal,true);
+			
+			this.image = ((BitmapDrawable)mActivity.ibIcon.getDrawable()).getBitmap();
+		} catch ( IllegalArgumentException e ) {
+			return false;
+		}
+		return true;
 	}
+	
 	
 	public ParamEntry ( Cursor c )  {
 		super();
@@ -188,19 +199,25 @@ public class ParamEntry extends Object implements Parcelable {
 		}
 	}
 	
-	private Double getNumber(int id) {
+	private Double getNumber(int id,boolean notNull) {
 		try {
-			return Double.parseDouble(this.getText(id));
+			return Double.parseDouble(this.getText(id,notNull));
 		} catch ( NumberFormatException e ) {
 		}
 		return 0.0;
 	}
 	
-	private String getText(int id) {
+	private String getText(int id,boolean notNull) {
 		EditText et = (EditText)mActivity.findViewById(id);
+		String sHint = (String)et.getTag();
 		if ( et == null )
 			return "???";
-		return et.getText().toString();
+		String str = et.getText().toString(); 
+		if ( notNull && (str == null || str.length() == 0 ) ) {
+			NetLog.Toast(mContext, "Не заполненно поле %s",sHint);
+			throw new IllegalArgumentException();
+		}
+		return str;
 	}
 	
 	
@@ -272,8 +289,8 @@ public class ParamEntry extends Object implements Parcelable {
 			if ( mMinHist == null || mMinHist.value > e.value )
 				mMinHist = e;
 		}
-		NetLog.v("Min: %s", mMinHist);
-		NetLog.v("Max: %s", mMaxHist);
+		//NetLog.v("Min: %s", mMinHist);
+		//NetLog.v("Max: %s", mMaxHist);
 		return false;
 	}
 	
@@ -323,14 +340,14 @@ public class ParamEntry extends Object implements Parcelable {
 		if ( curs != null && !curs.isClosed())
 			curs.close();
 		
-		NetLog.v("Hist %d for param %s",mList.size(),this.name);
-		for ( HistEntry e : mList ) {
-			NetLog.v("-> %s",e);
-		}
+		//NetLog.v("Hist %d for param %s",mList.size(),this.name);
+		//for ( HistEntry e : mList ) {
+		//	NetLog.v("-> %s",e);
+		//}
 		
 		if ( mList.isEmpty() ) {
 			this.mActiveHist = new HistEntry(this);
-			this.mActiveHist.Save(ProfileList.getInstance().getDB());
+			this.mActiveHist.Save();
 			this.populateHist(fAsc);
 			//mList.add(this.mActiveHist);
 		}

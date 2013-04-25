@@ -1,6 +1,10 @@
 eclipse.preferences.version=1
+encoding//src/com/code4bones/notummobile/HistActivity.java=UTF-8
 encoding//src/com/code4bones/notummobile/NewParamActivity.java=UTF-8
+encoding//src/com/code4bones/notummobile/ParamEntry.java=UTF-8
 encoding//src/com/code4bones/notummobile/ParamListActivity.java=UTF-8
 encoding//src/com/code4bones/notummobile/ProfileActivity.java=UTF-8
 encoding//src/com/code4bones/notummobile/ProfileListAdapter.java=UTF-8
+encoding//src/com/code4bones/notummobile/TemplateAdapter.java=UTF-8
+encoding//src/com/code4bones/utils/MessageBox.java=UTF-8
 encoding//src/com/code4bones/utils/NetLog.java=UTF-8

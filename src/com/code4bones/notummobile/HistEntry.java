@@ -7,6 +7,7 @@ import com.code4bones.utils.NetLog;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
+import android.view.View;
 
 public class HistEntry {
 
@@ -15,6 +16,7 @@ public class HistEntry {
 	public double value;
 	public Date   changed;
 	public boolean checked;
+	public View row;
 	
 	public HistEntry(ParamEntry e) {
 		this.value = e.startVal;
@@ -50,15 +52,15 @@ public class HistEntry {
 	}
 	
 	public void Delete() {
-		SQLiteStatement stm = ProfileList.getInstance().getDB().compileStatement("delete * from hist where _id = ?");
+		SQLiteStatement stm = ProfileList.getInstance().getDB().compileStatement("delete from hist where _id = ?");
 		stm.clearBindings();
-		stm.bindLong(0,this.id);
+		stm.bindLong(1,this.id);
 		stm.execute();
 	}
 	
-	public void Save(SQLiteDatabase db) {
+	public void Save() {
 		SQLiteStatement stm;
-		
+		SQLiteDatabase db = ProfileList.getInstance().getDB();
 		if ( id == -1 )
 			stm = db.compileStatement("insert into hist ( paramId,value,changed ) values(?,?,?)");
 		else

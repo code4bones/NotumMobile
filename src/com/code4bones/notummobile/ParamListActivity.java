@@ -17,6 +17,7 @@ import org.achartengine.model.XYValueSeries;
 import org.achartengine.renderer.SimpleSeriesRenderer;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 
+import com.code4bones.utils.MessageBox;
 import com.code4bones.utils.NetLog;
 //import com.iguanaui.columnseries.R;
 import com.iguanaui.controls.DataChart;
@@ -200,23 +201,26 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		dlg.show();
 	}
 	
-	private DialogInterface.OnClickListener mAlertClick = new DialogInterface.OnClickListener() {
-		@Override
-		public void onClick(DialogInterface dialog, int which) {
-			if ( which != -1 )
-				return;
-		}
-	};
-	
 	private void applyParamValue() {
-		ParamEntry paramEntry = this.mProfile.currentParam();
-		HistEntry entry = paramEntry.mActiveHist;
-		if ( paramEntry.exists(entry) != null ) {
-			NetLog.MsgBox(this, mAlertClick, "Внимание!", "Запись на %s уже cуществует,заменить ?", entry.changed);
+		final ParamEntry paramEntry = this.mProfile.currentParam();
+		final HistEntry entry = paramEntry.mActiveHist;
+		final HistEntry dupEntry = paramEntry.exists(entry);
+		if ( dupEntry != null ) {
+			String msg = String.format("На это число уже есть значение,заменить %f на %f ?", dupEntry.value,entry.value);
+			MessageBox.Show(ProfileList.dateStr(entry.changed), msg, this,MessageBox.MB_YESNO,new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					if ( which == DialogInterface.BUTTON_POSITIVE ) {
+						entry.id = dupEntry.id;
+						entry.Save();
+						showParam(paramEntry);
+					} 
+				}
+			});
+		} else {
+			entry.Save();
+			showParam(paramEntry);
 		}
-		entry.Save(ProfileList.getInstance().getDB());
-		NetLog.v("Apply %s",entry);
-		this.showParam(paramEntry);
 	}
 	
 
@@ -269,7 +273,6 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 	    mSers = series;
 		mRender = this.getBarDemoRenderer();
 	    
-	    NetLog.v("Series %d",mDataset.getSeriesCount());
 	    
 		mChart = ChartFactory.getBarChartView(this, mDataset, mRender, BarChart.Type.DEFAULT);
 		item.addView(mChart,new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT));
@@ -285,12 +288,10 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		this.mProfile.setCurrentParam(entry);
 		entry.populateHist(true);
 		this.createChart();
-	//	NetLog.v("ITEM %s",entry.mListItem);
-		//this.toggleItem(mListViewItemSelected);
 		
 		String sTitle = String.format("%s / %s", this.mProfile.profileName,entry.name);
 		this.mTvParamName.setText(sTitle);
-		this.mTvParamDate.setText(entry.changed.toGMTString());
+		this.mTvParamDate.setText(ProfileList.dateStr(entry.changed));
 		this.mTvStartValue.setText(String.valueOf(entry.startVal));
 		this.mTvTargetValue.setText(String.valueOf(entry.targetVal));
 		
@@ -402,7 +403,7 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		Calendar c = Calendar.getInstance();
 		c.set(year, monthOfYear, dayOfMonth);
 		Date selDate = c.getTime();
-		this.mTvParamDate.setText(selDate.toGMTString());
+		this.mTvParamDate.setText(ProfileList.dateStr(selDate));
 		this.mTvParamDate.setTag(selDate);
 		this.mProfile.currentParam().changed = selDate;
 		this.mProfile.currentParam().mActiveHist.changed = selDate;

@@ -67,8 +67,8 @@ public class HistListAdapter extends ArrayAdapter<HistEntry> {
 		
 		public void update(ParamEntry pe,HistEntry e,HistEntry p) {
 			double diff = e.value - p.value;
-			//NetLog.v("update(%s)",e);
-			tvDate.setText(e.changed.toGMTString());
+
+			tvDate.setText(ProfileList.dateStr(e.changed));
 			tvValue.setText(String.valueOf(e.value));
 			tvDiff.setText((diff>0?"+":"")+String.valueOf(diff));
 			tvStart.setText(String.valueOf(pe.startVal));
@@ -93,29 +93,18 @@ public class HistListAdapter extends ArrayAdapter<HistEntry> {
 	};
 	
 	
-	
-	public OnCheckedChangeListener mOnCheck = new OnCheckedChangeListener() {
-		@Override
-		public void onCheckedChanged(CompoundButton buttonView,
-				boolean isChecked) {
-			HistEntry entry = (HistEntry)buttonView.getTag();
-			entry.checked = isChecked;
-			if ( isChecked ) {
-				mRemove.add(entry);
-			} else {
-				mRemove.remove(entry);
-			}
-		}
-	};
-	
-	public HistListAdapter(Context context, ParamEntry paramEntry,OnClickListener onClick) {
-		super(context, R.layout.hist_item_row, paramEntry.toArray());
+	public HistListAdapter(Context context, ParamEntry paramEntry,HistEntry[] hists,OnClickListener onClick) {
+		super(context, R.layout.hist_item_row, hists);
 		mContext = context;
 		mParamEntry = paramEntry;
 		mOnClick = onClick;
-		mList = this.mParamEntry.toArray();
+		mList = hists;
 	}
 	
+    @Override  
+    public HistEntry getItem(int position) {  
+        return mList[position];  
+    }  
 	
 	@Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -129,7 +118,7 @@ public class HistListAdapter extends ArrayAdapter<HistEntry> {
 			holder.ibDate.setOnClickListener(mOnClick);
 			holder.ibDec.setOnClickListener(mOnClick);
 			holder.ibInc.setOnClickListener(mOnClick);
-			holder.chkDelete.setOnCheckedChangeListener(mOnCheck);
+			holder.chkDelete.setOnClickListener(mOnClick);
 		} else { // convertView is alerady assigned
 			holder = (Holder)row.getTag();
 		}
@@ -139,7 +128,8 @@ public class HistListAdapter extends ArrayAdapter<HistEntry> {
 			prevHist = mList[position+1];
 		else
 			prevHist = entry;
-			
+		
+		entry.row = row;
 		holder.update(mParamEntry,entry,prevHist);
 		
 		return row;

@@ -1,11 +1,16 @@
 package com.code4bones.notummobile;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import com.code4bones.utils.NetLog;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.DatePickerDialog.OnDateSetListener;
 import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,15 +18,19 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.ListView;
 
-public class HistActivity extends Activity {
+public class HistActivity extends Activity implements OnDateSetListener {
 
 	public ParamEntry mParamEntry;
 	public ListView mListView;
+	public HistEntry mHistEntry = null;
 	public HistListAdapter mAdapter;
-	public ArrayList<HistEntry> mHist = new ArrayList<HistEntry>();
+	public ArrayList<HistEntry> mChange = new ArrayList<HistEntry>();
 	public ArrayList<HistEntry> mRemove = new ArrayList<HistEntry>();
+	public ArrayList<HistEntry> mChangeDate = new ArrayList<HistEntry>();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -32,15 +41,17 @@ public class HistActivity extends Activity {
 		mParamEntry = res.getParcelableExtra("paramEntry");
 		NetLog.v("%s",mParamEntry);
 		
-		this.setTitle(mParamEntry.name);
+		this.setTitle("Детализация \"" + mParamEntry.name+"\"");
 		
-		mParamEntry.populateHist(false);
-		
-		mAdapter = new HistListAdapter(this,mParamEntry,mOnClick);
 		mListView = (ListView)this.findViewById(R.id.lvHist);
-		mListView.setAdapter(mAdapter);
+		reloadList();
 	}
 
+	public void reloadList() {
+		mParamEntry.populateHist(false);
+		mAdapter = new HistListAdapter(this,mParamEntry,mParamEntry.toArray(),mOnClick);
+		mListView.setAdapter(mAdapter);
+	}
 	
 	public OnClickListener mOnClick = new OnClickListener() {
 		@Override
@@ -48,24 +59,41 @@ public class HistActivity extends Activity {
 			HistEntry entry = (HistEntry)v.getTag();
 			if ( v.getId() == R.id.ibHistSelectDate )
 				selectDate(entry);
+			else if ( v.getId() == R.id.chkDelete )
+				toggleCheck(v);
 			else
 				changeValue(v);
 		}
 	};
 	
-	public void selectDate(HistEntry entry) {
+	public void toggleCheck(View v) {
+		CheckBox box = (CheckBox)v;
+		HistEntry entry = (HistEntry)box.getTag();
+		entry.checked = box.isChecked();
+		if ( entry.checked ) {
+			if ( this.mRemove.indexOf(entry) == -1 )
+				this.mRemove.add(entry);
+		} else
+			this.mRemove.remove(entry);
 		
+		NetLog.v("[%d] Toggled on %s [ %s ]",mRemove.size(),entry,entry.checked);
+	}
+	
+	public void selectDate(HistEntry e) {
+		this.mHistEntry = e;
+		Dialog dlg = new DatePickerDialog(this,this,1900+e.changed.getYear(),e.changed.getMonth(),e.changed.getDate());
+		dlg.show();
 	}
 	
 	public void changeValue(View v) {
-		HistEntry entry = (HistEntry)v.getTag();
-		int idx = mHist.indexOf(entry);
+		this.mHistEntry = (HistEntry)v.getTag();
+		int idx = mChange.indexOf(this.mHistEntry);
 		if ( idx == -1 )
-			mHist.add(entry);
+			mChange.add(this.mHistEntry);
 		if ( v.getId() == R.id.ibHistDecValue ) {
-			entry.value -= mParamEntry.incVal; 
+			this.mHistEntry.value -= mParamEntry.incVal; 
 		} else {
-			entry.value += mParamEntry.incVal;
+			this.mHistEntry.value += mParamEntry.incVal;
 		}
 		mAdapter.notifyDataSetChanged();
 	}
@@ -81,8 +109,7 @@ public class HistActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch ( item.getItemId() ) {
 		case R.id.itemHistSave:
-			Save();
-			Delete();
+			Apply();
 			this.setResult(RESULT_OK);
 			finish();
 			break;
@@ -94,28 +121,42 @@ public class HistActivity extends Activity {
 		return true;
 	}
 	
-	public void Delete() {
-		for ( HistEntry e : mHist ) {
+	public void Apply() {
+		for ( HistEntry e : mRemove ) {
 			e.Delete();
+			mChange.remove(e);
+			mChangeDate.remove(e);
 		}
-	}
-	
-	public void Save() {
-		for ( HistEntry e : mHist ) {
-			e.Save(ProfileList.getInstance().getDB());
+		for ( HistEntry e : mChange ) { 
+			e.Save();
+			mChangeDate.remove(e);
 		}
+		for ( HistEntry e : mChangeDate )
+			e.Save();
 	}
 	
 	@Override
 	public void onBackPressed() {
-	    // This will be called either automatically for you on 2.0
-	    // or later, or by the code above on earlier versions of the
-	    // platform.
-		if ( mHist.size() == 0 && mRemove.size() == 0 ) {
+		if ( mChange.size() == 0 && mRemove.size() == 0 && this.mChangeDate.size() == 0 ) {
 			super.onBackPressed();
 		} else {
 			this.openOptionsMenu();
 		}
 		return;
+	}
+
+	@Override
+	public void onDateSet(DatePicker view, int year, int monthOfYear,
+			int dayOfMonth) {
+		// TODO Auto-generated method stub
+		Calendar c = Calendar.getInstance();
+		c.set(year, monthOfYear, dayOfMonth);
+		Date selDate = c.getTime();
+		
+		this.mHistEntry.changed = selDate;
+		this.mAdapter.notifyDataSetChanged();
+		int idx = mChangeDate.indexOf(this.mHistEntry);
+		if ( idx == -1 )
+			mChangeDate.add(this.mHistEntry);
 	}	
 }

@@ -1,7 +1,9 @@
 package com.code4bones.notummobile;
 
 import java.io.FileNotFoundException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import android.content.Context;
@@ -52,6 +54,11 @@ public class ProfileList {
 		db.execSQL(ProfileListDBHelper.DB_PROFILES);
 		db.execSQL(ProfileListDBHelper.DB_HIST);
 		return this;
+	}
+	
+	public static String dateStr(Date dt) {
+		SimpleDateFormat df = new SimpleDateFormat("dd, MMMM");
+		return df.format(dt);
 	}
 	
 	public SQLiteDatabase getDB() {
