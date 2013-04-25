@@ -57,7 +57,7 @@ public class ProfileList {
 	}
 	
 	public static String dateStr(Date dt) {
-		SimpleDateFormat df = new SimpleDateFormat("dd, MMMM");
+		SimpleDateFormat df = new SimpleDateFormat("dd, MMMM yyyy");
 		return df.format(dt);
 	}
 	

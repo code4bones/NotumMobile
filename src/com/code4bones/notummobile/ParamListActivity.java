@@ -391,7 +391,7 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 	}
 	
 	public void addNewParam(Intent data) {
-		ParamEntry entry = (ParamEntry) data.getSerializableExtra(NewParamActivity.PARAM_ENTRY);
+		ParamEntry entry = (ParamEntry) data.getParcelableExtra(NewParamActivity.PARAM_ENTRY);
 		mProfile.setCurrentParam(entry);
 		this.updateParamList();
 	}

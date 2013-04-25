@@ -128,7 +128,7 @@ public class NewParamActivity extends Activity implements OnDateSetListener {
 			this.ibIcon.setImageBitmap(e.image);
 			
 		this.etName.setText(e.name);
-		this.tvStartDate.setText(e.startDate.toGMTString());
+		this.tvStartDate.setText(ProfileList.dateStr(e.startDate));
 		this.tvStartDate.setTag(e.startDate);
 		this.tvEndDate.setTag(e.endDate);
 		this.updateParamEndDate(e);
@@ -207,7 +207,7 @@ public class NewParamActivity extends Activity implements OnDateSetListener {
 		c.set(year, monthOfYear, dayOfMonth);
 		Date selDate = c.getTime();
 	
-		mDateView.setText(selDate.toGMTString());
+		mDateView.setText(ProfileList.dateStr(selDate));
 		mDateView.setTag(selDate);
 		
 		if ( mDateView.getId() == R.id.tvStartDate )
@@ -220,7 +220,7 @@ public class NewParamActivity extends Activity implements OnDateSetListener {
 	
 	public void updateParamEndDate(ParamEntry e) {
 		if ( e.endDate != null )
-			this.tvEndDate.setText(e.endDate.toGMTString());
+			this.tvEndDate.setText(ProfileList.dateStr(e.endDate));
 		else
 			this.tvEndDate.setText("Не ограниченно");
 	}
@@ -238,7 +238,7 @@ public class NewParamActivity extends Activity implements OnDateSetListener {
 		if ( mParamEntry.stepVal > 0 )
 			this.tvStep.setText(String.valueOf(mParamEntry.stepVal));
 		else
-			this.tvStep.setText("Без периода");
+			this.tvStep.setText(" Не учитывать");
 		
 	}
 	

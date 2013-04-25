@@ -55,12 +55,17 @@ public class ProfileEntry extends Object implements Parcelable {
 	
 	public ProfileEntry() {
 		this.profileId = -1;
-		this.profileName = "...";
+		this.profileName = "Новый профиль";
 	}
 	
-	public void collectData(ProfileActivity a) {
-		this.profileName = a.profileName.getText().toString();
+	public boolean collectData(ProfileActivity a) {
+		this.profileName = a.profileName.getText().toString().trim();
+		
+		if ( this.profileName.length() == 0 ) {
+			return false;
+		}
 		this.profileIcon = ((BitmapDrawable)a.profileIcon.getDrawable()).getBitmap();
+		return true;
 	}
 	
 	

@@ -7,7 +7,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:background="#000000"
@@ -34,30 +34,34 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" >
 
-                    <ImageButton
-                        android:id="@+id/ibParamIcon"
+                    <EditText
+                        android:id="@+id/etParamName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/trans_bgr"
-                        android:src="@drawable/camera" />
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_toLeftOf="@+id/ibParamTemplate"
+                        android:layout_toRightOf="@+id/ibParamIcon"
+                        android:ems="10" />
 
                     <ImageButton
                         android:id="@+id/ibParamTemplate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
-                        android:layout_alignParentTop="true"
+                        android:layout_centerVertical="true"
                         android:background="@drawable/trans_bgr"
                         android:src="@drawable/book" />
 
-                    <EditText
-                        android:id="@+id/etParamName"
+                    <ImageButton
+                        android:id="@+id/ibParamIcon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_toLeftOf="@+id/ibParamTemplate"
-                        android:layout_toRightOf="@+id/ibParamIcon"
-                        android:ems="10" />
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentTop="true"
+                        android:background="@drawable/trans_bgr"
+                        android:src="@drawable/camera" />
 
                 </RelativeLayout>
 
@@ -176,15 +180,24 @@
                         android:src="@drawable/arrowdown" />
 
                         <TextView
+                            android:id="@+id/textView1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentBottom="true"
+                            android:layout_alignParentLeft="true"
+                            android:text="Интервал значений (дн.) : "
                             android:textColor="#FFFA00"
+                            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                        <TextView
                             android:id="@+id/tvStep"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignBaseline="@+id/bnProfileSave"
-                            android:layout_alignBottom="@+id/bnProfileSave"
-                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentBottom="true"
+                            android:layout_toRightOf="@+id/textView1"
                             android:text="Не ограниченно"
-                            android:textAppearance="?android:attr/textAppearanceSmall" />
+                            android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:textColor="#FFFA00" />
 
                     </RelativeLayout>
 
@@ -262,7 +275,7 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentLeft="true"
                             android:layout_centerVertical="true"
-                            android:text="Единица инкремента"
+                            android:text="Единица прироста"
                             android:textAppearance="?android:attr/textAppearanceSmall" />
 
                     </RelativeLayout>

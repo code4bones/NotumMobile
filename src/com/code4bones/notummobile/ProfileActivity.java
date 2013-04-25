@@ -45,6 +45,7 @@ public class ProfileActivity extends Activity {
 		mProfile = data.getParcelableExtra(ProfileEntry.PROFILE_ENTRY);
 		
 		this.profileName = (EditText)this.findViewById(R.id.etParamName);
+		this.profileName.setBackgroundResource(R.drawable.edit_text_shape);
 		this.profileIcon = (ImageButton)this.findViewById(R.id.ibParamIcon);
 		
 		if ( mProfile != null  ) {
@@ -96,10 +97,13 @@ public class ProfileActivity extends Activity {
 		Intent i = new Intent();
 		if ( mProfile == null )
 			mProfile = new ProfileEntry();
-		mProfile.collectData(ProfileActivity.this);
-		i.putExtra(ProfileEntry.PROFILE_ENTRY, ProfileActivity.this.mProfile);
-		setResult(RESULT_OK,i);
-		finish();
+		if ( mProfile.collectData(ProfileActivity.this) ) {
+			i.putExtra(ProfileEntry.PROFILE_ENTRY, ProfileActivity.this.mProfile);
+			setResult(RESULT_OK,i);
+			finish();
+		} else {
+			NetLog.Toast(this,"Наименование не указанно");
+		}
 	}
 	
 	public void SelectPhoto() {

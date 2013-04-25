@@ -68,7 +68,7 @@ public class ParamEntry extends Object implements Parcelable {
 		this.startDate = new Date();
 		this.endDate = new Date();
 		this.changed = new Date();
-		this.stepVal = 1;
+		this.stepVal = 0;
 		this.incVal = 1;
 		this.startVal = 10;
 		this.targetVal = 100;
@@ -89,6 +89,8 @@ public class ParamEntry extends Object implements Parcelable {
 		ParamEntry e = new ParamEntry(profileId);
 		e.name = name;
 		e.measure = measure;
+		e.startVal = 1;
+		e.targetVal = 100;
 		return e;
 	}
 	
@@ -177,7 +179,6 @@ public class ParamEntry extends Object implements Parcelable {
 		this.targetVal = c.getDouble(8);
 		this.incVal = c.getDouble(9);
 		byte[] blob = c.getBlob(10);
-		//this.changed = new Date(c.getLong(11));
 		this.image = BitmapFactory.decodeByteArray(blob, 0, blob.length);
 		this.getLastDate();
 	}
@@ -199,22 +200,29 @@ public class ParamEntry extends Object implements Parcelable {
 		}
 	}
 	
-	private Double getNumber(int id,boolean notNull) {
+	private double getNumber(int id,boolean notNull) {
 		try {
-			return Double.parseDouble(this.getText(id,notNull));
+			Double res = Double.parseDouble(this.getText(id,notNull));
+			if ( notNull && res == 0 ) {
+				String sHint = (String)mActivity.findViewById(id).getTag();
+				NetLog.Toast(mContext, "%s : Значение не может быть нулевым",sHint);
+				throw new IllegalArgumentException();
+			}
+			return res;
 		} catch ( NumberFormatException e ) {
+			throw new IllegalArgumentException();
 		}
-		return 0.0;
 	}
 	
 	private String getText(int id,boolean notNull) {
 		EditText et = (EditText)mActivity.findViewById(id);
-		String sHint = (String)et.getTag();
 		if ( et == null )
 			return "???";
+		String sHint = (String)et.getTag();
 		String str = et.getText().toString(); 
+		str = str.trim();
 		if ( notNull && (str == null || str.length() == 0 ) ) {
-			NetLog.Toast(mContext, "Не заполненно поле %s",sHint);
+			NetLog.Toast(mContext, "%s : Поле не заполненно",sHint);
 			throw new IllegalArgumentException();
 		}
 		return str;
@@ -298,7 +306,8 @@ public class ParamEntry extends Object implements Parcelable {
 		DateTime now = DateTime.now();
 		DateTime last = new DateTime(changed);
 		int days = Days.daysBetween(last.toDateMidnight(), now.toDateMidnight()).getDays();
-		return days >= this.stepVal;
+		NetLog.v("%s (%s) : ALERTED %d",name,ProfileList.dateStr(changed),days);
+		return this.stepVal > 0 && days >= this.stepVal;
 	}
 	
 	public HistEntry exists(HistEntry n) {
@@ -318,7 +327,6 @@ public class ParamEntry extends Object implements Parcelable {
 		Cursor curs = ProfileList.getInstance().getDB().rawQuery("select max(changed) from hist where paramId = ?",new String[]{sid});
 		if ( curs.moveToFirst() ) {
 			this.changed = new Date(curs.getLong(0));
-			//NetLog.v("%s Changed %s",this,this.changed);
 		}
 		if ( curs != null && !curs.isClosed())
 			curs.close();
