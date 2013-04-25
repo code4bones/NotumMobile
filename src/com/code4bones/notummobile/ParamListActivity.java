@@ -16,6 +16,8 @@ import org.achartengine.model.XYSeries;
 import org.achartengine.model.XYValueSeries;
 import org.achartengine.renderer.SimpleSeriesRenderer;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
+import org.joda.time.DateTime;
+import org.joda.time.Days;
 
 import com.code4bones.utils.MessageBox;
 import com.code4bones.utils.NetLog;
@@ -61,6 +63,7 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 	ProgressBar mProgress;
 	TextView mTvStartValue;
 	TextView mTvTargetValue;
+	TextView mTvCurrentValue;
 	HorizontalListView mParamList;
 	View mListViewItem = null;
 	View mListViewItemSelected = null;
@@ -71,14 +74,14 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		setContentView(R.layout.activity_param_list);
 		mProfile = mProfiles.getCurrentProfile();
 		
-		this.setTitle("Просмотр \"" + mProfile.profileName+"\"");
+		this.setTitle("Просмотр профиля \"" + mProfile.profileName+"\"");
 		
 		mTvParamName = (TextView)this.findViewById(R.id.tvProfileName);
 		mTvParamDate = (TextView)this.findViewById(R.id.tvParamDate);
 		mTvStartValue = (TextView)this.findViewById(R.id.tvStartValue);
 		mTvTargetValue = (TextView)this.findViewById(R.id.tvEndValue);
 		mProgress = (ProgressBar)this.findViewById(R.id.pbProgress);
-	
+		
 		mParamList = (HorizontalListView) findViewById(R.id.vwParamList);  
 		mParamList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 			@Override
@@ -98,6 +101,7 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 				mListViewItemSelected = item;
 				toggleItem(item);
 				ParamEntry entry = (ParamEntry)adapt.getItemAtPosition(position);
+				entry.resetDate(null);
 				showParam(entry);
 			}
 		});
@@ -121,7 +125,9 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 	public void updateParamList() {
 		if ( mProfile.populateParams(mProfiles.getDB() ) > 0) {
 			mParamList.setAdapter(new ParamListAdapter(mProfile.toArray()));
-			this.showParam(mProfile.currentParam());
+			ParamEntry pe = mProfile.currentParam();
+			pe.resetDate(null);
+			this.showParam(pe);
 		} else {
 			Intent i = new Intent(this,NewParamActivity.class);
 			i.putExtra(NewParamActivity.NEW_LIST, true);
@@ -172,13 +178,15 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		mDataset.addSeries(mSers.toXYSeries());
 		
 		if ( entry.value < this.mProfile.currentParam().mMinHist.value )
-			nMin = entry.value - (entry.value / 2);
+			nMin = entry.value - (entry.value / 3);
 		else if ( entry.value > this.mProfile.currentParam().mMaxHist.value )
-			nMax = entry.value + (entry.value /2 );
+			nMax = entry.value + (entry.value / 3);
 		
 	    this.mRender.setYAxisMin(nMin);
 	    this.mRender.setYAxisMax(nMax);
+		this.mRender.setChartTitle(String.format("%f", entry.value));
 
+	   
 		mChart.repaint();
 	    
 		NetLog.v("changeParam: %s",entry);
@@ -213,12 +221,14 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 					if ( which == DialogInterface.BUTTON_POSITIVE ) {
 						entry.id = dupEntry.id;
 						entry.Save();
+						paramEntry.resetDate(null);
 						showParam(paramEntry);
 					} 
 				}
 			});
 		} else {
 			entry.Save();
+			paramEntry.resetDate(null);
 			showParam(paramEntry);
 		}
 	}
@@ -261,7 +271,8 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		ParamEntry paramEntry = mProfile.currentParam();
 	    HistEntry list[] = paramEntry.toArray();
 
-	    CategorySeries series = new CategorySeries("История");
+	    String msg = String.format("Кол-во замеров: %d.", list.length);
+	    CategorySeries series = new CategorySeries(msg);
 	    for ( int idx =0; idx < list.length;idx++ ) {
 	    	series.add(list[idx].value);
 	    	
@@ -285,6 +296,7 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 			NetLog.Toast(this, "There are no parameters for that profile");
 			return;
 		}
+		//entry.resetDate(null);
 		this.mProfile.setCurrentParam(entry);
 		entry.populateHist(true);
 		this.createChart();
@@ -298,23 +310,20 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		if ( this.mChart != null ) {
 			HistEntry eMax = entry.mMaxHist;
 			HistEntry eMin = entry.mMinHist;
-			HistEntry eFirst = entry.mFirstHist;
 			
 			updateProgress(entry);
-			//this.mProgress.setMax((int)(entry.targetVal - entry.startVal));
-			//this.mProgress.setProgress((int)entry.mActiveHist.value);
 
-			this.mRender.setChartTitle(String.format("%f", entry.startVal));
-		    // dates
-			this.mRender.setXTitle("Дни");
-		    this.mRender.setXAxisMin(0);
+			this.mRender.setChartTitle(String.format("%f", entry.mLastHist.value));
+			this.mRender.setXAxisMin(0);
 		    this.mRender.setXAxisMax(entry.mList.size()+2);
 		    // values
 			this.mRender.setYTitle(entry.measure);
-		    this.mRender.setYAxisMin(eMin.value - (eMin.value / 2));
-		    this.mRender.setYAxisMax(eMax.value + (eMax.value / 2));
+		    this.mRender.setYAxisMin(eMin.value - (eMin.value / 3));
+		    this.mRender.setYAxisMax(eMax.value + (eMax.value / 3));
+		    
 		    
 		    SimpleSeriesRenderer r = this.mRender.getSeriesRendererAt(0);
+		    
 		    r.setGradientEnabled(true);
 		    r.setGradientStart(eMin.value, Color.parseColor("#5662A3"));
 		    r.setGradientStop(eMax.value,Color.parseColor("#D3DAFE"));
@@ -405,8 +414,7 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		Date selDate = c.getTime();
 		this.mTvParamDate.setText(ProfileList.dateStr(selDate));
 		this.mTvParamDate.setTag(selDate);
-		this.mProfile.currentParam().changed = selDate;
-		this.mProfile.currentParam().mActiveHist.changed = selDate;
+		this.mProfile.currentParam().resetDate(selDate);
 	}
 	
 	

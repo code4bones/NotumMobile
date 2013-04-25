@@ -45,7 +45,7 @@ public class HistEntry {
 
 	public HistEntry(HistEntry e) {
 		this.value = e.value;
-		this.changed = e.changed;
+		this.changed = new Date();
 		this.paramId = e.paramId;
 		this.id = -1;
 		this.checked = false;

@@ -285,6 +285,12 @@ public class ParamEntry extends Object implements Parcelable {
 	public HistEntry mMinHist = null;
 	public HistEntry mFirstHist = null;
 	
+	public void resetDate(Date dt) {
+		this.changed = dt!=null?dt:new Date();
+		if ( this.mActiveHist != null )
+			this.mActiveHist.changed = this.changed;
+	}
+	
 	public boolean getMinMaxHist() {
 		mMaxHist = null;
 		mMinHist = null;
@@ -348,10 +354,6 @@ public class ParamEntry extends Object implements Parcelable {
 		if ( curs != null && !curs.isClosed())
 			curs.close();
 		
-		//NetLog.v("Hist %d for param %s",mList.size(),this.name);
-		//for ( HistEntry e : mList ) {
-		//	NetLog.v("-> %s",e);
-		//}
 		
 		if ( mList.isEmpty() ) {
 			this.mActiveHist = new HistEntry(this);
