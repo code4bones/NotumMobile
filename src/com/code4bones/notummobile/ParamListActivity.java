@@ -53,9 +53,6 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 
 	public final ProfileList mProfiles = ProfileList.getInstance();
 	public ProfileEntry mProfile;
-	private List<String> categories=new ArrayList<String>();
-	private List<Float> column1=new ArrayList<Float>();
-//	private List<Float> column2=new ArrayList<Float>();
 	
 	TextView mTvParamName;
 	TextView mTvParamDate;
@@ -63,6 +60,8 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 	TextView mTvStartValue;
 	TextView mTvTargetValue;
 	HorizontalListView mParamList;
+	View mListViewItem = null;
+	View mListViewItemSelected = null;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -77,12 +76,13 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		mTvStartValue = (TextView)this.findViewById(R.id.tvStartValue);
 		mTvTargetValue = (TextView)this.findViewById(R.id.tvEndValue);
 		mProgress = (ProgressBar)this.findViewById(R.id.pbProgress);
-		
+	
 		mParamList = (HorizontalListView) findViewById(R.id.vwParamList);  
 		mParamList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 			@Override
 			public boolean onItemLongClick(AdapterView<?> adapt, View arg1,
 					int position, long arg3) {
+				toggleItem(arg1);
 				ParamEntry entry = (ParamEntry)adapt.getItemAtPosition(position);
 				editParam(entry);
 				return false;
@@ -91,8 +91,10 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		mParamList.setOnItemClickListener( new AdapterView.OnItemClickListener() {
 
 			@Override
-			public void onItemClick(AdapterView<?> adapt, View arg1, int position,
+			public void onItemClick(AdapterView<?> adapt, View item, int position,
 					long arg3) {
+				mListViewItemSelected = item;
+				toggleItem(item);
 				ParamEntry entry = (ParamEntry)adapt.getItemAtPosition(position);
 				showParam(entry);
 			}
@@ -103,6 +105,17 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		
 	} // onCreate
 
+	public void toggleItem(View view) {
+		if ( this.mListViewItem != null ) {
+			mListViewItem.setBackgroundResource(0);
+		} 
+		view = view.findViewById(R.id.paramName);
+		view.setBackgroundResource(R.drawable.list_view_selection);
+		mListViewItem = view;
+		
+	}
+	
+	
 	public void updateParamList() {
 		if ( mProfile.populateParams(mProfiles.getDB() ) > 0) {
 			mParamList.setAdapter(new ParamListAdapter(mProfile.toArray()));
@@ -258,6 +271,8 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		this.mProfile.setCurrentParam(entry);
 		entry.populateHist(true);
 		this.createChart();
+	//	NetLog.v("ITEM %s",entry.mListItem);
+		//this.toggleItem(mListViewItemSelected);
 		
 		String sTitle = String.format("%s / %s", this.mProfile.profileName,entry.name);
 		this.mTvParamName.setText(sTitle);

@@ -49,6 +49,7 @@ class ParamListAdapter extends BaseAdapter {
 
     	ParamEntry entry = mData[position];
         holder.update(entry);
+       // entry.mListItem = retval;
           
         return retval;  
     }
@@ -66,6 +67,8 @@ class ParamListAdapter extends BaseAdapter {
     	public void update(ParamEntry entry) {
    	       image.setImageBitmap(Utils.getRoundedCornerBitmap(entry.image));
    	       text.setText(entry.name);  
+           image.setBackgroundResource(R.drawable.image_border);
+           text.setTag(entry);
     	}
     	
     }

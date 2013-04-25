@@ -35,6 +35,7 @@ public class ProfileListAdapter extends ArrayAdapter<ProfileEntry> {
 			icon = (ImageView)row.findViewById(R.id.ivProfileIcon);
 			name = (TextView)row.findViewById(R.id.tvParamName);
 			tags = (FlowLayout)row.findViewById(R.id.cvTagsView);
+			icon.setBackgroundResource(R.drawable.image_border);
 			row.setTag(this);
 		}
 		
@@ -57,7 +58,11 @@ public class ProfileListAdapter extends ArrayAdapter<ProfileEntry> {
 			
 			if ( entry.populateParams(ProfileList.getInstance().getDB()) > 0 ) {
 				for ( ParamEntry param : entry.mParams ) {
-					TextView t = createLabel(param.name,R.drawable.profile_badge_shape);
+					
+					int shape = R.drawable.profile_badge_shape;
+					if ( param.isAlerted() )
+						shape = R.drawable.profile_badge_shape_notdata;
+					TextView t = createLabel(param.name,shape);
 		            tags.addView(t, new TagsView.LayoutParams(2, 2));			
 		            }
 			} else {

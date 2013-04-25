@@ -9,6 +9,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.joda.time.DateTime;
+import org.joda.time.Days;
+
 import com.code4bones.utils.NetLog;
 
 import android.app.Activity;
@@ -38,6 +41,7 @@ public class ParamEntry extends Object implements Parcelable {
 	transient Context mContext;
 	transient HistEntry mLastHist = null;
 	transient HistEntry mActiveHist = null;
+	transient boolean mSelected = false;
 	
 	public Bitmap image;
 	public long   paramId;
@@ -46,6 +50,7 @@ public class ParamEntry extends Object implements Parcelable {
 	public String measure;
 	public Date   startDate;
 	public Date	  endDate;
+	public Date	  changed;
 	public long   stepVal;
 	public double  incVal;
 	public double  startVal;
@@ -62,6 +67,7 @@ public class ParamEntry extends Object implements Parcelable {
 		this.measure = "?";
 		this.startDate = new Date();
 		this.endDate = new Date();
+		//this.changed = new Date();
 		this.stepVal = 1;
 		this.incVal = 1;
 		this.startVal = 10;
@@ -90,6 +96,7 @@ public class ParamEntry extends Object implements Parcelable {
 		this.measure = "?";
 		this.startDate = new Date();
 		this.endDate = new Date();
+		//this.changed = new Date();
 		this.image = null;
 	}
 	
@@ -104,6 +111,7 @@ public class ParamEntry extends Object implements Parcelable {
 		this.measure = in.readString();
 		this.startDate = new Date(in.readLong());
 		this.endDate = new Date(in.readLong());
+		//this.changed = new Date(in.readLong());
 		this.image = in.readParcelable(Bitmap.class.getClassLoader());
 	}
 	
@@ -119,6 +127,7 @@ public class ParamEntry extends Object implements Parcelable {
 		o.writeString(this.measure);
 		o.writeLong(this.startDate.getTime());
 		o.writeLong(this.endDate.getTime());
+		//o.writeLong(this.changed.getTime());
 		o.writeParcelable(this.image, flags);
 	}
 	
@@ -156,7 +165,9 @@ public class ParamEntry extends Object implements Parcelable {
 		this.targetVal = c.getDouble(8);
 		this.incVal = c.getDouble(9);
 		byte[] blob = c.getBlob(10);
+		//this.changed = new Date(c.getLong(11));
 		this.image = BitmapFactory.decodeByteArray(blob, 0, blob.length);
+		this.getLastDate();
 	}
 	
 	public void setImage(String iconPath) {
@@ -231,6 +242,7 @@ public class ParamEntry extends Object implements Parcelable {
 		ins.bindDouble(8, this.targetVal);
 		ins.bindDouble(9, this.incVal);
 		ins.bindBlob(10, blob);
+		//ins.bindLong(11,this.changed.getTime());
 		
 		if ( this.paramId == -1 ) {
 			this.paramId = ins.executeInsert();
@@ -262,6 +274,24 @@ public class ParamEntry extends Object implements Parcelable {
 		NetLog.v("Min: %s", mMinHist);
 		NetLog.v("Max: %s", mMaxHist);
 		return false;
+	}
+	
+	public boolean isAlerted() {
+		DateTime now = DateTime.now();
+		DateTime last = new DateTime(changed);
+		int days = Days.daysBetween(last.toDateMidnight(), now.toDateMidnight()).getDays();
+		return days >= this.stepVal;
+	}
+	
+	public void getLastDate() {
+		String sid = String.valueOf(this.paramId);
+		Cursor curs = ProfileList.getInstance().getDB().rawQuery("select max(changed) from hist where paramId = ?",new String[]{sid});
+		if ( curs.moveToFirst() ) {
+			this.changed = new Date(curs.getLong(0));
+			//NetLog.v("%s Changed %s",this,this.changed);
+		}
+		if ( curs != null && !curs.isClosed())
+			curs.close();
 	}
 	
 	public int populateHist(boolean fAsc) {
