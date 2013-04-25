@@ -67,7 +67,7 @@ public class ParamEntry extends Object implements Parcelable {
 		this.measure = "?";
 		this.startDate = new Date();
 		this.endDate = new Date();
-		//this.changed = new Date();
+		this.changed = new Date();
 		this.stepVal = 1;
 		this.incVal = 1;
 		this.startVal = 10;
@@ -96,7 +96,7 @@ public class ParamEntry extends Object implements Parcelable {
 		this.measure = "?";
 		this.startDate = new Date();
 		this.endDate = new Date();
-		//this.changed = new Date();
+		this.changed = new Date();
 		this.image = null;
 	}
 	
@@ -111,7 +111,7 @@ public class ParamEntry extends Object implements Parcelable {
 		this.measure = in.readString();
 		this.startDate = new Date(in.readLong());
 		this.endDate = new Date(in.readLong());
-		//this.changed = new Date(in.readLong());
+		this.changed = new Date(in.readLong());
 		this.image = in.readParcelable(Bitmap.class.getClassLoader());
 	}
 	
@@ -127,7 +127,7 @@ public class ParamEntry extends Object implements Parcelable {
 		o.writeString(this.measure);
 		o.writeLong(this.startDate.getTime());
 		o.writeLong(this.endDate.getTime());
-		//o.writeLong(this.changed.getTime());
+		o.writeLong(this.changed.getTime());
 		o.writeParcelable(this.image, flags);
 	}
 	
@@ -147,6 +147,7 @@ public class ParamEntry extends Object implements Parcelable {
 		
 		this.startVal = getNumber(R.id.etParamCurrentValue);
 		this.targetVal = getNumber(R.id.etTargetValue);
+		
 		this.incVal = getNumber(R.id.etIncVal);
 		
 		this.image = ((BitmapDrawable)mActivity.ibIcon.getDrawable()).getBitmap();
@@ -281,6 +282,18 @@ public class ParamEntry extends Object implements Parcelable {
 		DateTime last = new DateTime(changed);
 		int days = Days.daysBetween(last.toDateMidnight(), now.toDateMidnight()).getDays();
 		return days >= this.stepVal;
+	}
+	
+	public HistEntry exists(HistEntry n) {
+		Date nd = n.changed;
+		for ( HistEntry h : this.mList ) {
+			Date hd = h.changed;
+			if ( nd.getDate() == hd.getDate() &&
+				 nd.getMonth() == hd.getMonth() &&
+				 nd.getYear() == hd.getYear() )
+				return h;
+		}
+		return null;
 	}
 	
 	public void getLastDate() {

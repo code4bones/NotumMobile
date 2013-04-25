@@ -78,15 +78,33 @@ public class HistActivity extends Activity {
 		switch ( item.getItemId() ) {
 		case R.id.itemHistSave:
 			Save();
+			this.setResult(RESULT_OK);
+			finish();
+			break;
+		case R.id.itemHistClose:
+			this.setResult(RESULT_CANCELED);
+			finish();
 			break;
 		}
 		return true;
 	}
 	
 	public void Save() {
-		NetLog.v("Saved %d items",mHist.size());
 		for ( HistEntry e : mHist ) {
 			e.Save(ProfileList.getInstance().getDB());
 		}
 	}
+	
+	@Override
+	public void onBackPressed() {
+	    // This will be called either automatically for you on 2.0
+	    // or later, or by the code above on earlier versions of the
+	    // platform.
+		if ( mHist.size() == 0 ) {
+			super.onBackPressed();
+		} else {
+			this.openOptionsMenu();
+		}
+		return;
+	}	
 }

@@ -1,4 +1,5 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/itemHistSave" android:title="Сохранить и Выйти"></item>
+    <item android:id="@+id/itemHistSave" android:title="Сохранить"></item>
+    <item android:id="@+id/itemHistClose" android:title="Выйти"></item>
 
 </menu>

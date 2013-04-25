@@ -73,6 +73,7 @@ public class ProfileEntry extends Object implements Parcelable {
 				ParamEntry entry = new ParamEntry(curs);
 				if ( mCurrentParam == null )
 					this.setCurrentParam(entry);
+				entry.getLastDate();
 				//NetLog.v("Selected %s",entry);
 				mParams.add(entry);
 			} while ( curs.moveToNext() );

@@ -32,6 +32,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
@@ -193,13 +194,26 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 	}
 	
 	private void selectParamValueDate() {
-		Dialog dlg = new DatePickerDialog(this,this,2013,05,21);
+		//TODO:
+		ParamEntry pe = this.mProfile.currentParam();
+		Dialog dlg = new DatePickerDialog(this,this,1900+pe.changed.getYear(),pe.changed.getMonth(),pe.changed.getDate());
 		dlg.show();
 	}
+	
+	private DialogInterface.OnClickListener mAlertClick = new DialogInterface.OnClickListener() {
+		@Override
+		public void onClick(DialogInterface dialog, int which) {
+			if ( which != -1 )
+				return;
+		}
+	};
 	
 	private void applyParamValue() {
 		ParamEntry paramEntry = this.mProfile.currentParam();
 		HistEntry entry = paramEntry.mActiveHist;
+		if ( paramEntry.exists(entry) != null ) {
+			NetLog.MsgBox(this, mAlertClick, "Внимание!", "Запись на %s уже cуществует,заменить ?", entry.changed);
+		}
 		entry.Save(ProfileList.getInstance().getDB());
 		NetLog.v("Apply %s",entry);
 		this.showParam(paramEntry);
@@ -276,7 +290,7 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		
 		String sTitle = String.format("%s / %s", this.mProfile.profileName,entry.name);
 		this.mTvParamName.setText(sTitle);
-		this.mTvParamDate.setText(entry.startDate.toGMTString());
+		this.mTvParamDate.setText(entry.changed.toGMTString());
 		this.mTvStartValue.setText(String.valueOf(entry.startVal));
 		this.mTvTargetValue.setText(String.valueOf(entry.targetVal));
 		
@@ -359,6 +373,10 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 				this.mProfile.setCurrentParam(entry);
 				this.updateParamList();
 			break;
+		case NewParamActivity.HIST:
+			if ( resultCode == RESULT_OK )
+				showParam(mProfile.currentParam());
+			break;
 		}
 	}
 	
@@ -386,6 +404,7 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		Date selDate = c.getTime();
 		this.mTvParamDate.setText(selDate.toGMTString());
 		this.mTvParamDate.setTag(selDate);
+		this.mProfile.currentParam().changed = selDate;
 		this.mProfile.currentParam().mActiveHist.changed = selDate;
 	}
 	

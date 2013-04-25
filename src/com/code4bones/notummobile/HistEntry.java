@@ -44,9 +44,9 @@ public class HistEntry {
 		this.id = -1;
 	}
 	
+	
 	public void Save(SQLiteDatabase db) {
 		SQLiteStatement stm;
-		//this.paramId = e.paramId;
 		
 		if ( id == -1 )
 			stm = db.compileStatement("insert into hist ( paramId,value,changed ) values(?,?,?)");

@@ -57,6 +57,7 @@ public class NewParamActivity extends Activity implements OnDateSetListener {
 	public EditText    etIncVal;
 	public EditText	   etCurrentVal;
 	public EditText    etTargetVal;
+	public DatePickerDialog mDatePicker;
 	
 	public boolean     mFirstParam = false;
 	
@@ -107,9 +108,10 @@ public class NewParamActivity extends Activity implements OnDateSetListener {
 		this.ibIcon.setImageBitmap(e.image);
 		this.etName.setText(e.name);
 		this.tvStartDate.setText(e.startDate.toGMTString());
-		
+		this.tvStartDate.setTag(e.startDate);
+		this.tvEndDate.setTag(e.endDate);
 		this.updateParamEndDate(e);
-		this.updateParamStep(-1);
+		this.updateParamStep(0);
 		
 		this.etMeasure.setText(e.measure);
 		this.etIncVal.setText(String.valueOf(e.incVal));
@@ -165,18 +167,41 @@ public class NewParamActivity extends Activity implements OnDateSetListener {
 		finish();
 	}
 	
+	public TextView mDateView = null;
+	
 	public void selectParamDate(int id) {
-		DatePickerDialog dlg = new DatePickerDialog(this,this,2013,05,21);
+		mDateView = (TextView)this.findViewById(id == R.id.ibParamStartDate?R.id.tvStartDate:R.id.tvEndDate);
+	    Date d = (Date)mDateView.getTag();
+		mDatePicker = new DatePickerDialog(this,this,1900+d.getYear(),d.getMonth(),d.getDate());
 		//TODO 
-		//dlg.getDatePicker().setTag(this.findViewById(id == R.id.ibParamStartDate?R.id.tvStartDate:R.id.tvEndDate));
-		dlg.show();
+		mDateView = (TextView)this.findViewById(id == R.id.ibParamStartDate?R.id.tvStartDate:R.id.tvEndDate);
+		mDatePicker.show();
+	}
+	
+	@Override
+	public void onDateSet(DatePicker view, int year, int monthOfYear,
+			int dayOfMonth) {
+		
+		Calendar c = Calendar.getInstance();
+		c.set(year, monthOfYear, dayOfMonth);
+		Date selDate = c.getTime();
+	
+		mDateView.setText(selDate.toGMTString());
+		mDateView.setTag(selDate);
+		
+		if ( mDateView.getId() == R.id.tvStartDate )
+			this.mParamEntry.startDate = selDate;
+		else {
+			this.mParamEntry.endDate = selDate;
+			updateParamEndDate(this.mParamEntry);
+		}
 	}
 	
 	public void updateParamEndDate(ParamEntry e) {
 		if ( e.endDate != null )
 			this.tvEndDate.setText(e.endDate.toGMTString());
 		else
-			this.tvEndDate.setText("No Limits");
+			this.tvEndDate.setText("Не ограниченно");
 	}
 	
 	public void updateParamStep(int id) {
@@ -192,7 +217,7 @@ public class NewParamActivity extends Activity implements OnDateSetListener {
 		if ( mParamEntry.stepVal > 0 )
 			this.tvStep.setText(String.valueOf(mParamEntry.stepVal));
 		else
-			this.tvStep.setText("No Limits");
+			this.tvStep.setText("Без периода");
 		
 	}
 	
@@ -231,25 +256,6 @@ public class NewParamActivity extends Activity implements OnDateSetListener {
 
 	
 	
-	@Override
-	public void onDateSet(DatePicker view, int year, int monthOfYear,
-			int dayOfMonth) {
-		
-		TextView tv = (TextView)view.getTag();
-		Calendar c = Calendar.getInstance();
-		c.set(year, monthOfYear, dayOfMonth);
-		Date selDate = c.getTime();
-	
-		tv.setText(selDate.toGMTString());
-		tv.setTag(selDate);
-		
-		if ( tv.getId() == R.id.tvStartDate )
-			this.mParamEntry.startDate = selDate;
-		else {
-			this.mParamEntry.endDate = selDate;
-			updateParamEndDate(this.mParamEntry);
-		}
-	}
 		
 		
 }

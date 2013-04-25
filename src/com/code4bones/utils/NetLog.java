@@ -146,6 +146,7 @@ public class NetLog {
 	    dlgAlert.setTitle(sTitle); 
 	    dlgAlert.setMessage(msg); 
 	    dlgAlert.setPositiveButton("OK", onClick);
+	    dlgAlert.setNegativeButton("Отмена", onClick);
 	    dlgAlert.setCancelable(true);
 	    dlgAlert.create().show();
 	}
