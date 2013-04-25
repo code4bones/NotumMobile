@@ -48,7 +48,7 @@ public class MainActivity extends Activity {
 	/* Controls */
 	private ListView lvProfiles;
 	
-	
+	//test
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

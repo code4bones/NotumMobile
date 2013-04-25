@@ -11,6 +11,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
 
 public class HistActivity extends Activity {
@@ -19,6 +21,7 @@ public class HistActivity extends Activity {
 	public ListView mListView;
 	public HistListAdapter mAdapter;
 	public ArrayList<HistEntry> mHist = new ArrayList<HistEntry>();
+	public ArrayList<HistEntry> mRemove = new ArrayList<HistEntry>();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +41,7 @@ public class HistActivity extends Activity {
 		mListView.setAdapter(mAdapter);
 	}
 
+	
 	public OnClickListener mOnClick = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
@@ -78,6 +82,7 @@ public class HistActivity extends Activity {
 		switch ( item.getItemId() ) {
 		case R.id.itemHistSave:
 			Save();
+			Delete();
 			this.setResult(RESULT_OK);
 			finish();
 			break;
@@ -87,6 +92,12 @@ public class HistActivity extends Activity {
 			break;
 		}
 		return true;
+	}
+	
+	public void Delete() {
+		for ( HistEntry e : mHist ) {
+			e.Delete();
+		}
 	}
 	
 	public void Save() {
@@ -100,7 +111,7 @@ public class HistActivity extends Activity {
 	    // This will be called either automatically for you on 2.0
 	    // or later, or by the code above on earlier versions of the
 	    // platform.
-		if ( mHist.size() == 0 ) {
+		if ( mHist.size() == 0 && mRemove.size() == 0 ) {
 			super.onBackPressed();
 		} else {
 			this.openOptionsMenu();

@@ -3,16 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <ImageButton
-        android:id="@+id/ibHistSelectDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="14dp"
-        android:src="@drawable/cal" />
-
     <TextView
         android:id="@+id/tvHistDate"
         android:layout_width="wrap_content"
@@ -90,5 +80,21 @@
         android:text="55,100 kg"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="#00FF00" />
+
+    <CheckBox
+        android:id="@+id/chkDelete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/pbHistProgress"
+        android:layout_alignParentLeft="true" />
+
+    <ImageButton
+        android:id="@+id/ibHistSelectDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="14dp"
+        android:layout_toRightOf="@+id/chkDelete"
+        android:src="@drawable/cal" />
 
 </RelativeLayout>

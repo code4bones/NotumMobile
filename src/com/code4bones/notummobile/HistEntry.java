@@ -14,12 +14,14 @@ public class HistEntry {
 	public long   paramId;
 	public double value;
 	public Date   changed;
+	public boolean checked;
 	
 	public HistEntry(ParamEntry e) {
 		this.value = e.startVal;
 		this.changed = e.startDate;
 		this.paramId = e.paramId;
 		this.id = -1;
+		this.checked = false;
 	}
 	
 	
@@ -28,6 +30,7 @@ public class HistEntry {
 		this.paramId = -1;
 		this.value = 0;
 		this.changed = new Date();
+		this.checked = false;
 	}
 
 	public HistEntry(Cursor c ) {
@@ -35,6 +38,7 @@ public class HistEntry {
 		this.paramId = c.getLong(1);
 		this.value = c.getDouble(2);
 		this.changed = new Date(c.getLong(3));
+		this.checked = false;
 	}
 
 	public HistEntry(HistEntry e) {
@@ -42,8 +46,15 @@ public class HistEntry {
 		this.changed = e.changed;
 		this.paramId = e.paramId;
 		this.id = -1;
+		this.checked = false;
 	}
 	
+	public void Delete() {
+		SQLiteStatement stm = ProfileList.getInstance().getDB().compileStatement("delete * from hist where _id = ?");
+		stm.clearBindings();
+		stm.bindLong(0,this.id);
+		stm.execute();
+	}
 	
 	public void Save(SQLiteDatabase db) {
 		SQLiteStatement stm;

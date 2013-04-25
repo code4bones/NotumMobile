@@ -1,5 +1,7 @@
 package com.code4bones.notummobile;
 
+import java.util.ArrayList;
+
 import com.code4bones.notummobile.ProfileListAdapter.ProfileHolder;
 import com.code4bones.utils.NetLog;
 
@@ -11,6 +13,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -21,6 +26,9 @@ public class HistListAdapter extends ArrayAdapter<HistEntry> {
 	Context mContext = null;
 	ParamEntry mParamEntry = null;
 	OnClickListener mOnClick = null;
+	public ArrayList<HistEntry> mRemove = new ArrayList<HistEntry>();
+	
+	//OnCheckedChangeListener mOnCheck = null;
 	
 	static class Holder {
 		
@@ -33,6 +41,7 @@ public class HistListAdapter extends ArrayAdapter<HistEntry> {
 		ImageButton ibDec;
 		ImageButton ibInc;
 		ProgressBar pbProg;
+		CheckBox    chkDelete;
 	
 		Holder(View row,HistEntry e) {
 			row.setTag(this);
@@ -46,12 +55,14 @@ public class HistListAdapter extends ArrayAdapter<HistEntry> {
 			ibDec   = (ImageButton)row.findViewById(R.id.ibHistDecValue);
 			ibInc   = (ImageButton)row.findViewById(R.id.ibHistIncValue);
 			pbProg  = (ProgressBar)row.findViewById(R.id.pbHistProgress);
+			chkDelete = (CheckBox)row.findViewById(R.id.chkDelete);
 			
 			tvDiff.setBackgroundResource(R.drawable.diff_label_shape);
 		
 			ibDate.setTag(e);
 			ibDec.setTag(e);
 			ibInc.setTag(e);
+			chkDelete.setTag(e);
 		}
 		
 		public void update(ParamEntry pe,HistEntry e,HistEntry p) {
@@ -63,7 +74,8 @@ public class HistListAdapter extends ArrayAdapter<HistEntry> {
 			tvStart.setText(String.valueOf(pe.startVal));
 			tvEnd.setText(String.valueOf(pe.targetVal));
 			pbProg.setMax(100);
-
+			chkDelete.setChecked(e.checked);
+			
 			double min = pe.startVal; // 2
 			double max = pe.targetVal - min; // 10
 			double cur  = e.value - min; // 2
@@ -76,6 +88,22 @@ public class HistListAdapter extends ArrayAdapter<HistEntry> {
 			} else {
 				tvDiff.setTextColor(Color.BLUE);
 				tvDiff.setBackgroundResource(R.drawable.diff_label_shape);
+			}
+		}
+	};
+	
+	
+	
+	public OnCheckedChangeListener mOnCheck = new OnCheckedChangeListener() {
+		@Override
+		public void onCheckedChanged(CompoundButton buttonView,
+				boolean isChecked) {
+			HistEntry entry = (HistEntry)buttonView.getTag();
+			entry.checked = isChecked;
+			if ( isChecked ) {
+				mRemove.add(entry);
+			} else {
+				mRemove.remove(entry);
 			}
 		}
 	};
@@ -101,6 +129,7 @@ public class HistListAdapter extends ArrayAdapter<HistEntry> {
 			holder.ibDate.setOnClickListener(mOnClick);
 			holder.ibDec.setOnClickListener(mOnClick);
 			holder.ibInc.setOnClickListener(mOnClick);
+			holder.chkDelete.setOnCheckedChangeListener(mOnCheck);
 		} else { // convertView is alerady assigned
 			holder = (Holder)row.getTag();
 		}
