@@ -22,13 +22,6 @@ import org.joda.time.Days;
 import com.code4bones.utils.MessageBox;
 import com.code4bones.utils.NetLog;
 //import com.iguanaui.columnseries.R;
-import com.iguanaui.controls.DataChart;
-import com.iguanaui.controls.axes.CategoryAxis;
-import com.iguanaui.controls.axes.CategoryXAxis;
-import com.iguanaui.controls.axes.NumericAxis;
-import com.iguanaui.controls.axes.NumericYAxis;
-import com.iguanaui.controls.valuecategory.ColumnSeries;
-import com.iguanaui.controls.valuecategory.ValueCategorySeries;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -174,24 +167,35 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		int idx = mSers.getItemCount()-1;
 		mSers.remove(idx);
 		mSers.add(entry.value);
+	    
 		mDataset.removeSeries(0);
 		mDataset.addSeries(mSers.toXYSeries());
 		
 		if ( entry.value < this.mProfile.currentParam().mMinHist.value )
-			nMin = entry.value - (entry.value / 3);
+			nMin = entry.value- (entry.value / 3);
 		else if ( entry.value > this.mProfile.currentParam().mMaxHist.value )
 			nMax = entry.value + (entry.value / 3);
 		
 	    this.mRender.setYAxisMin(nMin);
 	    this.mRender.setYAxisMax(nMax);
 		this.mRender.setChartTitle(String.format("%f", entry.value));
-
 	   
 		mChart.repaint();
 	    
 		NetLog.v("changeParam: %s",entry);
 		updateProgress(paramEntry);
 		
+	}
+	
+	public void updateRender(ParamEntry entry) {
+		HistEntry eMin = entry.mMinHist;
+		HistEntry eMax = entry.mMaxHist;
+		double nMin = Math.min(eMax.value, eMin.value);
+		double nMax = Math.max(eMax.value, eMax.value);
+	    //nMax -= nMin;
+	    //nMin  = 0;
+		this.mRender.setYAxisMin(nMin - (nMin / 3));
+	    this.mRender.setYAxisMax(nMax + (nMax / 3));
 	}
 	
 	public void updateProgress(ParamEntry entry) {
@@ -247,7 +251,9 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 
 	    
 	    SimpleSeriesRenderer r = new SimpleSeriesRenderer();
-	    
+	    NumberFormat nf = NumberFormat.getInstance();
+	    nf.setMaximumFractionDigits(3);
+	    r.setChartValuesFormat(nf);
 	    // saved hist
 	    
 	    r.setColor(Color.parseColor("#D3DAFE"));
@@ -270,7 +276,8 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		mDataset = new XYMultipleSeriesDataset();
 		ParamEntry paramEntry = mProfile.currentParam();
 	    HistEntry list[] = paramEntry.toArray();
-
+	    HistEntry hMin = paramEntry.mMinHist;
+	    
 	    String msg = String.format("Кол-во замеров: %d.", list.length);
 	    CategorySeries series = new CategorySeries(msg);
 	    for ( int idx =0; idx < list.length;idx++ ) {
@@ -283,11 +290,11 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 	     
 	    mSers = series;
 		mRender = this.getBarDemoRenderer();
-	    
-	    
+		mRender.setZoomButtonsVisible(true);
 		mChart = ChartFactory.getBarChartView(this, mDataset, mRender, BarChart.Type.DEFAULT);
 		item.addView(mChart,new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT));
 		mChart.setBackgroundResource(R.drawable.gradient_barchart);
+		
 	}
 	
 	
@@ -313,14 +320,13 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 			
 			updateProgress(entry);
 
+			
 			this.mRender.setChartTitle(String.format("%f", entry.mLastHist.value));
 			this.mRender.setXAxisMin(0);
 		    this.mRender.setXAxisMax(entry.mList.size()+2);
 		    // values
 			this.mRender.setYTitle(entry.measure);
-		    this.mRender.setYAxisMin(eMin.value - (eMin.value / 3));
-		    this.mRender.setYAxisMax(eMax.value + (eMax.value / 3));
-		    
+			this.updateRender(entry);
 		    
 		    SimpleSeriesRenderer r = this.mRender.getSeriesRendererAt(0);
 		    
