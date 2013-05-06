@@ -3,6 +3,7 @@ package com.code4bones.notummobile;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
+import com.code4bones.utils.DrawableOnTouchListener;
 import com.code4bones.utils.NetLog;
 import com.code4bones.utils.Utils;
 
@@ -47,6 +48,8 @@ public class ProfileActivity extends Activity {
 		this.profileName = (EditText)this.findViewById(R.id.etParamName);
 		this.profileName.setBackgroundResource(R.drawable.edit_text_shape);
 		this.profileIcon = (ImageButton)this.findViewById(R.id.ibParamIcon);
+		
+		DrawableOnTouchListener.addDeleteButton(new EditText[] {this.profileName});
 		
 		if ( mProfile != null  ) {
 			NetLog.v("Edit %d",mProfile.profileId);

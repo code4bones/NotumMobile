@@ -7,10 +7,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import com.code4bones.utils.DrawableOnTouchListener;
 import com.code4bones.utils.NetLog;
+import com.code4bones.utils.Utils;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -23,8 +27,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -107,6 +113,7 @@ public class NewParamActivity extends Activity implements OnDateSetListener {
 		
 		this.etName.setBackgroundResource(R.drawable.edit_text_shape);
 		this.etName.setTag("Наименование наблюдения");
+		
 		this.etIncVal.setBackgroundResource(R.drawable.edit_text_shape);
 		this.etIncVal.setTag("Единица Прироста");
 		this.etCurrentVal.setBackgroundResource(R.drawable.edit_text_shape);
@@ -119,10 +126,14 @@ public class NewParamActivity extends Activity implements OnDateSetListener {
 		
 		ibIcon.setOnClickListener(mOnClick);
 	
+		DrawableOnTouchListener.addDeleteButton(new EditText[] {etIncVal,etName,etMeasure,etTargetVal,etCurrentVal});
 		
 		setupControlValues(mParamEntry);
+		
+		this.etName.requestFocus();
 	}
-
+	
+	
 	public void setupControlValues(ParamEntry e) {
 		if ( e.image != null )
 			this.ibIcon.setImageBitmap(e.image);

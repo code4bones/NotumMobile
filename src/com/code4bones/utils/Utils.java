@@ -1,5 +1,7 @@
 package com.code4bones.utils;
 
+import com.code4bones.notummobile.R;
+
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
@@ -8,6 +10,9 @@ import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.EditText;
 
 public class Utils {
 
@@ -32,4 +37,6 @@ public class Utils {
 	 
 	    return output;
 	  }
+	
+	
 }

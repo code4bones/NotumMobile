@@ -172,13 +172,18 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		mDataset.addSeries(mSers.toXYSeries());
 		
 		if ( entry.value < this.mProfile.currentParam().mMinHist.value )
-			nMin = entry.value- (entry.value / 3);
+			nMin = entry.value;//- (entry.value / 3);
 		else if ( entry.value > this.mProfile.currentParam().mMaxHist.value )
-			nMax = entry.value + (entry.value / 3);
+			nMax = entry.value;// + (entry.value / 3);
 		
-	    this.mRender.setYAxisMin(nMin);
-	    this.mRender.setYAxisMax(nMax);
-		this.mRender.setChartTitle(String.format("%f", entry.value));
+	    //this.mRender.setYAxisMin(nMin);
+	    //this.mRender.setYAxisMax(nMax);
+		
+		NumberFormat nf = NumberFormat.getInstance();
+		nf.setMaximumFractionDigits(2);
+		nf.setMinimumFractionDigits(2);
+		
+		this.mRender.setChartTitle(nf.format(entry.value));
 	   
 		mChart.repaint();
 	    
@@ -190,12 +195,12 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 	public void updateRender(ParamEntry entry) {
 		HistEntry eMin = entry.mMinHist;
 		HistEntry eMax = entry.mMaxHist;
-		double nMin = Math.min(eMax.value, eMin.value);
-		double nMax = Math.max(eMax.value, eMax.value);
+		double nMin = Math.min(entry.startVal,entry.targetVal);// Math.min(eMax.value, eMin.value);
+		double nMax = Math.max(entry.startVal,entry.targetVal); // Math.max(eMax.value, eMax.value);
 	    //nMax -= nMin;
 	    //nMin  = 0;
-		this.mRender.setYAxisMin(nMin - (nMin / 3));
-	    this.mRender.setYAxisMax(nMax + (nMax / 3));
+		this.mRender.setYAxisMin(nMin);// - (nMin / 3));
+	    this.mRender.setYAxisMax(nMax);// + (nMax / 3));
 	}
 	
 	public void updateProgress(ParamEntry entry) {
@@ -247,16 +252,18 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 	    renderer.setLegendTextSize(15);
 	    renderer.setMargins(new int[] {20, 30, 15, 0});
 	    renderer.setBarSpacing(0.1);
-	    
 
 	    
 	    SimpleSeriesRenderer r = new SimpleSeriesRenderer();
 	    NumberFormat nf = NumberFormat.getInstance();
-	    nf.setMaximumFractionDigits(3);
+		nf.setMaximumFractionDigits(2);
+		nf.setMinimumFractionDigits(2);
 	    r.setChartValuesFormat(nf);
 	    // saved hist
 	    
 	    r.setColor(Color.parseColor("#D3DAFE"));
+	    r.setShowLegendItem(true);
+	    
 	    renderer.setInScroll(true);
 	    renderer.addSeriesRenderer(r);
 	    renderer.setDisplayChartValues(true);
@@ -287,11 +294,11 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 	    
 	     series.add(paramEntry.mActiveHist.value);
 	     mDataset.addSeries(series.toXYSeries());
-	     
+	    
 	    mSers = series;
 		mRender = this.getBarDemoRenderer();
-		mRender.setZoomButtonsVisible(true);
-		mChart = ChartFactory.getBarChartView(this, mDataset, mRender, BarChart.Type.DEFAULT);
+		mRender.setZoomButtonsVisible(false);
+		mChart = ChartFactory.getBarChartView(this, mDataset, mRender, BarChart.Type.STACKED);
 		item.addView(mChart,new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT));
 		mChart.setBackgroundResource(R.drawable.gradient_barchart);
 		
@@ -320,8 +327,11 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 			
 			updateProgress(entry);
 
+			NumberFormat nf = NumberFormat.getInstance();
+			nf.setMaximumFractionDigits(2);
+			nf.setMinimumFractionDigits(2);
 			
-			this.mRender.setChartTitle(String.format("%f", entry.mLastHist.value));
+			this.mRender.setChartTitle(nf.format(entry.mLastHist.value));
 			this.mRender.setXAxisMin(0);
 		    this.mRender.setXAxisMax(entry.mList.size()+2);
 		    // values

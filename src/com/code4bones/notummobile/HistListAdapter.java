@@ -1,5 +1,6 @@
 package com.code4bones.notummobile;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 
 import com.code4bones.notummobile.ProfileListAdapter.ProfileHolder;
@@ -68,9 +69,12 @@ public class HistListAdapter extends ArrayAdapter<HistEntry> {
 		public void update(ParamEntry pe,HistEntry e,HistEntry p) {
 			double diff = e.value - p.value;
 
+			NumberFormat nf = NumberFormat.getInstance();
+			nf.setMaximumFractionDigits(2);
+			nf.setMinimumFractionDigits(2);
 			tvDate.setText(ProfileList.dateStr(e.changed));
-			tvValue.setText(String.valueOf(e.value));
-			tvDiff.setText((diff>0?"+":"")+String.valueOf(diff));
+			tvValue.setText(nf.format(e.value));
+			tvDiff.setText((diff>0?"+":"")+nf.format(diff));
 			tvStart.setText(String.valueOf(pe.startVal));
 			tvEnd.setText(String.valueOf(pe.targetVal));
 			pbProg.setMax(100);

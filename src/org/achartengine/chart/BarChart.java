@@ -22,6 +22,8 @@ import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.SimpleSeriesRenderer;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 
+import com.code4bones.utils.NetLog;
+
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -209,6 +211,9 @@ public class BarChart extends XYChart {
     return Color.argb(alpha, r, g, b);
   }
 
+  public void test() {
+	  
+  }
   /**
    * The graphical representation of the series values as text.
    * 
