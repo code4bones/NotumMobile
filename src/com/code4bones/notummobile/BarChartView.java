@@ -102,12 +102,12 @@ public class BarChartView extends View implements View.OnTouchListener {
 	private float mOffsetX = 0;
 	private Handler mTouchHandler = null;
 	private ChartItem mSelectedItem = null;
-	
+	private NumberFormat mFormat = NumberFormat.getInstance();
 	
 	
 	public BarChartView(Context context) {
 		super(context);
-		this.setOnTouchListener(this);
+		init();
 	}	
 	
 	public BarChartView(Context context, AttributeSet attrs) {
@@ -147,24 +147,12 @@ public class BarChartView extends View implements View.OnTouchListener {
 		this.repaint();
 	}
 	
-	private void drawTitle(Canvas c) {
-	    RectF rr = new RectF(mRect);
-	    rr.set(2, mRect.top, mRect.right, 10);
-		Paint p = new Paint();
-		
-	    p.setAntiAlias(true);
-		p.setTextSize(15);
-	    p.setStyle(Style.STROKE);
-	    p.setColor(Color.YELLOW);
-	    c.drawText("Hello", mRect.centerX(), mRect.top+10, p);
-	}
+	
 	
 	@Override
 	public void onDraw(Canvas c) {
 		
 		c.getClipBounds(mRect);
-		this.drawBackground(c);
-		//this.drawTitle(c);
 		if ( mItems.size() == 0 )
 			return;
 		
@@ -197,50 +185,61 @@ public class BarChartView extends View implements View.OnTouchListener {
 		this.SelectItem(null);
 	}
 	
-	private void drawYLabels(Canvas c) {
-		NumberFormat nf = NumberFormat.getInstance();
-		nf.setMinimumFractionDigits(2);
-		nf.setMaximumFractionDigits(2);
+	private int[] mLabelColors = new int[2];
+	private final RectF mLabelRect = new RectF();
+	private final Rect  mLabelBounds = new Rect();
+	private final Paint mLabelPaint = new Paint();
+	private final Paint mLabelBgrPaint = new Paint();
+	private LinearGradient mLabelShader = null;
+	
+	private void init() {
+		this.setOnTouchListener(this);
+
+		mFormat.setMinimumFractionDigits(3);
+		mFormat.setMaximumFractionDigits(3);
 		
-		Paint p = new Paint();
+		mLabelColors[0] = Color.rgb(34, 181, 27);
+		mLabelColors[1] = Color.BLACK;
+
+	    mLabelPaint.setAntiAlias(true);
+	    mLabelPaint.setTextSize(12);
+	    mLabelPaint.setColor(Color.YELLOW);
+		
+	}
+	
+	private void drawYLabels(Canvas c) {
+		
+	    String strValue;
 		float x = mRect.left+10;
 		float y = mRect.bottom;
 	
-		int from = Color.rgb(34,181, 27);
-		int to   = Color.BLACK;
-		
-
-	    RectF rr = new RectF(mRect);
-	    rr.set(2, mRect.top+5, x+3, mRect.bottom-5);
-		Paint ps = new Paint();
-	    Shader shader = new LinearGradient(0,0,rr.right,0, 
-				from, to, TileMode.CLAMP); 
-		ps.setShader(shader); 			
-
-		
-	    c.drawRect(0, mRect.top, x+5, mRect.bottom, ps);
-		
-	    p.setAntiAlias(true);
-		p.setTextSize(12);
-	    p.setStyle(Style.STROKE);
-	    p.setColor(Color.YELLOW);
+	    mLabelRect.set(2, mRect.top+5, x+3, mRect.bottom-5);
+		if ( mLabelShader == null ) {
+//		  mLabelShader = new LinearGradient(0,0,mLabelRect.right,0,mLabelColors[0], mLabelColors[1], TileMode.CLAMP); 
+		  mLabelShader = new LinearGradient(0,0,0,mRect.bottom/2,mLabelColors[1], mLabelColors[0], TileMode.MIRROR); 
+		  mLabelBgrPaint.setShader(mLabelShader); 
+		  mLabelBgrPaint.setAntiAlias(true);
+		}
+	    c.drawRect(0, mRect.top, x, mRect.bottom, mLabelBgrPaint);
+	    
+	    // MIN
 		c.save();
+	    strValue = mFormat.format(this.mMinValue);
 		c.rotate(-90,x,y);
-	    c.drawText(nf.format(this.mMinValue), x+10, y, p);
+	    c.drawText(strValue, x, y, mLabelPaint);
 	    c.restore();
 	    
+	    // MAX
 	    c.save();
-	    y = mRect.top+30;
+	    strValue = mFormat.format(this.mMaxValue);
+	    mLabelPaint.getTextBounds(strValue, 0,strValue.length(), mLabelBounds);
+	    y = mRect.top + mLabelBounds.width();
 		c.rotate(-90,x,y);
-	    c.drawText(nf.format(this.mMaxValue), x-15, y, p);
+	    c.drawText(strValue, x, y, mLabelPaint);
 	    c.restore();
 	    
 	}
 	
-	private void drawBackground(Canvas c) {
-		//Paint p = new Paint();
-		//c.drawRect(mRect, p);
-	}
 	
 	private void Adjust() {
 		mMaxValue = 0;

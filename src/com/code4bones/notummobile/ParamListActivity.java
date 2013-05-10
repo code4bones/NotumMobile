@@ -109,15 +109,17 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 			HistEntry e = (HistEntry)item.obj;
 			if ( e == null ) {
 				mTvParamDate.setText(ProfileList.dateStr(mProfile.currentParam().changed));
+				updateProgress(mProfile.currentParam(),null);
 				return;
 			}
 			
-			NumberFormat nf = NumberFormat.getInstance();
+			//NumberFormat nf = NumberFormat.getInstance();
 			
-			nf.setMinimumFractionDigits(2);
-			nf.setMaximumFractionDigits(2);
-			mProgress.setText(nf.format(e.value));
+			//nf.setMinimumFractionDigits(2);
+			//nf.setMaximumFractionDigits(2);
+			//mProgress.setText(nf.format(e.value));
 			mTvParamDate.setText(ProfileList.dateStr(e.changed));
+			updateProgress(mProfile.currentParam(),e);
 		}
 	};
 	
@@ -177,21 +179,22 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		else
 			entry.value -= paramEntry.incVal;
 		
-		updateProgress(paramEntry);
+		updateProgress(paramEntry,null);
 		mChart.SetLast((float)entry.value);
 	}
 	
 	
-	public void updateProgress(ParamEntry entry) {
+	public void updateProgress(ParamEntry entry,HistEntry he) {
+		double hv  = he==null?entry.mActiveHist.value:he.value;
 		double min = entry.startVal; // 2
 		double max = entry.targetVal - min; // 10
-		double cur  = entry.mActiveHist.value - min; // 2
+		double cur  = /*entry.mActiveHist.value*/hv - min; // 2
 		int val = (int)(100 / (max / cur));
 		this.mProgress.setProgress(val);
 		NumberFormat nf = NumberFormat.getInstance();
 		nf.setMinimumFractionDigits(2);
 		nf.setMaximumFractionDigits(2);
-		this.mProgress.setText(nf.format(entry.mActiveHist.value));
+		this.mProgress.setText(nf.format(/*entry.mActiveHist.value*/hv));
 	}
 	
 	private void selectParamValueDate() {
@@ -250,7 +253,7 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		}
 		mChart.addItem((float)entry.mActiveHist.value);
 		mChart.SelectItem(null);
-		updateProgress(entry);
+		updateProgress(entry,null);
 	}
 	
 	@Override
