@@ -15,6 +15,8 @@ import com.code4bones.utils.NetLog;
 //import com.iguanaui.columnseries.R;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
@@ -44,13 +46,14 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 	
 	TextView mTvParamName;
 	TextView mTvParamDate;
-	ProgressBar mProgress;
+	TextProgressBar mProgress;
 	TextView mTvStartValue;
 	TextView mTvTargetValue;
 	TextView mTvCurrentValue;
 	HorizontalListView mParamList;
 	View mListViewItem = null;
 	View mListViewItemSelected = null;
+	BarChartView mChart = null;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -64,8 +67,8 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		mTvParamDate = (TextView)this.findViewById(R.id.tvParamDate);
 		mTvStartValue = (TextView)this.findViewById(R.id.tvStartValue);
 		mTvTargetValue = (TextView)this.findViewById(R.id.tvEndValue);
-		mProgress = (ProgressBar)this.findViewById(R.id.pbProgress);
-		
+		mProgress = (TextProgressBar)this.findViewById(R.id.pbProgress);
+		mProgress.setTextSize(18);
 		mParamList = (HorizontalListView) findViewById(R.id.vwParamList);  
 		mParamList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 			@Override
@@ -90,11 +93,34 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 			}
 		});
 		
+	    FrameLayout item = (FrameLayout)this.findViewById(R.id.chartFrame);
+	    mChart = new BarChartView(this);
+		item.addView(mChart,new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT));
+		mChart.setBackgroundResource(R.drawable.gradient_barchart);
+		mChart.setTouchHandler(mChartHandler);
 		setParamValueListener(new int[] {R.id.ibValueDec,R.id.ibValueInc,R.id.ibValueApply,R.id.ibSelectDate});
 		this.updateParamList();
 		
 	} // onCreate
 
+	private Handler mChartHandler = new Handler() {
+		public void handleMessage(Message msg) {
+			BarChartView.ChartItem item = (BarChartView.ChartItem)msg.obj;
+			HistEntry e = (HistEntry)item.obj;
+			if ( e == null ) {
+				mTvParamDate.setText(ProfileList.dateStr(mProfile.currentParam().changed));
+				return;
+			}
+			
+			NumberFormat nf = NumberFormat.getInstance();
+			
+			nf.setMinimumFractionDigits(2);
+			nf.setMaximumFractionDigits(2);
+			mProgress.setText(nf.format(e.value));
+			mTvParamDate.setText(ProfileList.dateStr(e.changed));
+		}
+	};
+	
 	public void toggleItem(View view) {
 		if ( this.mListViewItem != null ) {
 			mListViewItem.setBackgroundResource(0);
@@ -142,7 +168,6 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 	
 	};
 	
-	private BarChartView mChart = null;
 	
 	public void changeParam(boolean fInc) {
 		ParamEntry paramEntry = mProfile.currentParam();
@@ -152,9 +177,6 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		else
 			entry.value -= paramEntry.incVal;
 		
-		
-	    
-		NetLog.v("changeParam: %s",entry);
 		updateProgress(paramEntry);
 		mChart.SetLast((float)entry.value);
 	}
@@ -166,6 +188,10 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		double cur  = entry.mActiveHist.value - min; // 2
 		int val = (int)(100 / (max / cur));
 		this.mProgress.setProgress(val);
+		NumberFormat nf = NumberFormat.getInstance();
+		nf.setMinimumFractionDigits(2);
+		nf.setMaximumFractionDigits(2);
+		this.mProgress.setText(nf.format(entry.mActiveHist.value));
 	}
 	
 	private void selectParamValueDate() {
@@ -201,19 +227,6 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 	
 
 	
-	private void createChart() {
-		FrameLayout item = (FrameLayout)this.findViewById(R.id.chartFrame);
-		//item.setBackgroundResource(R.drawable.gradient_param_list);
-
-		ParamEntry paramEntry = mProfile.currentParam();
-	    HistEntry list[] = paramEntry.toArray();
-	    HistEntry hMin = paramEntry.mMinHist;
-	    //TODO
-	    mChart = new BarChartView(this);
-		item.addView(mChart,new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT));
-		mChart.setBackgroundResource(R.drawable.gradient_barchart);
-	}
-	
 	
 	public void showParam(ParamEntry entry) {
 		if ( entry == null ) {
@@ -223,7 +236,6 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		//entry.resetDate(null);
 		this.mProfile.setCurrentParam(entry);
 		entry.populateHist(true);
-		this.createChart();
 		
 		String sTitle = String.format("%s / %s", this.mProfile.profileName,entry.name);
 		this.mTvParamName.setText(sTitle);
@@ -231,9 +243,12 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		this.mTvStartValue.setText(String.valueOf(entry.startVal));
 		this.mTvTargetValue.setText(String.valueOf(entry.targetVal));
 		
+		mChart.reset();
 		for ( HistEntry e : entry.mList ) {
-			mChart.addItem((float)e.value);
+			BarChartView.ChartItem item = mChart.addItem((float)e.value);
+			item.obj = e;
 		}
+		mChart.addItem((float)entry.mActiveHist.value);
 		mChart.SelectItem(null);
 		updateProgress(entry);
 	}

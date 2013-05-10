@@ -33,10 +33,11 @@ public class BarChartView extends View implements View.OnTouchListener {
 		
 		private float mValue = 0;
 		private float mLoginValue = 0;
-		private Rect   mRect  = new Rect();
+		//private Rect   mRect  = new Rect();
 		private RectF  mRectf = new RectF();
 		private boolean mLast = false;
 		private boolean mSelected = false;
+		public  Object  obj;
 		
 		public ChartItem(float dblVal) {
 			this.mValue = dblVal;
@@ -135,7 +136,9 @@ public class BarChartView extends View implements View.OnTouchListener {
 		int page = (int) (mRect.width() / (this.mItemWidth + this.mItemSpace));
 		page--;
 		int idx = mItems.indexOf(item);
-		if ( idx < page ) {
+		NetLog.v("IDX %d, Page = %d",idx,page);
+		if ( idx < page || page < 0) {
+			mOffsetX = 0;
 			this.repaint();
 			return;
 		}
@@ -144,11 +147,24 @@ public class BarChartView extends View implements View.OnTouchListener {
 		this.repaint();
 	}
 	
+	private void drawTitle(Canvas c) {
+	    RectF rr = new RectF(mRect);
+	    rr.set(2, mRect.top, mRect.right, 10);
+		Paint p = new Paint();
+		
+	    p.setAntiAlias(true);
+		p.setTextSize(15);
+	    p.setStyle(Style.STROKE);
+	    p.setColor(Color.YELLOW);
+	    c.drawText("Hello", mRect.centerX(), mRect.top+10, p);
+	}
+	
 	@Override
 	public void onDraw(Canvas c) {
 		
 		c.getClipBounds(mRect);
 		this.drawBackground(c);
+		//this.drawTitle(c);
 		if ( mItems.size() == 0 )
 			return;
 		
@@ -161,7 +177,7 @@ public class BarChartView extends View implements View.OnTouchListener {
 			item.mLoginValue = item.mValue - this.mMinValue;
 			float barHeight = ( item.mLoginValue / mRangeValue ) * nHeight;
 			float barY      = nHeight - barHeight;
-			item.mRectf.set(barX,barY,barX+this.mItemWidth,mRect.bottom);
+			item.mRectf.set(barX,barY+5,barX+this.mItemWidth,mRect.bottom);
 			barX += this.mItemWidth + this.mItemSpace;
 			item.drawItem(c);
 		}
@@ -222,7 +238,7 @@ public class BarChartView extends View implements View.OnTouchListener {
 	}
 	
 	private void drawBackground(Canvas c) {
-		Paint p = new Paint();
+		//Paint p = new Paint();
 		//c.drawRect(mRect, p);
 	}
 	
@@ -239,10 +255,11 @@ public class BarChartView extends View implements View.OnTouchListener {
 		mRangeValue = mMaxValue - mMinValue;
 	}
 	
-	public void addItem(float dblValue) {
+	public ChartItem addItem(float dblValue) {
 		ChartItem item = new ChartItem(dblValue); 
 		mItems.add(item);
 		Adjust();
+		return item;
 	}
 	
 	
@@ -293,9 +310,11 @@ public class BarChartView extends View implements View.OnTouchListener {
 			if ( this.mTouchX != this.mReleaseX )
 				return true;
 			ChartItem item = itemAtPos(event.getX(),event.getY());
-			if ( item != null && this.mTouchHandler != null ) {
-				Message msg = this.mTouchHandler.obtainMessage(BarChartView.kBAR_SELECTED, item);
-				msg.sendToTarget();
+			if ( item != null ) {
+				if ( this.mTouchHandler != null ) {
+					Message msg = this.mTouchHandler.obtainMessage(BarChartView.kBAR_SELECTED, item);
+					msg.sendToTarget();
+				}
 				if ( this.mSelectedItem != null ) {
 					this.mSelectedItem.mSelected = false;
 				}
