@@ -7,15 +7,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
-import org.achartengine.ChartFactory;
-import org.achartengine.GraphicalView;
-import org.achartengine.chart.BarChart;
-import org.achartengine.model.CategorySeries;
-import org.achartengine.model.XYMultipleSeriesDataset;
-import org.achartengine.model.XYSeries;
-import org.achartengine.model.XYValueSeries;
-import org.achartengine.renderer.SimpleSeriesRenderer;
-import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 
@@ -151,6 +142,8 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 	
 	};
 	
+	private BarChartView mChart = null;
+	
 	public void changeParam(boolean fInc) {
 		ParamEntry paramEntry = mProfile.currentParam();
 		HistEntry entry = paramEntry.mActiveHist;
@@ -160,48 +153,12 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 			entry.value -= paramEntry.incVal;
 		
 		
-		double nMin = this.mRender.getYAxisMin();
-		double nMax = this.mRender.getYAxisMax();
-		
-		
-		int idx = mSers.getItemCount()-1;
-		mSers.remove(idx);
-		mSers.add(entry.value);
-	    
-		mDataset.removeSeries(0);
-		mDataset.addSeries(mSers.toXYSeries());
-		
-		if ( entry.value < this.mProfile.currentParam().mMinHist.value )
-			nMin = entry.value;//- (entry.value / 3);
-		else if ( entry.value > this.mProfile.currentParam().mMaxHist.value )
-			nMax = entry.value;// + (entry.value / 3);
-		
-	    //this.mRender.setYAxisMin(nMin);
-	    //this.mRender.setYAxisMax(nMax);
-		
-		NumberFormat nf = NumberFormat.getInstance();
-		nf.setMaximumFractionDigits(2);
-		nf.setMinimumFractionDigits(2);
-		
-		this.mRender.setChartTitle(nf.format(entry.value));
-	   
-		mChart.repaint();
 	    
 		NetLog.v("changeParam: %s",entry);
 		updateProgress(paramEntry);
-		
+		mChart.SetLast((float)entry.value);
 	}
 	
-	public void updateRender(ParamEntry entry) {
-		HistEntry eMin = entry.mMinHist;
-		HistEntry eMax = entry.mMaxHist;
-		double nMin = Math.min(entry.startVal,entry.targetVal);// Math.min(eMax.value, eMin.value);
-		double nMax = Math.max(entry.startVal,entry.targetVal); // Math.max(eMax.value, eMax.value);
-	    //nMax -= nMin;
-	    //nMin  = 0;
-		this.mRender.setYAxisMin(nMin);// - (nMin / 3));
-	    this.mRender.setYAxisMax(nMax);// + (nMax / 3));
-	}
 	
 	public void updateProgress(ParamEntry entry) {
 		double min = entry.startVal; // 2
@@ -243,65 +200,18 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 	}
 	
 
-	public XYMultipleSeriesRenderer getBarDemoRenderer() {
-	   
-		XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer();
-	    renderer.setAxisTitleTextSize(16);
-	    renderer.setChartTitleTextSize(20);
-	    renderer.setLabelsTextSize(15);
-	    renderer.setLegendTextSize(15);
-	    renderer.setMargins(new int[] {20, 30, 15, 0});
-	    renderer.setBarSpacing(0.1);
-
-	    
-	    SimpleSeriesRenderer r = new SimpleSeriesRenderer();
-	    NumberFormat nf = NumberFormat.getInstance();
-		nf.setMaximumFractionDigits(2);
-		nf.setMinimumFractionDigits(2);
-	    r.setChartValuesFormat(nf);
-	    // saved hist
-	    
-	    r.setColor(Color.parseColor("#D3DAFE"));
-	    r.setShowLegendItem(true);
-	    
-	    renderer.setInScroll(true);
-	    renderer.addSeriesRenderer(r);
-	    renderer.setDisplayChartValues(true);
-	    renderer.setLabelsColor(Color.YELLOW);
-	    renderer.setAntialiasing(true);
-	    return renderer;
-	  }	
-	
-	
-	public CategorySeries mSers; 
 	
 	private void createChart() {
 		FrameLayout item = (FrameLayout)this.findViewById(R.id.chartFrame);
 		//item.setBackgroundResource(R.drawable.gradient_param_list);
-		
 
-		mDataset = new XYMultipleSeriesDataset();
 		ParamEntry paramEntry = mProfile.currentParam();
 	    HistEntry list[] = paramEntry.toArray();
 	    HistEntry hMin = paramEntry.mMinHist;
-	    
-	    String msg = String.format("Кол-во замеров: %d.", list.length);
-	    CategorySeries series = new CategorySeries(msg);
-	    for ( int idx =0; idx < list.length;idx++ ) {
-	    	series.add(list[idx].value);
-	    	
-	     }
-	    
-	     series.add(paramEntry.mActiveHist.value);
-	     mDataset.addSeries(series.toXYSeries());
-	    
-	    mSers = series;
-		mRender = this.getBarDemoRenderer();
-		mRender.setZoomButtonsVisible(false);
-		mChart = ChartFactory.getBarChartView(this, mDataset, mRender, BarChart.Type.STACKED);
+	    //TODO
+	    mChart = new BarChartView(this);
 		item.addView(mChart,new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT));
 		mChart.setBackgroundResource(R.drawable.gradient_barchart);
-		
 	}
 	
 	
@@ -321,37 +231,12 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		this.mTvStartValue.setText(String.valueOf(entry.startVal));
 		this.mTvTargetValue.setText(String.valueOf(entry.targetVal));
 		
-		if ( this.mChart != null ) {
-			HistEntry eMax = entry.mMaxHist;
-			HistEntry eMin = entry.mMinHist;
-			
-			updateProgress(entry);
-
-			NumberFormat nf = NumberFormat.getInstance();
-			nf.setMaximumFractionDigits(2);
-			nf.setMinimumFractionDigits(2);
-			
-			this.mRender.setChartTitle(nf.format(entry.mLastHist.value));
-			this.mRender.setXAxisMin(0);
-		    this.mRender.setXAxisMax(entry.mList.size()+2);
-		    // values
-			this.mRender.setYTitle(entry.measure);
-			this.updateRender(entry);
-		    
-		    SimpleSeriesRenderer r = this.mRender.getSeriesRendererAt(0);
-		    
-		    r.setGradientEnabled(true);
-		    r.setGradientStart(eMin.value, Color.parseColor("#5662A3"));
-		    r.setGradientStop(eMax.value,Color.parseColor("#D3DAFE"));
-		    
-		    mChart.repaint();
+		for ( HistEntry e : entry.mList ) {
+			mChart.addItem((float)e.value);
 		}
-	
+		mChart.SelectItem(null);
+		updateProgress(entry);
 	}
-	
-	public XYMultipleSeriesDataset  mDataset;
-	public XYMultipleSeriesRenderer mRender;
-	public GraphicalView mChart;
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
