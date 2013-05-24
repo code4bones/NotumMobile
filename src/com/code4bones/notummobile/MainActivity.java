@@ -1,30 +1,16 @@
 package com.code4bones.notummobile;
 
-import java.io.PrintStream;
-
-import android.annotation.TargetApi;
 import android.app.Activity;
-import android.os.Bundle;
-import android.content.Context;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.NavUtils;
-import android.view.Gravity;
-import android.view.LayoutInflater;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
+import com.code4bones.utils.NetLog;
 
 // local
-import com.code4bones.utils.*;
 
 public class MainActivity extends Activity {
 
@@ -34,13 +20,13 @@ public class MainActivity extends Activity {
 	 */
 	private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
 	private static final NetLog mLog = NetLog.getInstance(); //PrintStream NETLOG = NetLog.Init("clinch", "notumMobile.log.txt", true);
-	
+
 	static class LogInit {
 		public LogInit() {
 			mLog.Init("clinch", "notumMobile.log.txt", true);
 		}
 	}
-	
+
 	public static final LogInit _logInit = new LogInit();
 	/* Profile List */
 	public static ProfileList mProfiles = null;

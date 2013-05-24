@@ -2,8 +2,8 @@
   <library name="libs">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/libs/aniqroid-2.5.jar!/" />
-      <root url="jar://$PROJECT_DIR$/libs/devsmartlib.jar!/" />
       <root url="jar://$PROJECT_DIR$/libs/android-support-v4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/joda-time-2.2.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

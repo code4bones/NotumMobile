@@ -1,11 +1,6 @@
 <component name="libraryTable">
   <library name="dexedLibs">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/bin/dexedLibs/annotations-3914e715728449bcc31ccb9077c0dba6.jar!/" />
-      <root url="jar://$PROJECT_DIR$/bin/dexedLibs/devsmartlib-a52ed703bbb7d2e3c1e792429e47f5a0.jar!/" />
-      <root url="jar://$PROJECT_DIR$/bin/dexedLibs/aniqroid-2.5-c2e494a305173ffc19ecf7e42913d1e5.jar!/" />
-      <root url="jar://$PROJECT_DIR$/bin/dexedLibs/android-support-v4-ecb145837d094a69e4116d137a6728fc.jar!/" />
-    </CLASSES>
+    <CLASSES />
     <JAVADOC />
     <SOURCES />
   </library>
