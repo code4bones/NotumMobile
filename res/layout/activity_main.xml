@@ -3,7 +3,7 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000000"
+    android:background="@drawable/screen"
     tools:context=".MainActivity"
     tools:ignore="MergeRootFrame" >
 
@@ -11,9 +11,12 @@
         android:id="@+id/mainListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#000000"
-        android:divider="#000000"
+        android:background="#00000000"
+        android:choiceMode="singleChoice"
+        android:clickable="true"
+        android:divider="#00000000"
         android:dividerHeight="10dp"
+        android:longClickable="true"
         android:paddingBottom="5dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"

@@ -25,6 +25,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -35,6 +36,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class NewParamActivity extends Activity implements OnDateSetListener {
@@ -43,7 +45,7 @@ public class NewParamActivity extends Activity implements OnDateSetListener {
 	public static final int SELECT_STARTDATE = 2;
 	public static final int SELECT_ENDDATE = 3;
 	
-	
+
 	public static final int ADD = 0;
 	public static final int EDIT = 1;
 	public static final int DELETE = 2;
@@ -91,6 +93,10 @@ public class NewParamActivity extends Activity implements OnDateSetListener {
 		}
 		mParamEntry.mContext = this;
 		
+		RelativeLayout rl = (RelativeLayout)this.findViewById(R.id.startDateSubLayout);
+		//Drawable d = rl.getBackground();
+		//d.setAlpha(150);
+		
 		this.findViewById(R.id.bnCancel).setOnClickListener(mOnClick);
 		this.findViewById(R.id.bnSave).setOnClickListener(mOnClick);
 		this.findViewById(R.id.bnDelete).setOnClickListener(mOnClick);
@@ -111,28 +117,39 @@ public class NewParamActivity extends Activity implements OnDateSetListener {
 		this.etCurrentVal = (EditText)this.findViewById(R.id.etParamCurrentValue);
 		this.etTargetVal = (EditText)this.findViewById(R.id.etTargetValue);
 		
-		this.etName.setBackgroundResource(R.drawable.edit_text_shape);
+		
+		//this.etName.setBackgroundResource(R.drawable.edit_text_shape);
+	
 		this.etName.setTag("Наименование наблюдения");
 		
-		this.etIncVal.setBackgroundResource(R.drawable.edit_text_shape);
+		//this.etIncVal.setBackgroundResource(R.drawable.edit_text_shape);
 		this.etIncVal.setTag("Единица Прироста");
-		this.etCurrentVal.setBackgroundResource(R.drawable.edit_text_shape);
+		//this.etCurrentVal.setBackgroundResource(R.drawable.edit_text_shape);
 		this.etCurrentVal.setTag("Текущее значение");
-		this.etTargetVal.setBackgroundResource(R.drawable.edit_text_shape);
+		//this.etTargetVal.setBackgroundResource(R.drawable.edit_text_shape);
 		this.etTargetVal.setTag("Желаемое значение");
-		this.etMeasure.setBackgroundResource(R.drawable.edit_text_shape);
+		//this.etMeasure.setBackgroundResource(R.drawable.edit_text_shape);
 		this.etMeasure.setTag("Единица измерения");
 		//this.etMeasure.setLines(1);
 		
 		ibIcon.setOnClickListener(mOnClick);
 	
 		DrawableOnTouchListener.addDeleteButton(new EditText[] {etIncVal,etName,etMeasure,etTargetVal,etCurrentVal});
-		
+		setAlphas(170,new View[] {etIncVal,etName,etMeasure,etTargetVal,etCurrentVal});
+		setAlphas(100,new View[] {tvStartDate,tvEndDate,tvStep});
 		setupControlValues(mParamEntry);
 		
 		this.etName.requestFocus();
 	}
 	
+	public void setAlphas(int alpha,View[] ets) {
+		for ( View e : ets ) {
+			Drawable d = e.getBackground();
+			if ( d != null ) {
+				d.setAlpha(alpha);
+			}
+		}
+	}
 	
 	public void setupControlValues(ParamEntry e) {
 		if ( e.image != null )

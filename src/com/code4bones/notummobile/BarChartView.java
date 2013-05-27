@@ -212,16 +212,16 @@ public class BarChartView extends View implements View.OnTouchListener {
 	    String strValue;
 		float x = mRect.left+10;
 		float y = mRect.bottom;
-	
+		
+		/*
 	    mLabelRect.set(2, mRect.top+5, x+3, mRect.bottom-5);
 		if ( mLabelShader == null ) {
-//		  mLabelShader = new LinearGradient(0,0,mLabelRect.right,0,mLabelColors[0], mLabelColors[1], TileMode.CLAMP); 
 		  mLabelShader = new LinearGradient(0,0,0,mRect.bottom/2,mLabelColors[1], mLabelColors[0], TileMode.MIRROR); 
 		  mLabelBgrPaint.setShader(mLabelShader); 
 		  mLabelBgrPaint.setAntiAlias(true);
 		}
 	    c.drawRect(0, mRect.top, x, mRect.bottom, mLabelBgrPaint);
-	    
+	    */
 	    // MIN
 		c.save();
 	    strValue = mFormat.format(this.mMinValue);

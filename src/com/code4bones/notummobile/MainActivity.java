@@ -18,7 +18,6 @@ public class MainActivity extends Activity {
 	 * The serialization (saved instance state) Bundle key representing the
 	 * current dropdown position.
 	 */
-	private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
 	private static final NetLog mLog = NetLog.getInstance(); //PrintStream NETLOG = NetLog.Init("clinch", "notumMobile.log.txt", true);
 
 	static class LogInit {
@@ -45,12 +44,20 @@ public class MainActivity extends Activity {
 		
 		lvProfiles = (ListView)this.findViewById(R.id.mainListView);
 
+		lvProfiles.setClickable(true);
+		lvProfiles.setLongClickable(true);
+		lvProfiles.setFocusable(false);
 		lvProfiles.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> aview, View arg1, int itemPos,
 					long index) {
 				ProfileEntry entry = mProfiles.getAt(index);
-				showProfileParams(entry);
+				if ( entry.profileId != -1 )
+					showProfileParams(entry);
+				else
+				{
+					editProfile(null, ProfileActivity.NEW_PROFILE);
+				}
 			}
 		});
 
@@ -65,6 +72,8 @@ public class MainActivity extends Activity {
 			}
 		
 		});
+		
+		//lvProfiles.setBackgroundResource(R.drawable.screen);
 		
 		updateList();
 	}

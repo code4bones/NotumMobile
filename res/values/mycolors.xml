@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <drawable name="param_name_text">#000000</drawable>
+    <drawable name="param_name_text_val">#ffff00</drawable>
+    <drawable name="edit_text">@drawable/edit_text_shape</drawable>
+    <dimen  name="param_edit_len">100dp</dimen>
+</resources>

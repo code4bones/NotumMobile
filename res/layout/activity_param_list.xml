@@ -2,27 +2,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="fill_parent"
-    android:background="#000000"
+    android:background="@drawable/screen"
     android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".ParamListActivity" >
 
     <TextView
         android:id="@+id/tvProfileName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
+        android:background="@drawable/title"
+        android:gravity="center_horizontal|center_vertical"
         android:paddingBottom="10dp"
-        android:shadowColor="#00FF00"
+        android:shadowColor="#000000"
         android:shadowDx="5"
         android:shadowDy="5"
         android:shadowRadius="5"
         android:text="Profile / Param"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="#ffffff" />
+        android:textColor="#0000ff" />
 
     <LinearLayout
         android:id="@+id/paramListLayout"
@@ -33,15 +31,16 @@
         <com.code4bones.notummobile.HorizontalListView
             android:id="@+id/vwParamList"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@drawable/gradient_param_list" />
+            android:layout_height="match_parent" />
+
     </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/paramControlsLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp" >
+        android:layout_marginTop="20dp"
+        android:background="@drawable/tooltip" >
 
         <LinearLayout
             android:id="@+id/linearLayout1"
@@ -58,7 +57,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/trans_bgr"
                 android:paddingRight="10dp"
-                android:src="@drawable/arrowdown" />
+                android:src="@drawable/button_down" />
 
             <ImageButton
                 android:id="@+id/ibValueInc"
@@ -66,7 +65,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/trans_bgr"
                 android:paddingRight="10dp"
-                android:src="@drawable/arrowup" />
+                android:src="@drawable/button_up" />
 
             <ImageButton
                 android:id="@+id/ibValueApply"
@@ -74,7 +73,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/trans_bgr"
                 android:paddingRight="5dp"
-                android:src="@drawable/plus" />
+                android:src="@drawable/circle_plus" />
         </LinearLayout>
 
         <ImageButton
@@ -84,7 +83,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignTop="@+id/linearLayout1"
             android:background="@drawable/trans_bgr"
-            android:src="@drawable/cal" />
+            android:src="@drawable/button_date" />
 
         <TextView
             android:id="@+id/tvParamDate"
@@ -92,9 +91,11 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/ibSelectDate"
+            android:background="@drawable/drop_shadow"
+            android:gravity="center_vertical|center_horizontal"
             android:text="Small Text"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="#ffffff" />
+            android:textColor="#000000" />
 
     </RelativeLayout>
 
@@ -143,7 +144,7 @@
             android:id="@+id/chartFrame"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:background="@drawable/gradient_param_list" >
+            android:background="@drawable/tooltip" >
         </FrameLayout>
 
     </RelativeLayout>

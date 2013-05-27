@@ -77,6 +77,8 @@ public class ProfileList {
 			if ( curs != null && !curs.isClosed())
 				curs.close();
 		}
+		ProfileEntry entry = new ProfileEntry();
+		mList.add(entry);
 		NetLog.Toast(mContext, "Loaded %d Profiles", mList.size());
 		return mList.size();
 	}

@@ -32,6 +32,7 @@ public class ProfileActivity extends Activity {
 	public EditText profileName;
 	public ImageButton profileIcon;
 	private String imagePath;
+	public ImageTextView profileHeader;
 	
 	public ProfileEntry mProfile; 
 	
@@ -48,16 +49,18 @@ public class ProfileActivity extends Activity {
 		this.profileName = (EditText)this.findViewById(R.id.etParamName);
 		this.profileName.setBackgroundResource(R.drawable.edit_text_shape);
 		this.profileIcon = (ImageButton)this.findViewById(R.id.ibParamIcon);
-		
+		this.profileHeader = (ImageTextView)this.findViewById(R.id.tvProfileHeader);
 		DrawableOnTouchListener.addDeleteButton(new EditText[] {this.profileName});
 		
 		if ( mProfile != null  ) {
 			NetLog.v("Edit %d",mProfile.profileId);
 			this.profileIcon.setImageBitmap(mProfile.profileIcon);
 			this.profileName.setText(mProfile.profileName);
+			this.profileHeader.setText(mProfile.profileName);
 		} else {
-			this.profileIcon.setImageResource(R.drawable.camera);
+			this.profileIcon.setImageResource(R.drawable.avatar);
 			this.profileName.setText("Новый профиль...");
+			this.profileHeader.setText("Новый профиль...");
 		}
 		
 		// PICK A PHOTO
@@ -71,7 +74,7 @@ public class ProfileActivity extends Activity {
 		// SAVE A PROFILE
 		this.findViewById(R.id.bnProfileCancel).setOnClickListener(mOnClick);
 		this.findViewById(R.id.bnProfileSave).setOnClickListener(mOnClick);
-		Button bnDelete = (Button)this.findViewById(R.id.bnProfileDelete);
+		ImageButton bnDelete = (ImageButton)this.findViewById(R.id.bnProfileDelete);
 		bnDelete.setOnClickListener( mOnClick );
 		bnDelete.setEnabled(this.mProfile != null);
 	}

@@ -60,7 +60,7 @@ public class ParamEntry extends Object implements Parcelable {
 	public ParamEntry(Context context,long profileId) {
 		super();
 		
-		this.image = BitmapFactory.decodeResource(context.getResources(), R.drawable.camera);
+		this.image = BitmapFactory.decodeResource(context.getResources(), R.drawable.avatar);
 		this.paramId = -1;
 		this.profileId = profileId;
 		this.name = "...";
@@ -310,6 +310,7 @@ public class ParamEntry extends Object implements Parcelable {
 	
 	public boolean isAlerted() {
 		DateTime now = DateTime.now();
+		//TODO://YODA !
 		DateTime last = new DateTime(changed);
 		int days = Days.daysBetween(last.toDateMidnight(), now.toDateMidnight()).getDays();
 		NetLog.v("%s (%s) : ALERTED %d",name,ProfileList.dateStr(changed),days);

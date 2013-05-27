@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,6 +28,7 @@ public class ProfileListAdapter extends ArrayAdapter<ProfileEntry> {
 		//TagsView  tags;
 		FlowLayout tags;
 		View	  view;
+		ImageButton btnAdd;
 		
 		//BadgeView badge;
 	
@@ -36,6 +38,13 @@ public class ProfileListAdapter extends ArrayAdapter<ProfileEntry> {
 			name = (TextView)row.findViewById(R.id.tvParamName);
 			tags = (FlowLayout)row.findViewById(R.id.cvTagsView);
 			icon.setBackgroundResource(R.drawable.image_border);
+			btnAdd = (ImageButton)row.findViewById(R.id.btnAddProfile);
+			if ( profile.profileId != -1 ) 
+				btnAdd.setVisibility(View.GONE); 
+			else {
+				icon.setVisibility(View.GONE);
+				
+			}
 			row.setTag(this);
 		}
 		
@@ -66,7 +75,7 @@ public class ProfileListAdapter extends ArrayAdapter<ProfileEntry> {
 		            tags.addView(t, new TagsView.LayoutParams(2, 2));			
 		            }
 			} else {
-				TextView t = createLabel("Нет данных",R.drawable.profile_badge_shape_notdata);
+				TextView t = createLabel(entry.profileId!=-1?"Нет данных":"Создайте новую группу параметров",entry.profileId!=-1?R.drawable.profile_badge_shape_notdata:R.drawable.profile_badge_shape_info);
 				tags.addView(t,new TagsView.LayoutParams(2,2));
 			}
 		}
@@ -91,6 +100,7 @@ public class ProfileListAdapter extends ArrayAdapter<ProfileEntry> {
 			LayoutInflater inf = ((Activity)mContext).getLayoutInflater();
 			row = inf.inflate(R.layout.profile_item_row,parent,false);
 			holder = new ProfileHolder(row,entry);
+			row.setFocusable(false);
 		} else { // convertView is alerady assigned
 			holder = (ProfileHolder)row.getTag();
 		}

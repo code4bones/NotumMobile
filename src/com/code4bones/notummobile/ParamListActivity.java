@@ -24,6 +24,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -96,11 +97,15 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 	    FrameLayout item = (FrameLayout)this.findViewById(R.id.chartFrame);
 	    mChart = new BarChartView(this);
 		item.addView(mChart,new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT));
-		mChart.setBackgroundResource(R.drawable.gradient_barchart);
+		mChart.setBackgroundResource(R.drawable.trans_bgr);
 		mChart.setTouchHandler(mChartHandler);
 		setParamValueListener(new int[] {R.id.ibValueDec,R.id.ibValueInc,R.id.ibValueApply,R.id.ibSelectDate});
 		this.updateParamList();
 		
+		Drawable d = item.getBackground();
+		d.setAlpha(100);
+		d = this.findViewById(R.id.paramControlsLayout).getBackground();
+		d.setAlpha(100);
 	} // onCreate
 
 	private Handler mChartHandler = new Handler() {
