@@ -73,8 +73,6 @@ public class MainActivity extends Activity {
 		
 		});
 		
-		//lvProfiles.setBackgroundResource(R.drawable.screen);
-		
 		updateList();
 	}
      

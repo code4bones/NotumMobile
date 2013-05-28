@@ -28,7 +28,7 @@ public class ProfileListAdapter extends ArrayAdapter<ProfileEntry> {
 		//TagsView  tags;
 		FlowLayout tags;
 		View	  view;
-		ImageButton btnAdd;
+		ImageView btnAdd;
 		
 		//BadgeView badge;
 	
@@ -38,19 +38,20 @@ public class ProfileListAdapter extends ArrayAdapter<ProfileEntry> {
 			name = (TextView)row.findViewById(R.id.tvParamName);
 			tags = (FlowLayout)row.findViewById(R.id.cvTagsView);
 			icon.setBackgroundResource(R.drawable.image_border);
-			btnAdd = (ImageButton)row.findViewById(R.id.btnAddProfile);
+			btnAdd = (ImageView)row.findViewById(R.id.btnAddProfile);
+			
 			if ( profile.profileId != -1 ) 
 				btnAdd.setVisibility(View.GONE); 
 			else {
 				icon.setVisibility(View.GONE);
-				
+				btnAdd.setVisibility(View.VISIBLE);
 			}
 			row.setTag(this);
 		}
 		
 		public TextView createLabel(String msg,int shape) {
 			TextView t = new TextView(view.getContext());
-            t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
+            t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10);
 			t.setText(msg);
             t.setShadowLayer(6, 6, 6, Color.BLACK);
             t.setTextColor(Color.WHITE);

@@ -75,9 +75,11 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 			@Override
 			public boolean onItemLongClick(AdapterView<?> adapt, View arg1,
 					int position, long arg3) {
-				toggleItem(arg1);
 				ParamEntry entry = (ParamEntry)adapt.getItemAtPosition(position);
-				editParam(entry);
+				if ( entry.profileId != -1) {
+					toggleItem(arg1);
+					editParam(entry);
+				} 
 				return false;
 			}
 		});
@@ -87,10 +89,15 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 			public void onItemClick(AdapterView<?> adapt, View item, int position,
 					long arg3) {
 				mListViewItemSelected = item;
-				toggleItem(item);
 				ParamEntry entry = (ParamEntry)adapt.getItemAtPosition(position);
-				entry.resetDate(null);
-				showParam(entry);
+				if ( entry.profileId != -1 ) {
+					toggleItem(item);
+					entry.resetDate(null);
+					showParam(entry);
+				} else {
+					Intent i = new Intent(ParamListActivity.this,NewParamActivity.class);
+					startActivityForResult(i, NewParamActivity.ADD);
+				}
 			}
 		});
 		
@@ -106,6 +113,8 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		d.setAlpha(100);
 		d = this.findViewById(R.id.paramControlsLayout).getBackground();
 		d.setAlpha(100);
+		d = this.findViewById(R.id.paramListLayout).getBackground();
+		d.setAlpha(100);
 	} // onCreate
 
 	private Handler mChartHandler = new Handler() {
@@ -117,12 +126,6 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 				updateProgress(mProfile.currentParam(),null);
 				return;
 			}
-			
-			//NumberFormat nf = NumberFormat.getInstance();
-			
-			//nf.setMinimumFractionDigits(2);
-			//nf.setMaximumFractionDigits(2);
-			//mProgress.setText(nf.format(e.value));
 			mTvParamDate.setText(ProfileList.dateStr(e.changed));
 			updateProgress(mProfile.currentParam(),e);
 		}
@@ -141,6 +144,7 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 	
 	public void updateParamList() {
 		if ( mProfile.populateParams(mProfiles.getDB() ) > 0) {
+			mProfile.mParams.add(new ParamEntry(this,-1));
 			mParamList.setAdapter(new ParamListAdapter(mProfile.toArray()));
 			ParamEntry pe = mProfile.currentParam();
 			pe.resetDate(null);

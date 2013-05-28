@@ -65,9 +65,10 @@ class ParamListAdapter extends BaseAdapter {
     	}
     	
     	public void update(ParamEntry entry) {
-   	       image.setImageBitmap(Utils.getRoundedCornerBitmap(entry.image));
+    	   image.setImageBitmap(Utils.getRoundedCornerBitmap(entry.image));
    	       text.setText(entry.name);  
-           image.setBackgroundResource(R.drawable.image_border);
+   	       if ( entry.profileId != -1 )
+   	    	   image.setBackgroundResource(R.drawable.image_border);
            text.setTag(entry);
     	}
     	

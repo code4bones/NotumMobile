@@ -22,6 +22,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.ListView;
+import android.widget.TextView;
 
 public class HistActivity extends Activity implements OnDateSetListener {
 
@@ -43,6 +44,9 @@ public class HistActivity extends Activity implements OnDateSetListener {
 		NetLog.v("%s",mParamEntry);
 		
 		this.setTitle("Детализация \"" + mParamEntry.name+"\"");
+		
+		TextView tv = (TextView)this.findViewById(R.id.tvHistName);
+		tv.setText(mParamEntry.name);
 		
 		mListView = (ListView)this.findViewById(R.id.lvHist);
 		reloadList();

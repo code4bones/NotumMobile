@@ -9,6 +9,7 @@ import com.code4bones.utils.NetLog;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -64,6 +65,9 @@ public class HistListAdapter extends ArrayAdapter<HistEntry> {
 			ibDec.setTag(e);
 			ibInc.setTag(e);
 			chkDelete.setTag(e);
+			
+			Drawable d = row.findViewById(R.id.histItemRowLayout).getBackground();
+			d.setAlpha(100);
 		}
 		
 		public void update(ParamEntry pe,HistEntry e,HistEntry p) {

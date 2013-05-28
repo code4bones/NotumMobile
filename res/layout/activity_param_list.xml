@@ -1,11 +1,10 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="fill_parent"
     android:background="@drawable/screen"
     android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context=".ParamListActivity" >
+    tools:context=".ParamListActivity" xmlns:android="http://schemas.android.com/apk/res/android">
 
     <TextView
         android:id="@+id/tvProfileName"
@@ -19,13 +18,14 @@
         android:shadowDy="5"
         android:shadowRadius="5"
         android:text="Profile / Param"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="#0000ff" />
 
     <LinearLayout
         android:id="@+id/paramListLayout"
         android:layout_width="match_parent"
-        android:layout_height="110dp"
+        android:layout_height="118dp"
+        android:background="@drawable/tooltip"
         android:orientation="vertical" >
 
         <com.code4bones.notummobile.HorizontalListView
@@ -38,8 +38,8 @@
     <RelativeLayout
         android:id="@+id/paramControlsLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="5dp"
         android:background="@drawable/tooltip" >
 
         <LinearLayout
@@ -55,8 +55,10 @@
                 android:id="@+id/ibValueDec"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:adjustViewBounds="false"
                 android:background="@drawable/trans_bgr"
-                android:paddingRight="10dp"
+                android:paddingTop="2dp"
+                android:scaleType="center"
                 android:src="@drawable/button_down" />
 
             <ImageButton
@@ -64,7 +66,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/trans_bgr"
-                android:paddingRight="10dp"
+                android:paddingRight="5dp"
                 android:src="@drawable/button_up" />
 
             <ImageButton
@@ -72,8 +74,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/trans_bgr"
-                android:paddingRight="5dp"
                 android:src="@drawable/circle_plus" />
+
         </LinearLayout>
 
         <ImageButton
@@ -95,7 +97,8 @@
             android:gravity="center_vertical|center_horizontal"
             android:text="Small Text"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="#000000" />
+            android:textColor="#000000"
+            android:textSize="10sp" />
 
     </RelativeLayout>
 

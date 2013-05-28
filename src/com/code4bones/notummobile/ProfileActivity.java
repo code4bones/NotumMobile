@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 public class ProfileActivity extends Activity {
 
@@ -32,7 +33,7 @@ public class ProfileActivity extends Activity {
 	public EditText profileName;
 	public ImageButton profileIcon;
 	private String imagePath;
-	public ImageTextView profileHeader;
+	public TextView profileHeader;
 	
 	public ProfileEntry mProfile; 
 	
@@ -49,7 +50,7 @@ public class ProfileActivity extends Activity {
 		this.profileName = (EditText)this.findViewById(R.id.etParamName);
 		this.profileName.setBackgroundResource(R.drawable.edit_text_shape);
 		this.profileIcon = (ImageButton)this.findViewById(R.id.ibParamIcon);
-		this.profileHeader = (ImageTextView)this.findViewById(R.id.tvProfileHeader);
+		this.profileHeader = (TextView)this.findViewById(R.id.tvProfileHeader);
 		DrawableOnTouchListener.addDeleteButton(new EditText[] {this.profileName});
 		
 		if ( mProfile != null  ) {

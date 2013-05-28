@@ -250,7 +250,7 @@ public class NewParamActivity extends Activity implements OnDateSetListener {
 		if ( e.endDate != null )
 			this.tvEndDate.setText(ProfileList.dateStr(e.endDate));
 		else
-			this.tvEndDate.setText("Не ограниченно");
+			this.tvEndDate.setText("Нет");
 	}
 	
 	public void updateParamStep(int id) {
@@ -266,7 +266,7 @@ public class NewParamActivity extends Activity implements OnDateSetListener {
 		if ( mParamEntry.stepVal > 0 )
 			this.tvStep.setText(String.valueOf(mParamEntry.stepVal));
 		else
-			this.tvStep.setText(" Не учитывать");
+			this.tvStep.setText(" Нет");
 		
 	}
 	

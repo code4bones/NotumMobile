@@ -60,10 +60,11 @@ public class ParamEntry extends Object implements Parcelable {
 	public ParamEntry(Context context,long profileId) {
 		super();
 		
-		this.image = BitmapFactory.decodeResource(context.getResources(), R.drawable.avatar);
+		this.image = BitmapFactory.decodeResource(context.getResources(), 
+				profileId!=-1?R.drawable.avatar:R.drawable.circle_plus);
 		this.paramId = -1;
 		this.profileId = profileId;
-		this.name = "...";
+		this.name = profileId!=-1?"...":"Добавить";
 		this.measure = "?";
 		this.startDate = new Date();
 		this.endDate = new Date();

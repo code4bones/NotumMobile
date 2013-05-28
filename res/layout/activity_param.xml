@@ -28,7 +28,7 @@
                     android:background="@drawable/title"
                     android:gravity="center_horizontal|center_vertical"
                     android:text="Наименование Наблюдения"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="#0000FF" />
 
                 <RelativeLayout
@@ -47,14 +47,15 @@
                         android:background="@drawable/edit_text"
                         android:ems="10" />
 
-                    <ImageButton
+                    <Button
                         android:id="@+id/ibParamTemplate"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                    	android:layout_width="wrap_content"
+                    	android:layout_height="wrap_content"
+                    	android:background="@drawable/blue_button"
+                    	android:textColor="@drawable/state_color"
+                    	android:text="Шаблон"
                         android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:background="@drawable/trans_bgr"
-                        android:src="@drawable/shablon" />
+                        android:layout_centerVertical="true" />
 
                     <ImageButton
                         android:id="@+id/ibParamIcon"
@@ -83,7 +84,7 @@
                     android:layout_height="wrap_content"
           			android:background="@drawable/title"
                     android:gravity="center_horizontal|center_vertical"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
                     android:text="Дата начала" />
 
                 <RelativeLayout
@@ -133,7 +134,7 @@
                     android:layout_height="wrap_content"
           			android:background="@drawable/title"
                     android:gravity="center_horizontal|center_vertical"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
                     android:text="Прогнозируемая дата окончания"
                    />
 
@@ -200,7 +201,7 @@
                             android:layout_alignParentBottom="true"
                             android:layout_alignParentLeft="true"
 	                        android:background="@drawable/drop_shadow"
-                            android:text="Интервал значений (дн.) : "
+                            android:text="Интервал(дн.)"
                             android:textColor="@drawable/param_name_text"
                             android:textAppearance="?android:attr/textAppearanceSmall" />
 
@@ -236,7 +237,7 @@
                     android:layout_height="wrap_content"
             		android:background="@drawable/title"
                     android:gravity="center_horizontal|center_vertical"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
 			         android:text="Метрика"
                      />
 
@@ -270,7 +271,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
-                            android:text="Наименование единицы измерения"
+                            android:text="Единица измерения"
                             android:textAppearance="?android:attr/textAppearanceSmall" />
 
                     </RelativeLayout>
