@@ -40,29 +40,30 @@
     </EditText>
 
     <ImageButton
+        android:id="@+id/bnProfileCancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/bnProfileDelete"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/button_cancel"
+        android:visibility="gone" />
+
+    <ImageButton
         android:id="@+id/bnProfileSave"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/etParamName"
-        android:layout_below="@+id/etParamName"
-        android:layout_marginTop="15dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="20dp"
         android:background="@drawable/button_save" />
 
     <ImageButton
         android:id="@+id/bnProfileDelete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignRight="@+id/bnProfileSave"
-        android:layout_marginBottom="16dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignTop="@+id/bnProfileSave"
         android:background="@drawable/button_delete" />
-
-    <ImageButton
-        android:id="@+id/bnProfileCancel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/etParamName"
-        android:layout_alignTop="@+id/bnProfileDelete"
-        android:background="@drawable/button_cancel" />
 
 </RelativeLayout>

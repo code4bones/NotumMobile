@@ -24,16 +24,48 @@
     <LinearLayout
         android:id="@+id/paramListLayout"
         android:layout_width="match_parent"
-        android:layout_height="118dp"
+        android:layout_height="120dp"
         android:background="@drawable/tooltip"
+        android:baselineAligned="false"
+        android:clipChildren="true"
+        android:clipToPadding="true"
         android:orientation="vertical" >
 
-        <com.code4bones.notummobile.HorizontalListView
-            android:id="@+id/vwParamList"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
-
     </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="26dp"
+        android:layout_marginTop="10dp"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/tvStartValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="#faff00" />
+
+        <com.code4bones.notummobile.TextProgressBar
+            android:id="@+id/pbProgress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/tvEndValue"
+            android:layout_toRightOf="@+id/tvStartValue"
+            android:max="100" />
+
+        <TextView
+            android:id="@+id/tvEndValue"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:text="255"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="#faff00" />
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/paramControlsLayout"
@@ -99,41 +131,6 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="#000000"
             android:textSize="10sp" />
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="26dp"
-        android:layout_marginTop="10dp"
-        android:orientation="vertical" >
-
-        <TextView
-            android:id="@+id/tvStartValue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="#faff00" />
-
-        <com.code4bones.notummobile.TextProgressBar
-            android:id="@+id/pbProgress"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@+id/tvEndValue"
-            android:layout_toRightOf="@+id/tvStartValue"
-            android:max="100" />
-
-        <TextView
-            android:id="@+id/tvEndValue"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:text="255"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="#faff00" />
 
     </RelativeLayout>
 

@@ -3,6 +3,8 @@ package com.code4bones.notummobile;
 import android.content.Context;
 
 import android.graphics.Canvas;
+import android.graphics.RectF;
+import android.graphics.Typeface;
 
 import android.graphics.Color;
 
@@ -24,7 +26,7 @@ private String text = "";
 
 private int textColor = Color.BLACK;
 
-private float textSize = 15;
+private float textSize = 13;
 
 
 
@@ -62,6 +64,7 @@ protected synchronized void onDraw(Canvas canvas) {
 
     Paint textPaint = new Paint();
 
+    textPaint.setTypeface(Typeface.DEFAULT_BOLD);
     textPaint.setAntiAlias(true);
 
     textPaint.setColor(textColor);
@@ -82,6 +85,12 @@ protected synchronized void onDraw(Canvas canvas) {
 
     //drawing text with appropriate color and size in the center
 
+ 
+    RectF rc = new RectF(x-5,0,x+bounds.width()+5,y+bounds.height()-7);
+    BadgeDrawer d = new BadgeDrawer(rc,canvas,new String[]{"#ff00d9f9","#ff9ad9f9","#ff9ad9f9"});
+    d.drawOutter();
+    d.drawInner();
+    d.drawBorder();
     canvas.drawText(text, x, y, textPaint);
 
 }

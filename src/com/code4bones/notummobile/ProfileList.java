@@ -53,11 +53,13 @@ public class ProfileList {
 		db.execSQL(ProfileListDBHelper.DB_PARAMS);
 		db.execSQL(ProfileListDBHelper.DB_PROFILES);
 		db.execSQL(ProfileListDBHelper.DB_HIST);
+		
+		db.close();
 		return this;
 	}
 	
 	public static String dateStr(Date dt) {
-		SimpleDateFormat df = new SimpleDateFormat("dd, MMMM yyyy");
+		SimpleDateFormat df = new SimpleDateFormat("dd, MMMM");
 		return df.format(dt);
 	}
 	

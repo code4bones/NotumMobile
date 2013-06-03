@@ -42,7 +42,7 @@ public class ProfileEntry extends Object implements Parcelable {
 	public ArrayList<ParamEntry> mParams = new ArrayList<ParamEntry>();
 	
 	public String toString() {
-		return String.format("ProfileEntry { id %d,name %s }", profileId,profileName);
+		return String.format("ProfileEntry { id %d,name %s }",profileId,profileName);
 	}
 	
 	public ProfileEntry(Cursor curs) {
@@ -107,6 +107,7 @@ public class ProfileEntry extends Object implements Parcelable {
 	public void Delete(SQLiteDatabase db) {
 		SQLiteStatement ins = null;
 		long rows = 0;
+		NetLog.v("delete %d", this.profileId);
 		if ( this.profileId == -1 )
 			return;
 		ins = db.compileStatement("delete from profiles where _id = ?");

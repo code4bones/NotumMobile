@@ -12,6 +12,7 @@ import org.joda.time.Days;
 
 import com.code4bones.utils.MessageBox;
 import com.code4bones.utils.NetLog;
+import com.code4bones.utils.Utils;
 //import com.iguanaui.columnseries.R;
 
 import android.os.Bundle;
@@ -37,6 +38,7 @@ import android.widget.BaseAdapter;
 import android.widget.DatePicker;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -51,9 +53,7 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 	TextView mTvStartValue;
 	TextView mTvTargetValue;
 	TextView mTvCurrentValue;
-	HorizontalListView mParamList;
-	View mListViewItem = null;
-	View mListViewItemSelected = null;
+	RibbonView mParamList;
 	BarChartView mChart = null;
 	
 	@Override
@@ -70,28 +70,17 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		mTvTargetValue = (TextView)this.findViewById(R.id.tvEndValue);
 		mProgress = (TextProgressBar)this.findViewById(R.id.pbProgress);
 		mProgress.setTextSize(18);
-		mParamList = (HorizontalListView) findViewById(R.id.vwParamList);  
-		mParamList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-			@Override
-			public boolean onItemLongClick(AdapterView<?> adapt, View arg1,
-					int position, long arg3) {
-				ParamEntry entry = (ParamEntry)adapt.getItemAtPosition(position);
-				if ( entry.profileId != -1) {
-					toggleItem(arg1);
-					editParam(entry);
-				} 
-				return false;
-			}
-		});
-		mParamList.setOnItemClickListener( new AdapterView.OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> adapt, View item, int position,
-					long arg3) {
-				mListViewItemSelected = item;
-				ParamEntry entry = (ParamEntry)adapt.getItemAtPosition(position);
+		
+		mParamList = new RibbonView(this);
+		LinearLayout ll = (LinearLayout)this.findViewById(R.id.paramListLayout);
+		ll.addView(mParamList, new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT));
+		mParamList.setSize(64, 10,12);
+		mParamList.setIconHandler(new Handler() {
+			public void handleMessage(Message msg) {
+				RibbonView.Icon ico = (RibbonView.Icon)msg.obj;
+				ParamEntry entry = (ParamEntry)ico.mObject;
 				if ( entry.profileId != -1 ) {
-					toggleItem(item);
+					//toggleItem(item);
 					entry.resetDate(null);
 					showParam(entry);
 				} else {
@@ -100,8 +89,8 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 				}
 			}
 		});
-		
-	    FrameLayout item = (FrameLayout)this.findViewById(R.id.chartFrame);
+
+		FrameLayout item = (FrameLayout)this.findViewById(R.id.chartFrame);
 	    mChart = new BarChartView(this);
 		item.addView(mChart,new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT));
 		mChart.setBackgroundResource(R.drawable.trans_bgr);
@@ -131,24 +120,23 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		}
 	};
 	
-	public void toggleItem(View view) {
-		if ( this.mListViewItem != null ) {
-			mListViewItem.setBackgroundResource(0);
-		} 
-		view = view.findViewById(R.id.paramName);
-		view.setBackgroundResource(R.drawable.list_view_selection);
-		mListViewItem = view;
-		
-	}
-	
-	
 	public void updateParamList() {
 		if ( mProfile.populateParams(mProfiles.getDB() ) > 0) {
 			mProfile.mParams.add(new ParamEntry(this,-1));
-			mParamList.setAdapter(new ParamListAdapter(mProfile.toArray()));
+			mParamList.reset();
+			for ( ParamEntry param : mProfile.mParams ) {
+				RibbonView.Icon ico = mParamList.addItem(param.image, param.name);
+				ico.mObject = param;
+				if ( param.profileId == -1)
+					ico.mHasBorder = false;
+			}
+			mParamList.repaint();
 			ParamEntry pe = mProfile.currentParam();
 			pe.resetDate(null);
 			this.showParam(pe);
+			//TODO:
+			this.mParamList.selectByObject(mProfile.currentParam());
+			
 		} else {
 			Intent i = new Intent(this,NewParamActivity.class);
 			i.putExtra(NewParamActivity.NEW_LIST, true);
@@ -197,7 +185,7 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		double hv  = he==null?entry.mActiveHist.value:he.value;
 		double min = entry.startVal; // 2
 		double max = entry.targetVal - min; // 10
-		double cur  = /*entry.mActiveHist.value*/hv - min; // 2
+		double cur  = hv - min; // 2
 		int val = (int)(100 / (max / cur));
 		this.mProgress.setProgress(val);
 		NumberFormat nf = NumberFormat.getInstance();
@@ -247,6 +235,7 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		}
 		//entry.resetDate(null);
 		this.mProfile.setCurrentParam(entry);
+
 		entry.populateHist(true);
 		
 		String sTitle = String.format("%s / %s", this.mProfile.profileName,entry.name);
@@ -293,6 +282,7 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		return true;
 	}
 
+	
 	@Override
 	public void onActivityResult(int requestCode,int resultCode,Intent data) {
 		switch ( requestCode ) {
@@ -310,6 +300,10 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 				ParamEntry entry = (ParamEntry) data.getParcelableExtra(NewParamActivity.PARAM_ENTRY);
 				this.mProfile.setCurrentParam(entry);
 				this.updateParamList();
+				RibbonView.Icon icon = this.mParamList.findObject(entry);
+				if ( icon != null ) {
+					this.mParamList.setVisible(this.mParamList.itemIndex(icon));
+				}
 			break;
 		case NewParamActivity.HIST:
 			if ( resultCode == RESULT_OK )

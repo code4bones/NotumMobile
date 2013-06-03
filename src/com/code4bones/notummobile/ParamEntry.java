@@ -142,8 +142,14 @@ public class ParamEntry extends Object implements Parcelable {
 	}
 	
 	public String toString() {
-		String s = String.format("ParamEntry[name %s,date: %s,start:%f, end %f,inc %f", name,startDate,startVal,targetVal,incVal);
+		String s = String.format("ParamEntry [name %s,date: %s,start:%f, end %f,inc %f", name,startDate,startVal,targetVal,incVal);
 		return s;
+	}
+	
+	public boolean equals(Object o) {
+		if ( o == null )
+			return false;
+		return this.paramId == ((ParamEntry)o).paramId;
 	}
 	
 	public boolean collectData(NewParamActivity activity) {
