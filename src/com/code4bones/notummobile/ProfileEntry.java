@@ -85,7 +85,7 @@ public class ProfileEntry extends Object implements Parcelable {
 			if ( curs != null && !curs.isClosed())
 				curs.close();
 		}
-		NetLog.v("Loaded %d Params", mParams.size());
+		//NetLog.v("Loaded %d Params", mParams.size());
 		return mParams.size();
 	}
 	

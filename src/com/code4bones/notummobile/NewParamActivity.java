@@ -76,6 +76,7 @@ public class NewParamActivity extends Activity implements OnDateSetListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_param);
 	
+		
 		mActivity = this;
 		Intent data = this.getIntent();
 		mFirstParam = data.getBooleanExtra(NewParamActivity.NEW_LIST, false);
@@ -84,11 +85,14 @@ public class NewParamActivity extends Activity implements OnDateSetListener {
 		ProfileList pl = ProfileList.getInstance();
 		mProfile = pl.getCurrentProfile();
 
+		mTemplates.add(ParamEntry.makeTemplate(mProfile.profileId, "Рост", "См."));
+		mTemplates.add(ParamEntry.makeTemplate(mProfile.profileId, "Вес", "Кг."));
+		mTemplates.add(ParamEntry.makeTemplate(mProfile.profileId, "Обьем талии", "См."));
+		
 		this.setTitle("Редактирование Параметра");
 		
 		this.findViewById(R.id.bnDelete).setEnabled(mParamEntry != null);
 		if ( mParamEntry == null ) {
-			//ProfileList pl = ProfileList.getInstance();
 			mParamEntry = new ParamEntry(this,mProfile.profileId);
 		}
 		mParamEntry.mContext = this;
@@ -140,6 +144,10 @@ public class NewParamActivity extends Activity implements OnDateSetListener {
 		setupControlValues(mParamEntry);
 		
 		this.etName.requestFocus();
+		
+		if ( mFirstParam )
+			this.setupControlValues(this.mTemplates.get(1));
+		
 	}
 	
 	public void setAlphas(int alpha,View[] ets) {
@@ -269,19 +277,17 @@ public class NewParamActivity extends Activity implements OnDateSetListener {
 			this.tvStep.setText(" Нет");
 		
 	}
+
+	final ArrayList<ParamEntry> mTemplates = new ArrayList<ParamEntry>();
 	
 	public void selectTemplate() {
        
-		final ArrayList<ParamEntry> params = new ArrayList<ParamEntry>();
-		params.add(ParamEntry.makeTemplate(mProfile.profileId, "Рост", "См."));
-		params.add(ParamEntry.makeTemplate(mProfile.profileId, "Вес", "Кг."));
-		params.add(ParamEntry.makeTemplate(mProfile.profileId, "Обьем талии", "См."));
-		
+		//TODO:
 		AlertDialog.Builder dlg = new AlertDialog.Builder(this);
-		dlg.setAdapter(new TemplateAdapter(this,params), new AlertDialog.OnClickListener() {
+		dlg.setAdapter(new TemplateAdapter(this,mTemplates), new AlertDialog.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				setupControlValues(params.get(which));
+				setupControlValues(mTemplates.get(which));
 			}
 		});
 		dlg.setTitle("Шаблоны");

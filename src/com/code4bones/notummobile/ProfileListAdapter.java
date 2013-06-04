@@ -51,7 +51,7 @@ public class ProfileListAdapter extends ArrayAdapter<ProfileEntry> {
 		
 		public TextView createLabel(String msg,int shape) {
 			TextView t = new TextView(view.getContext());
-            t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10);
+            t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
 			t.setText(msg);
             t.setShadowLayer(6, 6, 6, Color.BLACK);
             t.setTextColor(Color.WHITE);

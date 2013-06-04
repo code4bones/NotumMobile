@@ -41,6 +41,8 @@ public class ParamEntry extends Object implements Parcelable {
 	transient Context mContext;
 	transient HistEntry mLastHist = null;
 	transient HistEntry mActiveHist = null;
+	transient double mOriginalValue = 0;
+	transient Date mOriginalDate = null;
 	transient boolean mSelected = false;
 	
 	public Bitmap image;
@@ -263,7 +265,7 @@ public class ParamEntry extends Object implements Parcelable {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		image.compress(Bitmap.CompressFormat.PNG, 100, bos);
 		byte[] blob = bos.toByteArray();
-		
+		NetLog.v("BLOB LENGTH for Bitmap %d",blob.length);
 		ins.clearBindings();
 		ins.bindString(1, this.name);
 		ins.bindLong(2,this.profileId);
@@ -295,7 +297,7 @@ public class ParamEntry extends Object implements Parcelable {
 	public void resetDate(Date dt) {
 		this.changed = dt!=null?dt:new Date();
 		if ( this.mActiveHist != null )
-			this.mActiveHist.changed = this.changed;
+			this.mActiveHist.setDate(this.changed); //changed = this.changed;
 	}
 	
 	public boolean getMinMaxHist() {
@@ -320,7 +322,7 @@ public class ParamEntry extends Object implements Parcelable {
 		//TODO://YODA !
 		DateTime last = new DateTime(changed);
 		int days = Days.daysBetween(last.toDateMidnight(), now.toDateMidnight()).getDays();
-		NetLog.v("%s (%s) : ALERTED %d",name,ProfileList.dateStr(changed),days);
+		//NetLog.v("%s (%s) : ALERTED %d",name,ProfileList.dateStr(changed),days);
 		return this.stepVal > 0 && days >= this.stepVal;
 	}
 	

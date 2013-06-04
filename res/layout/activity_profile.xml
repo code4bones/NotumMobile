@@ -15,31 +15,7 @@
         android:text="Large Text"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
-    <ImageButton
-        android:id="@+id/ibParamIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/tvProfileHeader"
-        android:layout_below="@+id/tvProfileHeader"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/trans_bgr"
-        android:paddingRight="10dp"
-        android:src="@drawable/avatar" />
-
-    <EditText
-        android:id="@+id/etParamName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/ibParamIcon"
-        android:layout_below="@+id/ibParamIcon"
-        android:layout_marginTop="28dp"
-        android:drawablePadding="10dp"
-        android:ems="10" >
-
-        <requestFocus />
-    </EditText>
-
-    <ImageButton
+    <Button
         android:id="@+id/bnProfileCancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -49,21 +25,95 @@
         android:background="@drawable/button_cancel"
         android:visibility="gone" />
 
-    <ImageButton
+    <Button
         android:id="@+id/bnProfileSave"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_alignBottom="@+id/etParamName"
         android:layout_alignParentRight="true"
-        android:layout_marginBottom="20dp"
-        android:background="@drawable/button_save" />
+        android:layout_alignTop="@+id/etParamName"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/green_button"
+        android:shadowColor="#FF0000"
+        android:shadowDx="4"
+        android:shadowRadius="5"
+        android:text="Сохранить"
+        android:textColor="#FFFA00"
+        android:textStyle="bold"
+        android:typeface="serif" />
 
-    <ImageButton
+    <Button
         android:id="@+id/bnProfileDelete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_alignTop="@+id/bnProfileSave"
-        android:background="@drawable/button_delete" />
+        android:layout_below="@+id/etParamName"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="16dp"
+        android:textColor="@drawable/state_color"
+        android:shadowColor="#ffffff"
+        android:shadowDx="4"
+        android:shadowRadius="5"
+        android:background="@drawable/button_red"
+        android:text="Удалить" />
+
+    <TextView
+        android:id="@+id/dlgTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/etParamName"
+        android:layout_alignLeft="@+id/etParamName"
+        android:layout_alignTop="@+id/ibParamIcon"
+        android:layout_marginRight="16dp"
+        android:gravity="center_vertical|left"
+        android:shadowColor="#FF0000"
+        android:shadowDx="4"
+        android:shadowRadius="5"
+        android:text="Аватар профиля"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#FFFA00"
+        android:textStyle="bold" />
+
+    <ImageButton
+        android:id="@+id/ibParamIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvProfileHeader"
+        android:layout_marginTop="31dp"
+        android:layout_toRightOf="@+id/dlgTextView"
+        android:background="@drawable/trans_bgr"
+        android:src="@drawable/avatar" />
+
+    <EditText
+        android:id="@+id/etParamName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/bnProfileDelete"
+        android:layout_below="@+id/ibParamIcon"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="31dp"
+        android:layout_toLeftOf="@+id/bnProfileSave"
+        android:drawablePadding="10dp"
+        android:ems="10" >
+
+        <requestFocus />
+    </EditText>
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/bnProfileSave"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/dlgTextView"
+        android:gravity="center_vertical|center_horizontal"
+        android:shadowColor="#FF0000"
+        android:shadowDx="4"
+        android:shadowRadius="5"
+        android:text="Название профиля"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#FFFA00"
+        android:textStyle="bold" />
 
 </RelativeLayout>

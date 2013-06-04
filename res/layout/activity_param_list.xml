@@ -34,103 +34,93 @@
     </LinearLayout>
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="26dp"
-        android:layout_marginTop="10dp"
-        android:orientation="vertical" >
-
-        <TextView
-            android:id="@+id/tvStartValue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="#faff00" />
-
-        <com.code4bones.notummobile.TextProgressBar
-            android:id="@+id/pbProgress"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@+id/tvEndValue"
-            android:layout_toRightOf="@+id/tvStartValue"
-            android:max="100" />
-
-        <TextView
-            android:id="@+id/tvEndValue"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:text="255"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="#faff00" />
-    </RelativeLayout>
-
-    <RelativeLayout
         android:id="@+id/paramControlsLayout"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:layout_marginTop="5dp"
+        android:layout_height="124dp"
+        android:layout_marginTop="1dp"
         android:background="@drawable/tooltip" >
 
-        <LinearLayout
-            android:id="@+id/linearLayout1"
-            android:layout_width="match_parent"
+        <ImageButton
+            android:id="@+id/ibValueInc"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/tvParamDate"
-            android:gravity="right"
-            android:orientation="horizontal" >
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/ibValueDec"
+            android:background="@drawable/trans_bgr"
+            android:paddingRight="5dp"
+            android:src="@drawable/button_up" />
 
-            <ImageButton
-                android:id="@+id/ibValueDec"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="false"
-                android:background="@drawable/trans_bgr"
-                android:paddingTop="2dp"
-                android:scaleType="center"
-                android:src="@drawable/button_down" />
-
-            <ImageButton
-                android:id="@+id/ibValueInc"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/trans_bgr"
-                android:paddingRight="5dp"
-                android:src="@drawable/button_up" />
-
-            <ImageButton
-                android:id="@+id/ibValueApply"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/trans_bgr"
-                android:src="@drawable/circle_plus" />
-
-        </LinearLayout>
+        <ImageButton
+            android:id="@+id/ibShowDetail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/trans_bgr"
+            android:src="@drawable/button_book" />
 
         <ImageButton
             android:id="@+id/ibSelectDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignTop="@+id/linearLayout1"
+            android:layout_alignLeft="@+id/ibShowDetail"
+            android:layout_below="@+id/ibValueDec"
             android:background="@drawable/trans_bgr"
             android:src="@drawable/button_date" />
+
+        <ImageButton
+            android:id="@+id/ibValueDec"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/ibShowDetail"
+            android:layout_toLeftOf="@+id/ibValueInc"
+            android:adjustViewBounds="false"
+            android:background="@drawable/trans_bgr"
+            android:paddingTop="2dp"
+            android:scaleType="center"
+            android:src="@drawable/button_down" />
 
         <TextView
             android:id="@+id/tvParamDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
+            android:layout_alignBottom="@+id/ibSelectDate"
+            android:layout_alignTop="@+id/ibSelectDate"
+            android:layout_toLeftOf="@+id/ibValueDec"
             android:layout_toRightOf="@+id/ibSelectDate"
-            android:background="@drawable/drop_shadow"
             android:gravity="center_vertical|center_horizontal"
-            android:text="Small Text"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="#000000"
-            android:textSize="10sp" />
+            android:text="12,март"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#000000" />
+
+        <TextView
+            android:id="@+id/tvParamValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/ibValueApply"
+            android:layout_alignLeft="@+id/tvParamDate"
+            android:layout_alignRight="@+id/tvParamDate"
+            android:layout_alignTop="@+id/ibShowDetail"
+            android:gravity="center_vertical|center_horizontal"
+            android:scrollHorizontally="false"
+            android:text="102.03"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/ibValueApply"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/tvParamDate"
+            android:layout_alignBottom="@+id/tvParamDate"
+            android:layout_toRightOf="@+id/tvParamDate"
+            android:background="@drawable/green_button"
+            android:shadowColor="#ffffff"
+            android:shadowDx="4"
+            android:shadowRadius="5"
+            android:text="Добавить"
+            android:textColor="@drawable/state_color" />
 
     </RelativeLayout>
 
@@ -147,12 +137,6 @@
             android:background="@drawable/tooltip" >
         </FrameLayout>
 
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/progressLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
     </RelativeLayout>
 
 </LinearLayout>

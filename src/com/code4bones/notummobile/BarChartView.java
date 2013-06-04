@@ -38,14 +38,20 @@ public class BarChartView extends View implements View.OnTouchListener {
 		private boolean mLast = false;
 		private boolean mSelected = false;
 		public  Object  obj;
+		public  Paint   textPaint = new Paint();
 		
 		public ChartItem(float dblVal) {
 			this.mValue = dblVal;
+			textPaint.setAntiAlias(true);
+			textPaint.setTypeface(Typeface.DEFAULT_BOLD);
+			textPaint.setTextSize(20);
 		}
 		
 		public void drawItem(Canvas c) {
-			Paint p = new Paint();
-			p.setColor(mLast?Color.RED:Color.GREEN);
+			//Paint p = new Paint();
+			
+			mLast = false;
+			textPaint.setColor(mLast?Color.RED:Color.GREEN);
 			
 			
 			Paint ps = new Paint();
@@ -65,18 +71,17 @@ public class BarChartView extends View implements View.OnTouchListener {
 			nf.setMaximumFractionDigits(2);
 			String msg = nf.format(this.mValue);
 			
-			p.setAntiAlias(true);
 			float x = mRectf.centerX()+5;
 			float y = mRectf.top;
 			if ( y < 15 ) {
 				y = mRectf.centerY();
-				p.setColor(Color.BLACK);
+				textPaint.setColor(Color.BLACK);
 			} else {
-				p.setColor(Color.YELLOW);
+				textPaint.setColor(Color.BLACK);
 			}
 			c.save();
 			c.rotate(-90,x,y);
-			c.drawText(msg, x, y, p);
+			c.drawText(msg, x, y, textPaint);
 			c.restore();
 		}
 		
@@ -136,7 +141,7 @@ public class BarChartView extends View implements View.OnTouchListener {
 		int page = (int) (mRect.width() / (this.mItemWidth + this.mItemSpace));
 		page--;
 		int idx = mItems.indexOf(item);
-		NetLog.v("IDX %d, Page = %d",idx,page);
+		//NetLog.v("IDX %d, Page = %d",idx,page);
 		if ( idx < page || page < 0) {
 			mOffsetX = 0;
 			this.repaint();
@@ -156,8 +161,8 @@ public class BarChartView extends View implements View.OnTouchListener {
 		if ( mItems.size() == 0 )
 			return;
 		
-		int nHeight = mRect.height()-10;
-		float barX = 15;    
+		int nHeight = mRect.height()-90;
+		float barX = 5;    
 		c.save();
 		c.translate(this.mOffsetX, 0);
 		
@@ -170,7 +175,7 @@ public class BarChartView extends View implements View.OnTouchListener {
 			item.drawItem(c);
 		}
 		c.restore();
-		this.drawYLabels(c);
+		//this.drawYLabels(c);
 	}
 	
 	public void SetLast(float val) {
@@ -195,8 +200,8 @@ public class BarChartView extends View implements View.OnTouchListener {
 	private void init() {
 		this.setOnTouchListener(this);
 
-		mFormat.setMinimumFractionDigits(3);
-		mFormat.setMaximumFractionDigits(3);
+		mFormat.setMinimumFractionDigits(2);
+		mFormat.setMaximumFractionDigits(2);
 		
 		mLabelColors[0] = Color.rgb(34, 181, 27);
 		mLabelColors[1] = Color.BLACK;
@@ -251,7 +256,12 @@ public class BarChartView extends View implements View.OnTouchListener {
 		}
 		this.mLastItem = mItems.get(mItems.size()-1);
 		this.mLastItem.mLast = true;
-		mRangeValue = mMaxValue - mMinValue;
+		
+		//mMaxValue = (mMaxValue) + (mMaxValue / 2);
+		//mMinValue = (mMinValue) - (mMinValue / 2);
+		
+		mRangeValue = (mMaxValue - mMinValue);
+		mRangeValue += (mRangeValue)/1.5;
 	}
 	
 	public ChartItem addItem(float dblValue) {

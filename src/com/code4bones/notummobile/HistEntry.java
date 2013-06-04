@@ -17,15 +17,45 @@ public class HistEntry {
 	public Date   changed;
 	public boolean checked;
 	public View row;
+
+	public Date oldChanged = null;
+	public double oldValue;
+	//public double origValue;
+	//public Date origDate;
 	
 	public HistEntry(ParamEntry e) {
 		this.value = e.startVal;
 		this.changed = e.startDate;
 		this.paramId = e.paramId;
+		//this.oldChanged = this.changed;
 		this.id = -1;
 		this.checked = false;
 	}
 	
+	
+	public void setValue(double val) {
+		if ( oldValue == Double.MAX_VALUE )
+			oldValue = value;
+		value = val;
+	}
+	
+	public void setDate(Date dt) {
+		if ( oldChanged == null )
+			oldChanged = new Date(changed.getTime());
+		changed = dt;
+	}
+
+	public boolean isValueChanged() {
+		return oldValue != value;
+	}
+	
+	public boolean isDateChanged() {
+		if ( oldChanged == null )
+			return false;
+		return oldChanged.getDay() != changed.getDay() ||
+			   oldChanged.getMonth() != changed.getMonth() ||
+			   oldChanged.getYear() != changed.getYear();
+	}
 	
 	public HistEntry() {
 		this.id = -1;
@@ -41,6 +71,10 @@ public class HistEntry {
 		this.value = c.getDouble(2);
 		this.changed = new Date(c.getLong(3));
 		this.checked = false;
+
+		//this.oldChanged = this.changed;
+		this.oldValue = Double.MAX_VALUE;
+		
 	}
 
 	public HistEntry(HistEntry e) {
@@ -49,6 +83,10 @@ public class HistEntry {
 		this.paramId = e.paramId;
 		this.id = -1;
 		this.checked = false;
+
+		//this.oldChanged = e.changed;
+		this.oldValue = e.value;
+	
 	}
 	
 	public void Delete() {

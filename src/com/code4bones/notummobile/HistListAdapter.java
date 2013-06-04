@@ -70,6 +70,14 @@ public class HistListAdapter extends ArrayAdapter<HistEntry> {
 			d.setAlpha(100);
 		}
 		
+		public int getHistValue(ParamEntry pe,HistEntry e) {
+			double min = pe.startVal; // 2
+			double max = pe.targetVal - min; // 10
+			double cur  = e.value - min; // 2
+			int val = (int)(100 / (max / cur));
+			return val;
+		}
+		
 		public void update(ParamEntry pe,HistEntry e,HistEntry p) {
 			double diff = e.value - p.value;
 
@@ -83,20 +91,24 @@ public class HistListAdapter extends ArrayAdapter<HistEntry> {
 			tvEnd.setText(String.valueOf(pe.targetVal));
 			pbProg.setMax(100);
 			chkDelete.setChecked(e.checked);
-			
-			double min = pe.startVal; // 2
-			double max = pe.targetVal - min; // 10
-			double cur  = e.value - min; // 2
+			/*
+			double min = pe.startVal; 
+			double max = pe.targetVal - min; 
+			double cur  = e.value - min; 
 			int val = (int)(100 / (max / cur));
+			*/
+			int val = getHistValue(pe,e);
+			int pval = getHistValue(pe,p);
 			pbProg.setProgress(val);
-			
-			if ( diff < 0 ) {
+
+			if ( pval > val ) {
 				tvDiff.setTextColor(Color.YELLOW);
 				tvDiff.setBackgroundResource(R.drawable.diff_label_shape_red);
 			} else {
 				tvDiff.setTextColor(Color.BLUE);
 				tvDiff.setBackgroundResource(R.drawable.diff_label_shape);
 			}
+			
 		}
 	};
 	

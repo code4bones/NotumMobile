@@ -56,7 +56,7 @@
     <shape>
             <solid android:color="#55f9ff" />
         <corners android:radius="3dp" />
-        <padding android:top="5dp" android:right="10dp" android:bottom="5dp" android:left="10dp" />
+        <padding android:top="1dp" android:right="10dp" android:bottom="5dp" android:left="10dp" />
     </shape>
    </item>
 </layer-list>

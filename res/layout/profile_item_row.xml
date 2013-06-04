@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="120dp"
+    android:layout_height="140dp"
     android:layout_marginBottom="3dp"
     android:layout_marginTop="5dp"
     android:background="@drawable/profile_cell_shape"
+    android:descendantFocusability="blocksDescendants"
     android:orientation="vertical"
-    android:paddingLeft="10dp" 
-    android:descendantFocusability="blocksDescendants">
+    android:paddingLeft="10dp" >
 
     <com.code4bones.notummobile.ImageTextView
         android:id="@+id/tvParamName"
@@ -27,7 +27,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="#000000" />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
@@ -35,16 +35,9 @@
             android:id="@+id/ivProfileIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:paddingRight="5dp"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
             android:src="@drawable/avatar" />
-
-        <com.code4bones.notummobile.FlowLayout
-            android:id="@+id/cvTagsView"
-            android:layout_width="211dp"
-            android:layout_height="68dp"
-            android:layout_marginRight="20dp"
-            android:paddingLeft="5dp" />
 
         <ImageView
             android:id="@+id/btnAddProfile"
@@ -54,6 +47,17 @@
             android:src="@drawable/but_plus"
             android:visibility="gone" />
 
-    </LinearLayout>
+        <com.code4bones.notummobile.FlowLayout
+            android:id="@+id/cvTagsView"
+            android:layout_width="202dp"
+            android:layout_height="83dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/ivProfileIcon"
+            android:paddingLeft="5dp" >
+
+        </com.code4bones.notummobile.FlowLayout>
+
+    </RelativeLayout>
  
 </LinearLayout>

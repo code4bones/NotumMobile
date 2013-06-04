@@ -2,6 +2,7 @@ package com.code4bones.notummobile;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -117,6 +118,10 @@ public class MainActivity extends Activity {
 		case R.id.add_profile:
 			this.editProfile(null, ProfileActivity.NEW_PROFILE);
 			break;
+		case R.id.mi_about:
+			Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.notum.pro/about/"));
+			startActivity(browserIntent);
+			break;
 		}
 		return true;
 	}
@@ -140,8 +145,10 @@ public class MainActivity extends Activity {
 
 	private void saveProfile(Intent data) {
 		ProfileEntry entry = data.getParcelableExtra(ProfileEntry.PROFILE_ENTRY);
-		if ( entry != null ) 
+		if ( entry != null ) {
 			mProfiles.add(entry);
+			showProfileParams(entry);
+		}
 		else
 			NetLog.v("DELETE");
 		updateList();

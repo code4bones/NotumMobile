@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.Dialog;
@@ -35,7 +36,9 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -49,27 +52,27 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 	
 	TextView mTvParamName;
 	TextView mTvParamDate;
-	TextProgressBar mProgress;
-	TextView mTvStartValue;
-	TextView mTvTargetValue;
 	TextView mTvCurrentValue;
 	RibbonView mParamList;
 	BarChartView mChart = null;
+	final NumberFormat mNfmt = NumberFormat.getInstance();
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_param_list);
 		mProfile = mProfiles.getCurrentProfile();
+		mNfmt.setMaximumFractionDigits(2);
+		mNfmt.setMinimumFractionDigits(2);
 		
 		this.setTitle("Просмотр профиля \"" + mProfile.profileName+"\"");
 		
 		mTvParamName = (TextView)this.findViewById(R.id.tvProfileName);
 		mTvParamDate = (TextView)this.findViewById(R.id.tvParamDate);
-		mTvStartValue = (TextView)this.findViewById(R.id.tvStartValue);
-		mTvTargetValue = (TextView)this.findViewById(R.id.tvEndValue);
-		mProgress = (TextProgressBar)this.findViewById(R.id.pbProgress);
-		mProgress.setTextSize(18);
+		mTvCurrentValue = (TextView)this.findViewById(R.id.tvParamValue);
+		//mProgress = (TextProgressBar)this.findViewById(R.id.pbProgress);
+		//mProgress.setTextSize(18);
 		
 		mParamList = new RibbonView(this);
 		LinearLayout ll = (LinearLayout)this.findViewById(R.id.paramListLayout);
@@ -95,7 +98,7 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		item.addView(mChart,new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT));
 		mChart.setBackgroundResource(R.drawable.trans_bgr);
 		mChart.setTouchHandler(mChartHandler);
-		setParamValueListener(new int[] {R.id.ibValueDec,R.id.ibValueInc,R.id.ibValueApply,R.id.ibSelectDate});
+		setParamValueListener(new int[] {R.id.ibShowDetail,R.id.ibValueDec,R.id.ibValueInc,R.id.ibValueApply,R.id.ibSelectDate});
 		this.updateParamList();
 		
 		Drawable d = item.getBackground();
@@ -104,8 +107,18 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		d.setAlpha(100);
 		d = this.findViewById(R.id.paramListLayout).getBackground();
 		d.setAlpha(100);
+
+		mTvCurrentValue.setOnClickListener(mOnValueClicked);
+		
 	} // onCreate
 
+	private View.OnClickListener mOnValueClicked = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			showInputValueDialog();
+		}
+	};
+	
 	private Handler mChartHandler = new Handler() {
 		public void handleMessage(Message msg) {
 			BarChartView.ChartItem item = (BarChartView.ChartItem)msg.obj;
@@ -119,6 +132,44 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 			updateProgress(mProfile.currentParam(),e);
 		}
 	};
+
+	public void showInputValueDialog() {
+		LayoutInflater li = LayoutInflater.from(this);
+		View view = li.inflate(R.layout.current_value_dlg, null);
+		
+		final AlertDialog.Builder dlg = new AlertDialog.Builder(this);
+		dlg.setView(view);
+		dlg.setCancelable(true);
+		dlg.setTitle("Новое значние");
+		ParamEntry pe = mProfile.currentParam();
+		float val = (float)pe.mActiveHist.value;
+		
+		final Button okButton = (Button)view.findViewById(R.id.dlgSaveValue);
+		final EditText editVal = (EditText)view.findViewById(R.id.dlgNewValue);
+		final TextView tvVal = (TextView)view.findViewById(R.id.dlgTextView);
+		editVal.setText(mNfmt.format(val));
+		tvVal.setText(mNfmt.format(val));
+		
+		final AlertDialog inputDlg = dlg.create();
+		inputDlg.show();
+		
+		okButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				//TODO:
+				try {
+					ParamEntry pe = mProfile.currentParam();
+					pe.mActiveHist.setValue(Float.parseFloat(editVal.getText().toString()));
+					updateProgress(pe,null);
+					inputDlg.cancel();
+				} catch ( NumberFormatException e ) {
+					NetLog.Toast(ParamListActivity.this, "Не верное значение");
+				}
+			}
+		});
+		
+	}
+
 	
 	public void updateParamList() {
 		if ( mProfile.populateParams(mProfiles.getDB() ) > 0) {
@@ -146,8 +197,8 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 	
 	public void setParamValueListener(int ids[]) {
 		for ( int id : ids ) {
-			ImageButton btn = (ImageButton)this.findViewById(id);
-			btn.setOnClickListener(mOnParamValueClicked);
+			View w = this.findViewById(id);
+			w.setOnClickListener(mOnParamValueClicked);
 		}
 	}
 	
@@ -157,6 +208,8 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		public void onClick(View v) {
 			if ( v.getId() == R.id.ibValueApply )
 				applyParamValue();
+			else if ( v.getId() == R.id.ibShowDetail )
+				showDetails();
 			else if ( v.getId() == R.id.ibSelectDate )
 				selectParamValueDate();
 			else {
@@ -171,42 +224,47 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 	public void changeParam(boolean fInc) {
 		ParamEntry paramEntry = mProfile.currentParam();
 		HistEntry entry = paramEntry.mActiveHist;
+		double val = entry.value;
 		if ( fInc )
-			entry.value += paramEntry.incVal;
+			val += paramEntry.incVal;
 		else
-			entry.value -= paramEntry.incVal;
+			val -= paramEntry.incVal;
 		
+		entry.setValue(val);
 		updateProgress(paramEntry,null);
-		mChart.SetLast((float)entry.value);
 	}
 	
 	
 	public void updateProgress(ParamEntry entry,HistEntry he) {
 		double hv  = he==null?entry.mActiveHist.value:he.value;
-		double min = entry.startVal; // 2
-		double max = entry.targetVal - min; // 10
-		double cur  = hv - min; // 2
-		int val = (int)(100 / (max / cur));
-		this.mProgress.setProgress(val);
-		NumberFormat nf = NumberFormat.getInstance();
-		nf.setMinimumFractionDigits(2);
-		nf.setMaximumFractionDigits(2);
-		this.mProgress.setText(nf.format(/*entry.mActiveHist.value*/hv));
+		boolean isChanged = he==null?entry.mActiveHist.isValueChanged():false;
+		Button bn = (Button)this.findViewById(R.id.ibValueApply);
+		bn.setEnabled(isChanged || entry.mActiveHist.isDateChanged());
+		if ( isChanged ) {
+			this.mTvCurrentValue.setTextColor(Color.RED);
+			//this.mTvCurrentValue.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.tick, 0);
+		} else {
+			//this.mTvCurrentValue.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+			this.mTvCurrentValue.setTextColor(Color.BLACK);
+		}
+		this.mTvCurrentValue.setText(mNfmt.format((float)hv));
 	}
 	
+	
 	private void selectParamValueDate() {
-		//TODO:
 		ParamEntry pe = this.mProfile.currentParam();
 		Dialog dlg = new DatePickerDialog(this,this,1900+pe.changed.getYear(),pe.changed.getMonth(),pe.changed.getDate());
 		dlg.show();
 	}
+	
+	
 	
 	private void applyParamValue() {
 		final ParamEntry paramEntry = this.mProfile.currentParam();
 		final HistEntry entry = paramEntry.mActiveHist;
 		final HistEntry dupEntry = paramEntry.exists(entry);
 		if ( dupEntry != null ) {
-			String msg = String.format("На это число уже есть значение,заменить %f на %f ?", dupEntry.value,entry.value);
+			String msg = String.format("На это число уже есть значение,заменить %s на %s ?", mNfmt.format(dupEntry.value),mNfmt.format(entry.value));
 			MessageBox.Show(ProfileList.dateStr(entry.changed), msg, this,MessageBox.MB_YESNO,new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
@@ -233,7 +291,6 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 			NetLog.Toast(this, "There are no parameters for that profile");
 			return;
 		}
-		//entry.resetDate(null);
 		this.mProfile.setCurrentParam(entry);
 
 		entry.populateHist(true);
@@ -241,15 +298,12 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		String sTitle = String.format("%s / %s", this.mProfile.profileName,entry.name);
 		this.mTvParamName.setText(sTitle);
 		this.mTvParamDate.setText(ProfileList.dateStr(entry.changed));
-		this.mTvStartValue.setText(String.valueOf(entry.startVal));
-		this.mTvTargetValue.setText(String.valueOf(entry.targetVal));
-		
+
 		mChart.reset();
 		for ( HistEntry e : entry.mList ) {
 			BarChartView.ChartItem item = mChart.addItem((float)e.value);
 			item.obj = e;
 		}
-		mChart.addItem((float)entry.mActiveHist.value);
 		mChart.SelectItem(null);
 		updateProgress(entry,null);
 	}
@@ -259,6 +313,12 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.param_list, menu);	
 		return true;
+	}
+	
+	public void showDetails() {
+		Intent res = new Intent(this,HistActivity.class);
+		res.putExtra("paramEntry", this.mProfile.currentParam());
+		this.startActivityForResult(res, NewParamActivity.HIST);
 	}
 	
 	@Override
@@ -271,9 +331,7 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 			this.startActivityForResult(res, NewParamActivity.ADD);
 			break;
 		case R.id.itemParamListHist:
-			res = new Intent(this,HistActivity.class);
-			res.putExtra("paramEntry", this.mProfile.currentParam());
-			this.startActivityForResult(res, NewParamActivity.HIST);
+			this.showDetails();
 			break;
 		case R.id.itemParamListEdit:
 			this.editParam(this.mProfile.currentParam());
@@ -298,11 +356,13 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 					return;
 			
 				ParamEntry entry = (ParamEntry) data.getParcelableExtra(NewParamActivity.PARAM_ENTRY);
-				this.mProfile.setCurrentParam(entry);
-				this.updateParamList();
-				RibbonView.Icon icon = this.mParamList.findObject(entry);
-				if ( icon != null ) {
-					this.mParamList.setVisible(this.mParamList.itemIndex(icon));
+					this.mProfile.setCurrentParam(entry);
+					this.updateParamList();
+					if ( entry != null ) {
+						RibbonView.Icon icon = this.mParamList.findObject(entry);
+						if ( icon != null ) {
+							this.mParamList.setVisible(this.mParamList.itemIndex(icon));
+					}
 				}
 			break;
 		case NewParamActivity.HIST:
@@ -334,9 +394,20 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		Calendar c = Calendar.getInstance();
 		c.set(year, monthOfYear, dayOfMonth);
 		Date selDate = c.getTime();
+		
 		this.mTvParamDate.setText(ProfileList.dateStr(selDate));
 		this.mTvParamDate.setTag(selDate);
 		this.mProfile.currentParam().resetDate(selDate);
+		
+		boolean dc = this.mProfile.currentParam().mActiveHist.isDateChanged();
+		Button bn = (Button)this.findViewById(R.id.ibValueApply);
+		bn.setEnabled(dc);
+		/*
+		if ( dc ) 
+			this.mTvParamDate.setTextColor(Color.RED);
+		else
+			this.mTvParamDate.setTextColor(Color.BLACK);
+		 */
 	}
 	
 	

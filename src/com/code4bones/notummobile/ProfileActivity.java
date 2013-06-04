@@ -75,9 +75,9 @@ public class ProfileActivity extends Activity {
 		// SAVE A PROFILE
 		this.findViewById(R.id.bnProfileCancel).setOnClickListener(mOnClick);
 		this.findViewById(R.id.bnProfileSave).setOnClickListener(mOnClick);
-		ImageButton bnDelete = (ImageButton)this.findViewById(R.id.bnProfileDelete);
+		Button bnDelete = (Button)this.findViewById(R.id.bnProfileDelete);
 		bnDelete.setOnClickListener( mOnClick );
-		bnDelete.setEnabled(this.mProfile != null);
+		bnDelete.setEnabled(this.mProfile != null && this.mProfile.profileId != -1);
 	}
 
 	private OnClickListener mOnClick = new OnClickListener() {
@@ -129,7 +129,7 @@ public class ProfileActivity extends Activity {
 			NetLog.v("Somethig selected %s",imagePath);
 			InputStream is = getContentResolver().openInputStream(imageUri);
 			Bitmap image = BitmapFactory.decodeStream(is);
-			Bitmap scaled = Bitmap.createScaledBitmap(image, 64, 64, false);
+			Bitmap scaled = Bitmap.createScaledBitmap(image, 64, 64, true);
 			profileIcon.setImageBitmap(Utils.getRoundedCornerBitmap(scaled));
 		} catch (FileNotFoundException e) {
 			NetLog.v("File Not Found");

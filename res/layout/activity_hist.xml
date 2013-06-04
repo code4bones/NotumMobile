@@ -22,7 +22,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#00000000"
-        android:choiceMode="none" >
+        android:choiceMode="none"
+        android:focusable="true"
+        android:focusableInTouchMode="false" >
 
     </ListView>
 
