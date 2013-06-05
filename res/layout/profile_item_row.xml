@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="140dp"
+    android:layout_height="150dp"
     android:layout_marginBottom="3dp"
     android:layout_marginTop="5dp"
     android:background="@drawable/profile_cell_shape"
@@ -29,34 +29,16 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="121dp" >
 
-        <ImageView
-            android:id="@+id/ivProfileIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="2dp"
-            android:paddingRight="2dp"
-            android:src="@drawable/avatar" />
+        <FrameLayout
+            android:id="@+id/layoutTipsView"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true" >
 
-        <ImageView
-            android:id="@+id/btnAddProfile"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/trans_bgr"
-            android:src="@drawable/but_plus"
-            android:visibility="gone" />
-
-        <com.code4bones.notummobile.FlowLayout
-            android:id="@+id/cvTagsView"
-            android:layout_width="202dp"
-            android:layout_height="83dp"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/ivProfileIcon"
-            android:paddingLeft="5dp" >
-
-        </com.code4bones.notummobile.FlowLayout>
+        </FrameLayout>
 
     </RelativeLayout>
  

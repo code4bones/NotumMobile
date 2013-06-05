@@ -5,6 +5,8 @@ import com.code4bones.utils.Utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
@@ -15,7 +17,9 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,61 +27,59 @@ import android.widget.TextView;
 public class ProfileListAdapter extends ArrayAdapter<ProfileEntry> {
 
 	static class ProfileHolder {
-		ImageView icon;
 		TextView  name;
-		//TagsView  tags;
-		FlowLayout tags;
 		View	  view;
-		ImageView btnAdd;
+		TipsView  tipsView;
+		public static Bitmap imgPlus = null;
 		
-		//BadgeView badge;
-	
-		ProfileHolder(View row,ProfileEntry profile) {
+		ProfileHolder(Context c,View row,ProfileEntry profile) {
 			view = row;
-			icon = (ImageView)row.findViewById(R.id.ivProfileIcon);
 			name = (TextView)row.findViewById(R.id.tvParamName);
-			tags = (FlowLayout)row.findViewById(R.id.cvTagsView);
-			icon.setBackgroundResource(R.drawable.image_border);
-			btnAdd = (ImageView)row.findViewById(R.id.btnAddProfile);
+			FrameLayout fl = (FrameLayout)row.findViewById(R.id.layoutTipsView);
+			tipsView = new TipsView(c);
+			fl.addView(tipsView, new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT));
+			tipsView.setFontSize(15);
 			
-			if ( profile.profileId != -1 ) 
-				btnAdd.setVisibility(View.GONE); 
-			else {
-				icon.setVisibility(View.GONE);
-				btnAdd.setVisibility(View.VISIBLE);
+			if ( imgPlus == null ) {
+				imgPlus = BitmapFactory.decodeResource(c.getResources(), R.drawable.circle_plus);
 			}
+ 			
 			row.setTag(this);
 		}
 		
-		public TextView createLabel(String msg,int shape) {
-			TextView t = new TextView(view.getContext());
-            t.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-			t.setText(msg);
-            t.setShadowLayer(6, 6, 6, Color.BLACK);
-            t.setTextColor(Color.WHITE);
-            t.setBackgroundResource(shape);
-            t.setSingleLine(true);
-            return t;
-		}
 		
 		public void update(ProfileEntry entry) {
-			icon.setImageBitmap(entry.profileIcon);
-			
 			name.setText(entry.profileName);
-			tags.removeAllViews();
+			
+			if ( entry.profileId == -1 ) {
+				tipsView.reset();
+				tipsView.setFontSize(20);
+				tipsView.setImage(ProfileHolder.imgPlus);
+				TipsView.Tip tip = tipsView.addTip("Создайте новый профиль", 0);
+				tip.setBadgeColors(TipsView.defaultBlue());
+				tipsView.Adjust();
+				return;
+			}
+			tipsView.setImage(entry.profileIcon);
+			tipsView.setFontSize(17);
 			
 			if ( entry.populateParams(ProfileList.getInstance().getDB()) > 0 ) {
+				tipsView.reset();
 				for ( ParamEntry param : entry.mParams ) {
-					
-					int shape = R.drawable.profile_badge_shape;
-					if ( param.isAlerted() )
-						shape = R.drawable.profile_badge_shape_notdata;
-					TextView t = createLabel(param.name,shape);
-		            tags.addView(t, new TagsView.LayoutParams(2, 2));			
-		            }
+					int pr = param.isAlerted()?0:1;
+					TipsView.Tip tip = tipsView.addTip(param.name, pr);
+					if ( pr == 0 ) {
+						tip.setBadgeColors(TipsView.defaultRed());
+					} else
+						tip.setBadgeColors(TipsView.defaultGreen());
+				}
+				tipsView.Adjust();
 			} else {
-				TextView t = createLabel(entry.profileId!=-1?"Нет данных":"Создайте новую группу параметров",entry.profileId!=-1?R.drawable.profile_badge_shape_notdata:R.drawable.profile_badge_shape_info);
-				tags.addView(t,new TagsView.LayoutParams(2,2));
+				tipsView.reset();
+				tipsView.setFontSize(23);
+				TipsView.Tip tip = tipsView.addTip("Нет данных", 0);
+				tip.setBadgeColors(TipsView.defaultRed());
+				tipsView.Adjust();
 			}
 		}
 	}
@@ -100,7 +102,7 @@ public class ProfileListAdapter extends ArrayAdapter<ProfileEntry> {
 		if ( row == null ) {
 			LayoutInflater inf = ((Activity)mContext).getLayoutInflater();
 			row = inf.inflate(R.layout.profile_item_row,parent,false);
-			holder = new ProfileHolder(row,entry);
+			holder = new ProfileHolder(mContext,row,entry);
 			row.setFocusable(false);
 		} else { // convertView is alerady assigned
 			holder = (ProfileHolder)row.getTag();
