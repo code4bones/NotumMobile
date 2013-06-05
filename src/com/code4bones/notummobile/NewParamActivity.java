@@ -122,19 +122,12 @@ public class NewParamActivity extends Activity implements OnDateSetListener {
 		this.etTargetVal = (EditText)this.findViewById(R.id.etTargetValue);
 		
 		
-		//this.etName.setBackgroundResource(R.drawable.edit_text_shape);
 	
 		this.etName.setTag("Наименование наблюдения");
-		
-		//this.etIncVal.setBackgroundResource(R.drawable.edit_text_shape);
 		this.etIncVal.setTag("Единица Прироста");
-		//this.etCurrentVal.setBackgroundResource(R.drawable.edit_text_shape);
 		this.etCurrentVal.setTag("Текущее значение");
-		//this.etTargetVal.setBackgroundResource(R.drawable.edit_text_shape);
 		this.etTargetVal.setTag("Желаемое значение");
-		//this.etMeasure.setBackgroundResource(R.drawable.edit_text_shape);
 		this.etMeasure.setTag("Единица измерения");
-		//this.etMeasure.setLines(1);
 		
 		ibIcon.setOnClickListener(mOnClick);
 	
@@ -173,7 +166,7 @@ public class NewParamActivity extends Activity implements OnDateSetListener {
 		this.etMeasure.setText(e.measure);
 		this.etIncVal.setText(String.valueOf(e.incVal));
 		this.etCurrentVal.setText(String.valueOf(e.startVal));
-		this.etTargetVal.setText(String.valueOf(e.targetVal));
+		this.etTargetVal.setText(e.hasTargetVal()?String.valueOf(e.targetVal):"");
 	}
 	
 	@Override
@@ -192,18 +185,13 @@ public class NewParamActivity extends Activity implements OnDateSetListener {
 		
 		if ( reqCode == SELECT_PHOTO ) {
 			Uri imageUri = data.getData();
-			imagePath = imageUri.toString();
-			try {
-				NetLog.v("Somethig selected %s",imagePath);
-	
-				InputStream is = getContentResolver().openInputStream(imageUri);
-				Bitmap image = BitmapFactory.decodeStream(is);
-				Bitmap scaled = Bitmap.createScaledBitmap(image, 64, 64, false);
-				ibIcon.setImageBitmap(scaled);
-				mParamEntry.setImage(imagePath);
-			} catch (FileNotFoundException e) {
-				NetLog.v("File Not Found");
-				e.printStackTrace();
+			Bitmap scaled = Utils.decodeBitmap(this,imageUri,128,128);
+			if ( scaled != null ) {
+			mParamEntry.image = Utils.getRoundedCornerBitmap(scaled);
+			ibIcon.setImageBitmap(mParamEntry.image);
+			scaled.recycle();
+			} else {
+				NetLog.Toast(this, "Ошибка установки аватарки");
 			}
 		} 
 	}

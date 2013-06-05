@@ -13,6 +13,7 @@ import org.joda.time.DateTime;
 import org.joda.time.Days;
 
 import com.code4bones.utils.NetLog;
+import com.code4bones.utils.Utils;
 
 import android.app.Activity;
 import android.content.Context;
@@ -74,7 +75,7 @@ public class ParamEntry extends Object implements Parcelable {
 		this.stepVal = 0;
 		this.incVal = 1;
 		this.startVal = 10;
-		this.targetVal = 100;
+		this.targetVal = Double.MIN_VALUE;
 		// TODO Auto-generated constructor stub
 	}
 
@@ -93,7 +94,7 @@ public class ParamEntry extends Object implements Parcelable {
 		e.name = name;
 		e.measure = measure;
 		e.startVal = 1;
-		e.targetVal = 100;
+		e.targetVal = Double.MIN_VALUE;
 		return e;
 	}
 	
@@ -104,7 +105,7 @@ public class ParamEntry extends Object implements Parcelable {
 		this.incVal = 1;
 		this.stepVal = 0;
 		this.startVal = 0;
-		this.targetVal = 0;
+		this.targetVal = Double.MIN_VALUE;
 		this.measure = "?";
 		this.startDate = new Date();
 		this.endDate = new Date();
@@ -163,17 +164,26 @@ public class ParamEntry extends Object implements Parcelable {
 			this.measure = getText(R.id.etMeasure,true);
 			
 			this.startVal = getNumber(R.id.etParamCurrentValue,true);
-			this.targetVal = getNumber(R.id.etTargetValue,true);
 			
 			this.incVal = getNumber(R.id.etIncVal,true);
 			
 			this.image = ((BitmapDrawable)mActivity.ibIcon.getDrawable()).getBitmap();
 		} catch ( IllegalArgumentException e ) {
+			NetLog.v("Illegal!");
 			return false;
+		}
+		try {
+			this.targetVal = getNumber(R.id.etTargetValue,false);
+		} catch (IllegalArgumentException e ) {
+			this.targetVal = Double.MIN_VALUE;
+			return true;
 		}
 		return true;
 	}
 	
+	public boolean hasTargetVal() {
+		return this.targetVal != Double.MIN_VALUE;
+	}
 	
 	public ParamEntry ( Cursor c )  {
 		super();
@@ -191,23 +201,7 @@ public class ParamEntry extends Object implements Parcelable {
 		this.image = BitmapFactory.decodeByteArray(blob, 0, blob.length);
 		this.getLastDate();
 	}
-	
-	public void setImage(String iconPath) {
-		if ( iconPath == null ) {
-			NetLog.v("Image is unchanged");
-			return;
-		}
-		Uri uri = Uri.parse(iconPath);
-		InputStream is;
-		try {
-			is = mContext.getContentResolver().openInputStream(uri);
-			Bitmap image = BitmapFactory.decodeStream(is);
-			this.image = Bitmap.createScaledBitmap(image, 64, 64, false);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+
 	
 	private double getNumber(int id,boolean notNull) {
 		try {

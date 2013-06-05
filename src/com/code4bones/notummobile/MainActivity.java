@@ -134,20 +134,21 @@ public class MainActivity extends Activity {
 		}
 		switch ( requestCode ) {
 		case ProfileActivity.NEW_PROFILE: // New Profile
-				saveProfile(data);
+				saveProfile(data,true);
 			break;
 		case ProfileActivity.EDIT_PROFILE: // Edit Profile
 			NetLog.v("Profile updated");
-				saveProfile(data);
+				saveProfile(data,false);
 			break;
 		}
 	}
 
-	private void saveProfile(Intent data) {
+	private void saveProfile(Intent data,boolean showParams) {
 		ProfileEntry entry = data.getParcelableExtra(ProfileEntry.PROFILE_ENTRY);
 		if ( entry != null ) {
 			mProfiles.add(entry);
-			showProfileParams(entry);
+			if ( showParams )
+				showProfileParams(entry);
 		}
 		else
 			NetLog.v("DELETE");

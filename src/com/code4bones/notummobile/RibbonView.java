@@ -169,7 +169,7 @@ public class RibbonView extends View implements View.OnTouchListener {
 					c.drawBitmap(mImage, rc.left, rc.top, paint);
 					if ( mHasBorder ) {
 						b.drawBorder();
-						b.addBubble(2,50);
+						//b.addBubble(2,50);
 					}
 				} else {
 					

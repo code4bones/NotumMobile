@@ -86,6 +86,7 @@ public class ProfileEntry extends Object implements Parcelable {
 				curs.close();
 		}
 		//NetLog.v("Loaded %d Params", mParams.size());
+		db.close();
 		return mParams.size();
 	}
 	
@@ -115,6 +116,7 @@ public class ProfileEntry extends Object implements Parcelable {
 		ins.bindLong(1, this.profileId);
 		//rows = ins.executeUpdateDelete();
 		ins.execute();
+		db.close();
 		NetLog.v("Param with id %d,deleted ( %d )",this.profileId,rows);
 	}
 	
@@ -143,6 +145,7 @@ public class ProfileEntry extends Object implements Parcelable {
 			ins.execute();
 			NetLog.v("Profile Updated %s ( affected %d ),ID = %d",this.profileName,rows,this.profileId);
 		}
+		db.close();
 	}
 
 	public ProfileEntry(Parcel in) {

@@ -88,20 +88,25 @@ public class HistListAdapter extends ArrayAdapter<HistEntry> {
 			tvValue.setText(nf.format(e.value));
 			tvDiff.setText((diff>0?"+":"")+nf.format(diff));
 			tvStart.setText(String.valueOf(pe.startVal));
-			tvEnd.setText(String.valueOf(pe.targetVal));
 			pbProg.setMax(100);
 			chkDelete.setChecked(e.checked);
-			/*
-			double min = pe.startVal; 
-			double max = pe.targetVal - min; 
-			double cur  = e.value - min; 
-			int val = (int)(100 / (max / cur));
-			*/
-			int val = getHistValue(pe,e);
-			int pval = getHistValue(pe,p);
-			pbProg.setProgress(val);
 
-			if ( pval > val ) {
+
+			boolean isRed = false;
+			if ( pe.hasTargetVal() ) {
+				int val = getHistValue(pe,e);
+				int pval = getHistValue(pe,p);
+				isRed = pval > val; 
+				tvEnd.setText(String.valueOf(pe.targetVal));
+				pbProg.setProgress(val);
+			} else {
+				tvEnd.setText("- - -");
+				pbProg.setProgress(0);
+				pbProg.setEnabled(false);
+				isRed = diff < 0;
+			}
+			
+			if ( isRed) {
 				tvDiff.setTextColor(Color.YELLOW);
 				tvDiff.setBackgroundResource(R.drawable.diff_label_shape_red);
 			} else {

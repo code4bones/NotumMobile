@@ -18,6 +18,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.Paint.Style;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.View.MeasureSpec;
@@ -207,8 +208,16 @@ public class TipsView extends View {
 	
 	public void setImage(Bitmap img) {
 		mImage = img;
-		if ( mImage != null )
+		if ( mImage != null ) {
 			setDeadRect(0,0,mImage.getWidth(),mImage.getHeight());
+			if ( mHasImageFrame ) {
+				mImageFramePaint.setAntiAlias(true);
+				mImageFramePaint.setStrokeWidth(3);
+				mImageFramePaint.setShadowLayer(2, 2,2, Color.parseColor("#000000"));
+				mImageFramePaint.setStyle(Style.STROKE);
+				mImageFramePaint.setColor(Color.parseColor("#CC97daff"));
+			}
+		}
 	}
 	
 	public synchronized void Adjust() {
@@ -217,12 +226,12 @@ public class TipsView extends View {
 	
 	@Override
 	public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		//TODO:
+		//TODO: onMeasure
 		mParentRect.set(0, 0, MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.getSize(heightMeasureSpec));
-		if ( mImage != null ) {
+		if ( mImage != null  ) {
 			mDeadRect.bottom = mParentRect.height() - (mParentRect.height()/3);
 			mDeadRect.right = mDeadRect.bottom;
-			mImage = Bitmap.createScaledBitmap(mImage, mDeadRect.width(), mDeadRect.height(), true);
+			//mImage = Bitmap.createScaledBitmap(mImage, mDeadRect.width(), mDeadRect.height(), true);
 		}
 		this.setMeasuredDimension(mParentRect.width(), mParentRect.height());
 	}
@@ -233,6 +242,9 @@ public class TipsView extends View {
 	private int mDrawY = 0;
 	private int mDrawX = 0;
 	private Bitmap mImage = null;
+	private RectF mImageFrameRect = new RectF();
+	private Paint mImageFramePaint = new Paint();
+	
 	
 	public int getDrawableWidth() {
 		return mParentRect.width() - 15;
@@ -242,10 +254,27 @@ public class TipsView extends View {
 		return mParentRect.height() - 15;
 	}
 	
+	Paint mImagePaint = new Paint();
+	private boolean mHasImageFrame = false;
+
+	
+	
 	@Override
 	public void onDraw(Canvas c) {
 		if ( mTips.isEmpty() )
 			return;
+
+		if ( mImage != null ) {
+			mDeadRect.bottom = mParentRect.height() - (mParentRect.height()/3);
+			mDeadRect.right = mDeadRect.bottom;
+			c.drawBitmap(mImage, null, mDeadRect, mImagePaint);
+			if ( mHasImageFrame ) {
+				mImageFrameRect.set(mDeadRect);
+				mImageFrameRect.inset(1, 1);
+				c.drawRoundRect(mImageFrameRect, 12,12, mImageFramePaint);
+			}
+		}
+		
 		mDrawWidth = this.getDrawableWidth();
 		mDrawHeight = this.getDrawableHeight();
 		//int yy = mDrawHeight 
@@ -275,10 +304,7 @@ public class TipsView extends View {
 			mDrawX += tip.getWidth();
 			tip.onDraw(c);
 		}
-		if ( mImage != null ) {
-			Paint p = new Paint();
-			c.drawBitmap(mImage, mDeadRect.left, mDeadRect.top, p);
-		}
+		
 	}
 	
 	public Tip nextTip() {
@@ -307,4 +333,19 @@ public class TipsView extends View {
 	public static String[] defaultRed() {
 		return new String[]{"#ffffff","#cf0500","#ff3338","#ffffff"};
 	}
+	
+	public void setImageFrame(boolean val) {
+		this.mHasImageFrame = val;
+	}
+	
+   private Handler mHandler = new Handler();	
+	
+   public void repaint() {
+	    mHandler.post(new Runnable() {
+	      public void run() {
+	        invalidate();
+	      }
+	    });
+    }
+	
 }

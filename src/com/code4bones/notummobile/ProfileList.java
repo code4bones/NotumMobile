@@ -82,6 +82,7 @@ public class ProfileList {
 		ProfileEntry entry = new ProfileEntry();
 		mList.add(entry);
 		NetLog.Toast(mContext, "Loaded %d Profiles", mList.size());
+		db.close();
 		return mList.size();
 	}
 	

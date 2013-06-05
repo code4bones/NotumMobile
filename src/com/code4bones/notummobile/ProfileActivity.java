@@ -125,16 +125,13 @@ public class ProfileActivity extends Activity {
 			return;
 		Uri imageUri = data.getData();
 		imagePath = imageUri.toString();
-		try {
-			NetLog.v("Somethig selected %s",imagePath);
-			InputStream is = getContentResolver().openInputStream(imageUri);
-			Bitmap image = BitmapFactory.decodeStream(is);
-			Bitmap scaled = Bitmap.createScaledBitmap(image, 64, 64, true);
+		NetLog.v("Somethig selected %s",imagePath);
+		Bitmap scaled = Utils.decodeBitmap(this,imageUri,128,128);
+		if ( scaled != null ) {
 			profileIcon.setImageBitmap(Utils.getRoundedCornerBitmap(scaled));
-		} catch (FileNotFoundException e) {
-			NetLog.v("File Not Found");
-			e.printStackTrace();
-		}
+			scaled.recycle();
+		} else
+			NetLog.Toast(this, "Ошибка установки аватарки");
 	}
 	
 	

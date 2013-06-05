@@ -35,8 +35,8 @@ public class ProfileListAdapter extends ArrayAdapter<ProfileEntry> {
 		ProfileHolder(Context c,View row,ProfileEntry profile) {
 			view = row;
 			name = (TextView)row.findViewById(R.id.tvParamName);
-			FrameLayout fl = (FrameLayout)row.findViewById(R.id.layoutTipsView);
 			tipsView = new TipsView(c);
+			FrameLayout fl = (FrameLayout)view.findViewById(R.id.layoutTipsView);
 			fl.addView(tipsView, new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT));
 			tipsView.setFontSize(15);
 			
@@ -50,21 +50,23 @@ public class ProfileListAdapter extends ArrayAdapter<ProfileEntry> {
 		
 		public void update(ProfileEntry entry) {
 			name.setText(entry.profileName);
+
+			tipsView.reset();
 			
 			if ( entry.profileId == -1 ) {
-				tipsView.reset();
 				tipsView.setFontSize(20);
+				tipsView.setImageFrame(false);
 				tipsView.setImage(ProfileHolder.imgPlus);
 				TipsView.Tip tip = tipsView.addTip("Создайте новый профиль", 0);
 				tip.setBadgeColors(TipsView.defaultBlue());
 				tipsView.Adjust();
 				return;
 			}
+			tipsView.setImageFrame(true);
 			tipsView.setImage(entry.profileIcon);
 			tipsView.setFontSize(17);
 			
 			if ( entry.populateParams(ProfileList.getInstance().getDB()) > 0 ) {
-				tipsView.reset();
 				for ( ParamEntry param : entry.mParams ) {
 					int pr = param.isAlerted()?0:1;
 					TipsView.Tip tip = tipsView.addTip(param.name, pr);
@@ -75,14 +77,13 @@ public class ProfileListAdapter extends ArrayAdapter<ProfileEntry> {
 				}
 				tipsView.Adjust();
 			} else {
-				tipsView.reset();
 				tipsView.setFontSize(23);
 				TipsView.Tip tip = tipsView.addTip("Нет данных", 0);
 				tip.setBadgeColors(TipsView.defaultRed());
 				tipsView.Adjust();
 			}
-		}
-	}
+		} // update
+	} // HOLDER
 	
 	private Context mContext = null;
 	private ProfileEntry mEntry[] = null;
