@@ -64,7 +64,7 @@ public class ProfileListAdapter extends ArrayAdapter<ProfileEntry> {
 			}
 			tipsView.setImageFrame(true);
 			tipsView.setImage(entry.profileIcon);
-			tipsView.setFontSize(17);
+			tipsView.setFontSize(20);
 			
 			if ( entry.populateParams(ProfileList.getInstance().getDB()) > 0 ) {
 				for ( ParamEntry param : entry.mParams ) {

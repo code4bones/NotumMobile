@@ -1,5 +1,7 @@
 package com.code4bones.notummobile;
 
+// http://atlant-inform.dyndns.org/medservice/dev/desc.php
+
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -78,11 +80,11 @@ public class MainActivity extends Activity {
 	}
      
 	public void updateList() {
-		if ( mProfiles.populateProfiles() == 0 ) {
+		if ( mProfiles.populateProfiles() == 1 ) {
 			editProfile(null,ProfileActivity.NEW_PROFILE);
 		} else {
 			ProfileEntry mItems[] = mProfiles.toArray();
-			NetLog.v("List view items %d", mItems.length);
+			//NetLog.v("List view items %d", mItems.length);
 			ProfileListAdapter plAdapter = new ProfileListAdapter(this,mItems); 
 			lvProfiles.setAdapter(plAdapter);
 		}
@@ -119,7 +121,7 @@ public class MainActivity extends Activity {
 			this.editProfile(null, ProfileActivity.NEW_PROFILE);
 			break;
 		case R.id.mi_about:
-			Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.notum.pro/about/"));
+			Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://notum.pro/news/prilozhenie_dnevnik_vesa_notummobile"));
 			startActivity(browserIntent);
 			break;
 		}
@@ -137,7 +139,7 @@ public class MainActivity extends Activity {
 				saveProfile(data,true);
 			break;
 		case ProfileActivity.EDIT_PROFILE: // Edit Profile
-			NetLog.v("Profile updated");
+				//NetLog.v("Profile updated");
 				saveProfile(data,false);
 			break;
 		}
@@ -150,8 +152,6 @@ public class MainActivity extends Activity {
 			if ( showParams )
 				showProfileParams(entry);
 		}
-		else
-			NetLog.v("DELETE");
 		updateList();
 	}
 	

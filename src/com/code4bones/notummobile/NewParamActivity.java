@@ -85,9 +85,18 @@ public class NewParamActivity extends Activity implements OnDateSetListener {
 		ProfileList pl = ProfileList.getInstance();
 		mProfile = pl.getCurrentProfile();
 
+		ParamEntry te = null;
 		mTemplates.add(ParamEntry.makeTemplate(mProfile.profileId, "Рост", "См."));
-		mTemplates.add(ParamEntry.makeTemplate(mProfile.profileId, "Вес", "Кг."));
+		te = ParamEntry.makeTemplate(mProfile.profileId, "Вес", "Кг.");
+		te.incVal = 0.1;
+		mTemplates.add(te);
+		
+		te = ParamEntry.makeTemplate(mProfile.profileId, "Вес ребенка", "Кг.");
+		te.incVal = 0.01;
+		mTemplates.add(te);
+		
 		mTemplates.add(ParamEntry.makeTemplate(mProfile.profileId, "Обьем талии", "См."));
+		
 		
 		this.setTitle("Редактирование Параметра");
 		
@@ -143,6 +152,8 @@ public class NewParamActivity extends Activity implements OnDateSetListener {
 		
 	}
 	
+	final ArrayList<ParamEntry> mTemplates = new ArrayList<ParamEntry>();
+	
 	public void setAlphas(int alpha,View[] ets) {
 		for ( View e : ets ) {
 			Drawable d = e.getBackground();
@@ -161,7 +172,7 @@ public class NewParamActivity extends Activity implements OnDateSetListener {
 		this.tvStartDate.setTag(e.startDate);
 		this.tvEndDate.setTag(e.endDate);
 		this.updateParamEndDate(e);
-		this.updateParamStep(0);
+		this.updateParamStep(-1);
 		
 		this.etMeasure.setText(e.measure);
 		this.etIncVal.setText(String.valueOf(e.incVal));
@@ -266,7 +277,6 @@ public class NewParamActivity extends Activity implements OnDateSetListener {
 		
 	}
 
-	final ArrayList<ParamEntry> mTemplates = new ArrayList<ParamEntry>();
 	
 	public void selectTemplate() {
        

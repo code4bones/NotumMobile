@@ -301,7 +301,7 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 
 		mChart.reset();
 		for ( HistEntry e : entry.mList ) {
-			BarChartView.ChartItem item = mChart.addItem((float)e.value);
+			BarChartView.ChartItem item = mChart.addItem((float)e.value,(float)e.changed.getDate());
 			item.obj = e;
 		}
 		mChart.SelectItem(null);

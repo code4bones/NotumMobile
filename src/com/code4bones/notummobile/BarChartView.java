@@ -32,6 +32,7 @@ public class BarChartView extends View implements View.OnTouchListener {
 	public class ChartItem {
 		
 		private float mValue = 0;
+		private float   mXValye = Float.MIN_VALUE;
 		private float mLoginValue = 0;
 		//private Rect   mRect  = new Rect();
 		private RectF  mRectf = new RectF();
@@ -39,12 +40,22 @@ public class BarChartView extends View implements View.OnTouchListener {
 		private boolean mSelected = false;
 		public  Object  obj;
 		public  Paint   textPaint = new Paint();
+		public  Paint	xTextPaint = new Paint();
 		
 		public ChartItem(float dblVal) {
+			this(dblVal,Float.MIN_VALUE);
+		}
+		
+		public ChartItem(float dblVal,float xValue) {
 			this.mValue = dblVal;
+			this.mXValye = xValue;
 			textPaint.setAntiAlias(true);
 			textPaint.setTypeface(Typeface.DEFAULT_BOLD);
-			textPaint.setTextSize(20);
+			textPaint.setTextSize(22);
+			xTextPaint.setAntiAlias(true);
+			xTextPaint.setTextSize(19);
+			xTextPaint.setTypeface(Typeface.DEFAULT_BOLD);
+			xTextPaint.setColor(Color.RED);
 		}
 		
 		public void drawItem(Canvas c) {
@@ -83,6 +94,14 @@ public class BarChartView extends View implements View.OnTouchListener {
 			c.rotate(-90,x,y);
 			c.drawText(msg, x, y, textPaint);
 			c.restore();
+			if ( this.mXValye != Float.MIN_VALUE ) {
+				nf.setMinimumFractionDigits(0);
+				nf.setMaximumFractionDigits(0);
+				msg = nf.format(this.mXValye);
+				float tw = xTextPaint.measureText(msg) / 2;
+				c.drawText(nf.format(this.mXValye), mRectf.centerX()-tw, mRectf.bottom, xTextPaint);
+			}
+
 		}
 		
 		public String toString() {
@@ -264,8 +283,8 @@ public class BarChartView extends View implements View.OnTouchListener {
 		mRangeValue += (mRangeValue)/1.5;
 	}
 	
-	public ChartItem addItem(float dblValue) {
-		ChartItem item = new ChartItem(dblValue); 
+	public ChartItem addItem(float dblValue,float xValue) {
+		ChartItem item = new ChartItem(dblValue,xValue); 
 		mItems.add(item);
 		Adjust();
 		return item;

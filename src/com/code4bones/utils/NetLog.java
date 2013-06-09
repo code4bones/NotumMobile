@@ -47,11 +47,12 @@ public class NetLog {
 	
 	public PrintStream Init(String tag,String sLogFileName,boolean removeIfExists) {
 		try {
+			
 			if ( this.isInitialized ) {
 				Log.w(tag,"NetLog is already initialized");
 				return ps;
 			}
-			
+			/*
 			TAG = tag;
 			sLogFile = Environment.getExternalStorageDirectory() + "/" + sLogFileName;
 			File file = new File(sLogFile);
@@ -61,7 +62,7 @@ public class NetLog {
 				NetLog.w("********* LOGGER STARTED ********* \n");
 			} else
 				NetLog.w("********* LOGGER ACQUIRED ********* \n");
-
+			 */
 		} catch ( Exception e ) {
 			Log.v(TAG,"NetLog Error " + e.toString());
 			return null;
@@ -69,6 +70,7 @@ public class NetLog {
 		this.isInitialized = true;
 		return ps;
 	}
+
 	
 	public static String getTimeStamp(String dateFormat) {
         Date currentTime = new Date();
@@ -77,6 +79,7 @@ public class NetLog {
 	}
 
 	public void writeToFile(String severety,String fmt,Object ... args) {
+		/*
 		if ( ps == null ) 
 			return;
 		
@@ -86,8 +89,10 @@ public class NetLog {
 			ps.printf(fmt,args);
 			//msg = msg.replace("\r", "").replace("\n", ""); 
 			ps.printf("\r\n");
-		}
+		}*/
+		
 	}
+	
 	
 	public String getTag() {
 		return TAG;
