@@ -3,9 +3,12 @@ package com.code4bones.notummobile;
 // http://atlant-inform.dyndns.org/medservice/dev/desc.php
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,10 +43,14 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		AppConfig appCfg = new AppConfig(this);
+		
 		setContentView(R.layout.activity_main);
 		
 		mProfiles = ProfileList.getInstance(this);
 		NetLog.v("We are started");
+		
 		
 		lvProfiles = (ListView)this.findViewById(R.id.mainListView);
 
@@ -76,7 +83,27 @@ public class MainActivity extends Activity {
 		
 		});
 		
-		updateList();
+		if ( appCfg.isFirstRun() ) {
+			NetLog.v("FIRST RUN!");
+			appCfg.generateMasterPassword();
+			NetLog.MsgBox(this, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					updateList();
+				}
+			},"Первый запуск/Обновление", 
+			  "ЗАПИШИТЕ МАСТЕР-ПАРОЛЬ:%s\nВы можете защитить Ваши данные установив свой пароль в \"Меню->Настройки\"",appCfg.getPassword(AppConfig.PASSWD_MASTER));
+		} else if ( appCfg.needPassword() ) {
+			appCfg.showDialog(new Handler() {
+				public void handleMessage(Message msg) {
+					if ( msg.what == R.id.btnPasswordCancel )
+						finish();
+					else
+						updateList();
+				}
+			}); 
+			} else
+				updateList();
 	}
      
 	public void updateList() {
@@ -121,8 +148,13 @@ public class MainActivity extends Activity {
 			this.editProfile(null, ProfileActivity.NEW_PROFILE);
 			break;
 		case R.id.mi_about:
-			Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://notum.pro/news/prilozhenie_dnevnik_vesa_notummobile"));
+			Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://lk.notum.pro/category/13"));
 			startActivity(browserIntent);
+			break;
+		case R.id.mi_settings:
+			Intent set = new Intent(this,SettingsActivity.class);
+			this.startActivity(set);
+			//this.startActivityForResult(set, ProfileActivity.SETTINGS);
 			break;
 		}
 		return true;
@@ -141,6 +173,9 @@ public class MainActivity extends Activity {
 		case ProfileActivity.EDIT_PROFILE: // Edit Profile
 				//NetLog.v("Profile updated");
 				saveProfile(data,false);
+			break;
+		case ProfileActivity.SETTINGS:
+			NetLog.v("Settings done");
 			break;
 		}
 	}

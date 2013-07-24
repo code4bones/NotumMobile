@@ -1,0 +1,81 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".SettingsActivity" >
+
+    <CheckBox
+        android:id="@+id/cbUsePassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:text="Использовать пароль" />
+
+  
+    <Button
+        android:id="@id/bnSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/tvMasterPassword"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/green_button"
+        android:text="Сохранить" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/cbUsePassword"
+        android:layout_below="@+id/cbUsePassword"
+        android:layout_marginTop="20dp"
+        android:text="Введите пароль"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <EditText
+        android:id="@+id/etSettingsPassword1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView1"
+        android:layout_below="@+id/textView1"
+        android:ems="10"
+        android:inputType="textPassword" >
+
+        <requestFocus />
+    </EditText>
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/etSettingsPassword1"
+        android:layout_below="@+id/etSettingsPassword1"
+        android:layout_marginTop="16dp"
+        android:text="Подтвердите пароль"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <EditText
+        android:id="@+id/etSettingsPassword2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView2"
+        android:layout_below="@+id/textView2"
+        android:ems="10"
+        android:inputType="textPassword" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/etSettingsPassword2"
+        android:layout_below="@+id/etSettingsPassword2"
+        android:text="АККУРАТНО ЗАПИШИТЕ ЭТОТ ПАРОЛЬ, В СЛУЧАЕ УТЕРИ, ВОСПОЛЬЗУЙТЕСЬ МАСТЕР ПАРОЛЕМ, КОТОРЫЙ ВЫ ЗАПИСАЛИ ПРИ ПЕРВОМ ЗАПУСКЕ ПРОГРАММЫ"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#ff0000" />
+  
+</RelativeLayout>

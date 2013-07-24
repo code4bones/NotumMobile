@@ -29,6 +29,8 @@ public class ProfileActivity extends Activity {
 	public static final int SELECT_PHOTO  = 10;
 	public static final int EDIT_PROFILE = 1;
 	public static final int NEW_PROFILE = 2;
+	public static final int SETTINGS = 3;
+	
 	
 	public EditText profileName;
 	public ImageButton profileIcon;

@@ -238,8 +238,8 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 	public void updateProgress(ParamEntry entry,HistEntry he) {
 		double hv  = he==null?entry.mActiveHist.value:he.value;
 		boolean isChanged = he==null?entry.mActiveHist.isValueChanged():false;
-		Button bn = (Button)this.findViewById(R.id.ibValueApply);
-		bn.setEnabled(isChanged || entry.mActiveHist.isDateChanged());
+		//Button bn = (Button)this.findViewById(R.id.ibValueApply);
+		//bn.setEnabled(isChanged || entry.mActiveHist.isDateChanged());
 		if ( isChanged ) {
 			this.mTvCurrentValue.setTextColor(Color.RED);
 			//this.mTvCurrentValue.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.tick, 0);
