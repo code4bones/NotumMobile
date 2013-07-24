@@ -77,7 +77,7 @@ public class AppConfig {
 		final AlertDialog.Builder dlg = new AlertDialog.Builder(mContext);
 		dlg.setView(view);
 		dlg.setCancelable(false);
-		dlg.setTitle("Введите пароль");
+		//dlg.setTitle("Введите пароль");
 		
 		
 		final EditText tvPassword = (EditText)view.findViewById(R.id.etPasswordValue);
@@ -92,13 +92,13 @@ public class AppConfig {
 					passDlg.cancel();
 			} else { // check
 					String passwd = tvPassword.getText().toString();
-					int res = validatePassword(PASSWD_MASTER,passwd) + 
-						      validatePassword(PASSWD_USER,passwd);
+					int res = validatePassword(PASSWD_USER,passwd);// + 
+						      //validatePassword(PASSWD_USER,passwd);
 					if ( res > 0 ) {
 						handler.sendEmptyMessage(v.getId());
 						passDlg.cancel();
 					} else { // Wrong passwd
-						
+						tvPassword.setText("");
 					}
 				}
 			}

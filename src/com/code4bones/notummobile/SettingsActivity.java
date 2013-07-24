@@ -18,6 +18,7 @@ public class SettingsActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_settings);
+		this.setTitle("Установка Пароля");
 		
 		final CheckBox checkBox = (CheckBox)this.findViewById(R.id.cbUsePassword);
 		final EditText editPassword1 = (EditText)this.findViewById(R.id.etSettingsPassword1);

@@ -14,18 +14,14 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:text="Использовать пароль" />
-
-  
-    <Button
-        android:id="@id/bnSave"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignRight="@+id/tvMasterPassword"
-        android:layout_marginBottom="24dp"
-        android:background="@drawable/green_button"
-        android:text="Сохранить" />
+        android:text="Использовать пароль" 
+        android:shadowColor="#FF0000"
+        android:shadowDx="4"
+        android:shadowRadius="5"
+        android:textColor="#FFFA00"
+        android:textStyle="bold"        
+        
+        />
 
     <TextView
         android:id="@+id/textView1"
@@ -34,6 +30,12 @@
         android:layout_alignLeft="@+id/cbUsePassword"
         android:layout_below="@+id/cbUsePassword"
         android:layout_marginTop="20dp"
+        android:shadowColor="#FF0000"
+        android:shadowDx="4"
+        android:shadowRadius="5"
+        android:textColor="#FFFA00"
+        android:textStyle="bold"        
+
         android:text="Введите пароль"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -43,6 +45,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/textView1"
         android:layout_below="@+id/textView1"
+        android:background="@drawable/edit_text_shape"
         android:ems="10"
         android:inputType="textPassword" >
 
@@ -56,6 +59,12 @@
         android:layout_alignLeft="@+id/etSettingsPassword1"
         android:layout_below="@+id/etSettingsPassword1"
         android:layout_marginTop="16dp"
+        android:shadowColor="#FF0000"
+        android:shadowDx="4"
+        android:shadowRadius="5"
+        android:textColor="#FFFA00"
+        android:textStyle="bold"        
+
         android:text="Подтвердите пароль"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -65,8 +74,19 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/textView2"
         android:layout_below="@+id/textView2"
+        android:background="@drawable/edit_text_shape"
         android:ems="10"
         android:inputType="textPassword" />
+
+    <Button
+        android:id="@id/bnSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/textView3"
+        android:layout_below="@+id/textView3"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/green_button"
+        android:text="Сохранить" />
 
     <TextView
         android:id="@+id/textView3"
@@ -74,8 +94,13 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/etSettingsPassword2"
         android:layout_below="@+id/etSettingsPassword2"
-        android:text="АККУРАТНО ЗАПИШИТЕ ЭТОТ ПАРОЛЬ, В СЛУЧАЕ УТЕРИ, ВОСПОЛЬЗУЙТЕСЬ МАСТЕР ПАРОЛЕМ, КОТОРЫЙ ВЫ ЗАПИСАЛИ ПРИ ПЕРВОМ ЗАПУСКЕ ПРОГРАММЫ"
+        android:layout_marginTop="29dp"
+        android:shadowColor="#FF0000"
+        android:shadowDx="4"
+        android:shadowRadius="5"
+        android:text="АККУРАТНО ЗАПИШИТЕ ЭТОТ ПАРОЛЬ, В СЛУЧАЕ УТЕРИ, ВОССТАНОВЛЕНИЕ ДАННЫХ БУДЕТ НЕ ВОЗМОЖНО"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="#ff0000" />
+        android:textColor="#ff0000"
+        android:textStyle="bold" />
   
 </RelativeLayout>

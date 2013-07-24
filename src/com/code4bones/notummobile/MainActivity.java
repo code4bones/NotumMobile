@@ -83,8 +83,8 @@ public class MainActivity extends Activity {
 		
 		});
 		
+		/*
 		if ( appCfg.isFirstRun() ) {
-			NetLog.v("FIRST RUN!");
 			appCfg.generateMasterPassword();
 			NetLog.MsgBox(this, new DialogInterface.OnClickListener() {
 				@Override
@@ -93,7 +93,9 @@ public class MainActivity extends Activity {
 				}
 			},"Первый запуск/Обновление", 
 			  "ЗАПИШИТЕ МАСТЕР-ПАРОЛЬ:%s\nВы можете защитить Ваши данные установив свой пароль в \"Меню->Настройки\"",appCfg.getPassword(AppConfig.PASSWD_MASTER));
-		} else if ( appCfg.needPassword() ) {
+		} else
+		*/
+		if ( appCfg.needPassword() ) {
 			appCfg.showDialog(new Handler() {
 				public void handleMessage(Message msg) {
 					if ( msg.what == R.id.btnPasswordCancel )
