@@ -25,8 +25,13 @@ public class WeekStatsView extends View implements View.OnTouchListener {
 
 	//XXX Styler
 	public interface WeekDayStyler {
-		public void StyleTheDay(DayCell day);
+		public void StyleTheDay(DayCell prevDay,DayCell day);
 	};
+	
+	public interface WeekDayClicked {
+		public void onWeekDayClicked(WeekStatsView view,DayCell cell);
+	}
+	
 	
 	public class DayCell extends Object {
 		
@@ -39,9 +44,9 @@ public class WeekStatsView extends View implements View.OnTouchListener {
 		public Paint mBgValuePaint = new Paint();
 		public Paint mFrameInPaint = new Paint();
 		public Paint mFrameOutPaint = new Paint();
-		
-		public double mChangeValue;
-		public double mValue;
+		public Object mObject;
+		public String mChangeValue;
+		public String mValue;
 		public boolean mShowSign = true;
 		
 		public NumberFormat mValueFormat = NumberFormat.getInstance();
@@ -78,15 +83,18 @@ public class WeekStatsView extends View implements View.OnTouchListener {
 		
 			//draw delta
 			RectF rcDelta = new RectF(mRect.left+15,mRect.top+2,mRect.right-2,mRect.top+20);
-			DrawInfo(c,(mChangeValue>0?"+":"")+mValueFormat.format(mChangeValue),rcDelta,mBgChangePaint,mTextChangePaint);
+			DrawInfo(c,mChangeValue,rcDelta,mBgChangePaint,mTextChangePaint);
 			
 			// draw value
 			RectF rcValue = new RectF(mRect.left+2,mRect.top+21,mRect.right-2,mRect.bottom-2);
-			DrawInfo(c,mValueFormat.format(mValue),rcValue,null,mTextValuePaint);
+			DrawInfo(c,mValue,rcValue,null,mTextValuePaint);
 			
 		}
 		
 		public void DrawInfo(Canvas c,String str,RectF rcBounds,Paint bg,Paint fg) {
+
+			if ( str == null )
+				return;
 
 			Rect  rc = new Rect();
 			fg.getTextBounds(str, 0, str.length(), rc);
@@ -115,7 +123,7 @@ public class WeekStatsView extends View implements View.OnTouchListener {
 	public WeekStatsView(Context context,WeekDayStyler styler) {
 		super(context);
 		mStyler = styler;
-		//this.setOnTouchListener(this);
+		this.setOnTouchListener(this);
 	}	
 	
 	public WeekStatsView(Context context, AttributeSet attrs) {
@@ -133,6 +141,7 @@ public class WeekStatsView extends View implements View.OnTouchListener {
 	}
 	
 	private WeekDayStyler mStyler = null;
+	private WeekDayClicked mOnWeekDayClicked = null;
 	final private Paint mDayPaint = new Paint();
 	final private Paint mTitlePaint = new Paint();
 	final private Handler mHandler = new Handler(); 
@@ -170,11 +179,13 @@ public class WeekStatsView extends View implements View.OnTouchListener {
 			cal.add(Calendar.DAY_OF_WEEK, 1);
 		}
 		// Cells
+		DayCell prevDay = null;
 		for ( DayCell cell : mCells ) {
 			if ( mStyler != null )
-				mStyler.StyleTheDay(cell);
+				mStyler.StyleTheDay(prevDay,cell);
 			cell.Draw(c);
-			NetLog.v("Draw %s",cell);
+			prevDay = cell;
+			//NetLog.v("Draw %s",cell);
 		}
 	}	
 
@@ -211,10 +222,38 @@ public class WeekStatsView extends View implements View.OnTouchListener {
 		});
 	}
 
+	public DayCell findItem(float x,float y) {
+		for ( DayCell cell: mCells ) {
+			if ( cell.mRect.contains(x, y)) {
+				return cell;
+			}
+		}
+		return null;
+	}
+	
+	private float mTouchDownX = 0;
+	private float mTouchUpX = 0;
+	
+	public void setOnWeekDayClicked(WeekDayClicked handler) {
+		this.mOnWeekDayClicked = handler;
+	}
+	
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
-		// TODO Auto-generated method stub
-		return false;
+		float x = event.getX();
+		float y = event.getY();
+		
+		if ( event.getAction() == MotionEvent.ACTION_DOWN ) {
+			mTouchDownX = x;
+		} else
+		if ( event.getAction() == MotionEvent.ACTION_UP ) {
+			mTouchUpX = x;
+			if ( mTouchDownX == mTouchUpX ) {
+				if ( this.mOnWeekDayClicked != null )
+					this.mOnWeekDayClicked.onWeekDayClicked(this,findItem(x,y));
+			}
+		}
+		return true;
 	}
 
 }

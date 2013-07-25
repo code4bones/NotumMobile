@@ -94,11 +94,11 @@ public class HistListAdapter extends ArrayAdapter<HistEntry> {
 
 			boolean isRed = false;
 			if ( pe.hasTargetVal() ) {
-				int val = getHistValue(pe,e);
-				int pval = getHistValue(pe,p);
+				double val = pe.getHistValue(e);
+				double pval = pe.getHistValue(p);
 				isRed = pval > val; 
 				tvEnd.setText(String.valueOf(pe.targetVal));
-				pbProg.setProgress(val);
+				pbProg.setProgress((int)val);
 			} else {
 				tvEnd.setText("- - -");
 				pbProg.setProgress(0);

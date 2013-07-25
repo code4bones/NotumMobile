@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
@@ -318,6 +319,36 @@ public class ParamEntry extends Object implements Parcelable {
 		int days = Days.daysBetween(last.toDateMidnight(), now.toDateMidnight()).getDays();
 		//NetLog.v("%s (%s) : ALERTED %d",name,ProfileList.dateStr(changed),days);
 		return this.stepVal > 0 && days >= this.stepVal;
+	}
+	
+	public double getHistValue(HistEntry e) {
+		double min = this.startVal; // 2
+		double max = this.targetVal - min; // 10
+		double cur  = e.value - min; // 2
+		double val = (100 / (max / cur));
+		return val;
+	}
+
+	
+	public HistEntry getBeforeEntry(HistEntry e) {
+		int idx = mList.indexOf(e);
+		if ( idx >= 1 ) {
+			idx--;
+			return mList.get(idx);
+		}
+		return null;
+	}
+	
+	public HistEntry getOnDate(Calendar cal) {
+		Date nd = cal.getTime();
+		for ( HistEntry h : this.mList ) {
+			Date hd = h.changed;
+			if ( nd.getDate() == hd.getDate() &&
+				 nd.getMonth() == hd.getMonth() &&
+				 nd.getYear() == hd.getYear() )
+				return h;
+		}
+		return null;
 	}
 	
 	public HistEntry exists(HistEntry n) {

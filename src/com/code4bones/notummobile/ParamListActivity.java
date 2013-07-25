@@ -10,6 +10,7 @@ import java.util.Random;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 
+import com.code4bones.notummobile.WeekStatsView.DayCell;
 import com.code4bones.utils.MessageBox;
 import com.code4bones.utils.NetLog;
 import com.code4bones.utils.Utils;
@@ -54,7 +55,8 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 	TextView mTvParamDate;
 	TextView mTvCurrentValue;
 	RibbonView mParamList;
-	BarChartView mChart = null;
+	//BarChartView mChart = null;
+	WeekStatsView mWeekStatsView = null;
 	final NumberFormat mNfmt = NumberFormat.getInstance();
 	
 	
@@ -94,10 +96,15 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		});
 
 		FrameLayout item = (FrameLayout)this.findViewById(R.id.chartFrame);
-	    mChart = new BarChartView(this);
+		mWeekStatsView = new WeekStatsView(this,mWeekDayStyler);
+		mWeekStatsView.setOnWeekDayClicked(mOnWeekDayClicked);
+		item.addView(mWeekStatsView,new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT));
+		/*
+		mChart = new BarChartView(this);
 		item.addView(mChart,new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT));
 		mChart.setBackgroundResource(R.drawable.trans_bgr);
 		mChart.setTouchHandler(mChartHandler);
+		*/
 		setParamValueListener(new int[] {R.id.ibShowDetail,R.id.ibValueDec,R.id.ibValueInc,R.id.ibValueApply,R.id.ibSelectDate});
 		this.updateParamList();
 		
@@ -112,6 +119,81 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		
 	} // onCreate
 
+	//XXX WEEK STYLE
+	private WeekStatsView.WeekDayStyler mWeekDayStyler = new WeekStatsView.WeekDayStyler() {
+		@Override
+		public void StyleTheDay(DayCell prevDay,DayCell day) {
+			ParamEntry param = mProfile.currentParam();
+			HistEntry entry = param.getOnDate(day.mCal);
+			if ( entry == null ) {
+				day.mValue = null;
+				day.mChangeValue = null;
+				if ( prevDay != null )
+					day.mObject = prevDay.mObject;
+				if ( day.mObject == null )
+					day.mPaint.setColor(Color.parseColor("#200000ff"));
+				else {
+					if(day.mCal.before(Calendar.getInstance())) {
+						day.mPaint.setColor(Color.parseColor("#ccff0000"));
+						day.mValue = "Забыли!";
+						day.mTextValuePaint.setColor(Color.YELLOW);
+					} else
+						day.mPaint.setColor(Color.parseColor("#200000ff"));
+				}
+				return;
+			}
+			day.mObject = entry;
+			
+			HistEntry prev = null;
+			if ( prevDay != null ) {
+				prev = (HistEntry)prevDay.mObject;
+			}
+			
+			prev = (HistEntry)(prevDay!=null?prevDay.mObject:entry);
+			if ( prev == null )
+				prev = entry;
+			double diff = entry.value - prev.value;
+			boolean isRed = false;
+			day.mChangeValue = (diff>0?"+":"")+day.mValueFormat.format(diff);
+			if ( param.hasTargetVal() ) {
+				double val = param.getHistValue(entry);
+				double pval = param.getHistValue(prev);
+				isRed = pval > val; 
+			} else {
+				isRed = diff < 0;
+			}
+			
+			if ( isRed ) {
+				day.mBgChangePaint.setColor(Color.RED);
+				day.mTextChangePaint.setColor(Color.YELLOW);
+			} else {
+				day.mBgChangePaint.setColor(Color.GREEN);
+				day.mTextChangePaint.setColor(Color.BLUE);
+			}
+			
+			day.mPaint.setColor(Color.parseColor("#800000ff"));
+			day.mTextValuePaint.setColor(Color.YELLOW);
+			day.mValue = day.mValueFormat.format(entry.value);
+		}
+	};
+	
+	private WeekStatsView.WeekDayClicked mOnWeekDayClicked = new WeekStatsView.WeekDayClicked() {
+		@Override
+		public void onWeekDayClicked(WeekStatsView view, DayCell cell) {
+			HistEntry e = (HistEntry)cell.mObject;
+			mProfile.currentParam().resetDate(cell.mCal.getTime());
+
+			if ( e == null ) {
+				mTvParamDate.setText(ProfileList.dateStr(cell.mCal.getTime()));
+				updateProgress(mProfile.currentParam(),null);
+				return;
+			}
+			mTvParamDate.setText(ProfileList.dateStr(cell.mCal.getTime()));
+			updateProgress(mProfile.currentParam(),e);
+			
+		}
+	};
+	
 	private View.OnClickListener mOnValueClicked = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
@@ -298,13 +380,16 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		String sTitle = String.format("%s / %s", this.mProfile.profileName,entry.name);
 		this.mTvParamName.setText(sTitle);
 		this.mTvParamDate.setText(ProfileList.dateStr(entry.changed));
-
+		
+		mWeekStatsView.repaint();
+		/*
 		mChart.reset();
 		for ( HistEntry e : entry.mList ) {
 			BarChartView.ChartItem item = mChart.addItem((float)e.value,(float)e.changed.getDate());
 			item.obj = e;
 		}
 		mChart.SelectItem(null);
+		*/
 		updateProgress(entry,null);
 	}
 	
