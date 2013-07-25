@@ -171,6 +171,7 @@ public class WeekStatsView extends View implements View.OnTouchListener {
 				mTitlePaint.setColor(Color.YELLOW);
 			else
 				mTitlePaint.setColor(Color.GREEN);
+			
 			String name = cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.getDefault());
 			float dy = mDayPaint.getTextSize();// .getFontSpacing();
 			c.drawRect(x+mCellSpace, 0, x+mCellWidth, mMarginTop, mTitlePaint);
