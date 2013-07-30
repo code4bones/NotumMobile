@@ -369,7 +369,7 @@ public class ParamEntry extends Object implements Parcelable {
 		if ( curs.moveToFirst() ) {
 			this.changed = new Date(curs.getLong(0));
 		}
-		if ( curs != null && !curs.isClosed())
+		if ( curs != null )
 			curs.close();
 	}
 	
@@ -386,7 +386,7 @@ public class ParamEntry extends Object implements Parcelable {
 				mList.add(entry);
 			} while ( curs.moveToNext() );
 		}
-		if ( curs != null && !curs.isClosed())
+		if ( curs != null )
 			curs.close();
 		
 		

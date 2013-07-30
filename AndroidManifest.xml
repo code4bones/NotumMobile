@@ -49,6 +49,10 @@
             android:name="com.code4bones.notummobile.SettingsActivity"
             android:label="@string/title_activity_settings" >
         </activity>
+        <activity
+            android:name="com.code4bones.notummobile.GraphActivity"
+            android:label="@string/title_activity_graph" >
+        </activity>
     </application>
 
 </manifest>

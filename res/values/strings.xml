@@ -13,5 +13,6 @@
     <string name="title_activity_param_list">ParamListActivity</string>
     <string name="title_activity_hist">HistActivity</string>
     <string name="title_activity_settings">SettingsActivity</string>
+    <string name="title_activity_graph">GraphActivity</string>
 
 </resources>

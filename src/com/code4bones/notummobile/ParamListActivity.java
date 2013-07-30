@@ -197,7 +197,10 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 	private View.OnClickListener mOnValueClicked = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			showInputValueDialog();
+			
+			Intent i = new Intent(ParamListActivity.this,GraphActivity.class);
+			startActivity(i);
+			//showInputValueDialog();
 		}
 	};
 	
