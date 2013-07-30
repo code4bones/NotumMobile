@@ -169,6 +169,7 @@ public class SplineGraphView extends View implements View.OnTouchListener {
 	public void setLimitsValue(float start,float target) {
 		mStartValue = start;
 		mTargetValue = target;
+		NetLog.v("Limits %f -> %f",mStartValue,mTargetValue);
 	}
 	
 	
@@ -185,11 +186,17 @@ public class SplineGraphView extends View implements View.OnTouchListener {
 			mMax[id].x = Math.max(mMax[id].x,c.x);
 		}
 		
+		if ( mStartValue < mMin[id].y ) {
+			mMin[id].y = mStartValue;
+		}
 		
-		if ( mTargetValue <= mMin[id].y )
-			mMin[id].y = mTargetValue-((1+mTargetValue * 0.005f));
-		else if ( mTargetValue >= mMax[id].y )
-			mMax[id].y = mTargetValue+((1+mTargetValue * 0.005f));
+		if ( mTargetValue != Float.MAX_VALUE  ) {
+			if ( mTargetValue <= mMin[id].y )
+				mMin[id].y = mTargetValue-((1+mTargetValue * 0.005f));
+			else if ( mTargetValue >= mMax[id].y )
+				mMax[id].y = mTargetValue+((1+mTargetValue * 0.005f));
+		}
+		
 		
 		mMin[id].y -=  (1+mMin[id].y * 0.005f);
 		mMax[id].y +=  (1+mMax[id].y * 0.005f);
@@ -355,22 +362,22 @@ public class SplineGraphView extends View implements View.OnTouchListener {
 		}
 		
 		
+		Coord tr;
 		// Target Value
-		Coord tr = translateXY(LN,1,mTargetValue);
-		this.mPntLimits.setColor(this.mClrLimitsTargetBg);
-		c.drawLine(mRect.left+40, tr.y, mRect.right, tr.y, this.mPntLimits);
-		this.mPntLimits.setColor(this.mClrLimitsTargetText);
-		mRcIcon.set(mRect.left+40, tr.y-16, mRect.left+56, tr.y);
-		c.drawBitmap(this.mBmpTarget,null,mRcIcon, this.mPntLimits);
-		c.drawText(String.format("%.2f",mTargetValue), mRcIcon.right+2, tr.y-2, this.mPntLimits);
+		if ( mTargetValue != Float.MAX_VALUE ) {
+			tr = translateXY(LN,1,mTargetValue);
+			this.mPntLimits.setColor(this.mClrLimitsTargetBg);
+			c.drawLine(mRect.left+40, tr.y, mRect.right, tr.y, this.mPntLimits);
+			this.mPntLimits.setColor(this.mClrLimitsTargetText);
+			mRcIcon.set(mRect.left+40, tr.y-16, mRect.left+56, tr.y);
+			c.drawBitmap(this.mBmpTarget,null,mRcIcon, this.mPntLimits);
+			c.drawText(String.format("%.2f",mTargetValue), mRcIcon.right+2, tr.y-2, this.mPntLimits);
+		}
 		
 		// Start Value
 		tr = translateXY(LN,1,mStartValue);
-		//this.mPntLimits.setShadowLayer(4, 4, 4, Color.GREEN);
-		//this.mPntLimits.setStrokeWidth(3);
 		this.mPntLimits.setColor(this.mClrLimitsStartBg);
 		c.drawLine(mRect.left+40, tr.y, mRect.right, tr.y, this.mPntLimits);
-		//this.mPntLimits.clearShadowLayer();
 		this.mPntLimits.setColor(this.mClrLimitsStartText);
 		mRcIcon.set(mRect.left+40, tr.y-16, mRect.left+56, tr.y);
 		c.drawBitmap(this.mBmpStart,null,mRcIcon, this.mPntLimits);

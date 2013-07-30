@@ -26,7 +26,7 @@ public class GraphActivity extends Activity implements SplineGraphView.SplineGra
 		
 		mGraph = new SplineGraphView(this);
 		mGraph.setAdapter(this);
-		mGraph.setLimitsValue(11, 16);
+		mGraph.setLimitsValue((float)mParamEntry.startVal,(float)(mParamEntry.targetVal == Double.MIN_VALUE?Float.MAX_VALUE:mParamEntry.targetVal));
 		
 		initGraph();
 		FrameLayout ll = (FrameLayout)this.findViewById(R.id.graphLayout);

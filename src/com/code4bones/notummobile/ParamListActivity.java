@@ -500,15 +500,13 @@ public class ParamListActivity extends Activity implements OnDateSetListener,Dir
 
 	@Override
 	public void onSwipeLeft() {
-		Intent i = new Intent(ParamListActivity.this,GraphActivity.class);
-		startActivity(i);
+		this.showGraph();
 	}
 
 
 	@Override
 	public void onSwipeRight() {
-		Intent i = new Intent(ParamListActivity.this,GraphActivity.class);
-		startActivity(i);
+		this.showGraph();
 	}
 
 
@@ -525,6 +523,14 @@ public class ParamListActivity extends Activity implements OnDateSetListener,Dir
 		
 	}
 	
+	public void showGraph() {
+		if ( mProfile.currentParam().mList.size() < 3  )
+			NetLog.MsgBox(this, "Внимание", "Для просмотра графика, нужно как минимум 3-и записи...");
+		else {
+			Intent i = new Intent(ParamListActivity.this,GraphActivity.class);
+			startActivity(i);
+		}
+	}
 	
 	
 }
