@@ -46,7 +46,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public class ParamListActivity extends Activity implements OnDateSetListener {
+public class ParamListActivity extends Activity implements OnDateSetListener,DirectionalGestureListener {
 
 	public final ProfileList mProfiles = ProfileList.getInstance();
 	public ProfileEntry mProfile;
@@ -98,6 +98,7 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		FrameLayout item = (FrameLayout)this.findViewById(R.id.chartFrame);
 		mWeekStatsView = new WeekStatsView(this,mWeekDayStyler);
 		mWeekStatsView.setOnWeekDayClicked(mOnWeekDayClicked);
+		mWeekStatsView.setSwipeHandler(this);
 		item.addView(mWeekStatsView,new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT));
 		/*
 		mChart = new BarChartView(this);
@@ -198,9 +199,7 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		@Override
 		public void onClick(View v) {
 			
-			Intent i = new Intent(ParamListActivity.this,GraphActivity.class);
-			startActivity(i);
-			//showInputValueDialog();
+			showInputValueDialog();
 		}
 	};
 	
@@ -496,6 +495,34 @@ public class ParamListActivity extends Activity implements OnDateSetListener {
 		else
 			this.mTvParamDate.setTextColor(Color.BLACK);
 		 */
+	}
+
+
+	@Override
+	public void onSwipeLeft() {
+		Intent i = new Intent(ParamListActivity.this,GraphActivity.class);
+		startActivity(i);
+	}
+
+
+	@Override
+	public void onSwipeRight() {
+		Intent i = new Intent(ParamListActivity.this,GraphActivity.class);
+		startActivity(i);
+	}
+
+
+	@Override
+	public void onSwipeTop() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void onSwipeBottom() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	

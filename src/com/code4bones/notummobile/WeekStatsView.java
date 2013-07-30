@@ -18,6 +18,7 @@ import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -281,6 +282,11 @@ public class WeekStatsView extends View implements View.OnTouchListener {
 	
 	private float mTouchDownX = 0;
 	private float mTouchUpX = 0;
+	public GestureDetector mGestureDetector = null;
+	
+	public void setSwipeHandler(DirectionalGestureListener l) {
+		mGestureDetector = new GestureDetector(new GestureListener(l));
+	}
 	
 	public void setOnWeekDayClicked(WeekDayClicked handler) {
 		this.mOnWeekDayClicked = handler;
@@ -288,6 +294,8 @@ public class WeekStatsView extends View implements View.OnTouchListener {
 	
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
+		
+		boolean res = this.mGestureDetector.onTouchEvent(event);
 		float x = event.getX();
 		float y = event.getY();
 		
@@ -308,7 +316,7 @@ public class WeekStatsView extends View implements View.OnTouchListener {
 				
 			}
 		}
-		return true;
+		return res;
 	}
 
 }

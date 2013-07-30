@@ -10,9 +10,16 @@ public class OnSwipeTouchListener implements OnTouchListener {
 
     private final GestureDetector gestureDetector = new GestureDetector(new GestureListener());
 
+    public View mView = null;
+    
+    public void attach(View v) {
+    	mView = v;
+    }
+    
     public boolean onTouch(final View view, final MotionEvent motionEvent) {
         //super.onTouch(view, motionEvent);
-        return gestureDetector.onTouchEvent(motionEvent);
+        mView.onTouchEvent(motionEvent);
+    	return gestureDetector.onTouchEvent(motionEvent);
     }
 
     private final class GestureListener extends SimpleOnGestureListener {
