@@ -73,20 +73,17 @@ public class HistEntry {
 		this.checked = false;
 
 		//this.oldChanged = this.changed;
-		this.oldValue = Double.MAX_VALUE;
-		
+		//this.oldValue = Double.MAX_VALUE;
+		this.oldValue = this.value;
 	}
 
 	public HistEntry(HistEntry e) {
 		this.value = e.value;
-		this.changed = new Date();
+		this.changed = e.changed;
 		this.paramId = e.paramId;
 		this.id = -1;
 		this.checked = false;
-
-		//this.oldChanged = e.changed;
-		this.oldValue = e.value;
-	
+		this.oldValue = this.value;
 	}
 	
 	public void Delete() {

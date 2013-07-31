@@ -21,6 +21,7 @@ import android.os.Message;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.MeasureSpec;
 import android.graphics.LinearGradient;
 
 
@@ -146,6 +147,8 @@ public class BarChartView extends View implements View.OnTouchListener {
 	
 	@Override
 	public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		mRect.set(0, 0, MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.getSize(heightMeasureSpec));
+
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 	}
 	
@@ -155,12 +158,10 @@ public class BarChartView extends View implements View.OnTouchListener {
 	
 	public void SelectItem(ChartItem item) {
 		if ( item == null )
-			item = this.mLastItem;
-		
+			item = this.mItems.get(mItems.size()-1);
 		int page = (int) (mRect.width() / (this.mItemWidth + this.mItemSpace));
 		page--;
 		int idx = mItems.indexOf(item);
-		//NetLog.v("IDX %d, Page = %d",idx,page);
 		if ( idx < page || page < 0) {
 			mOffsetX = 0;
 			this.repaint();

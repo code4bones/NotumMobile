@@ -21,7 +21,6 @@ class GestureListener extends SimpleOnGestureListener  {
     
     @Override
     public boolean onDown(MotionEvent e) {
-        NetLog.v("onDown");
     	return true;
     }
 

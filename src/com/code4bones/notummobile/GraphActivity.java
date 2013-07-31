@@ -84,7 +84,9 @@ public class GraphActivity extends Activity implements SplineGraphView.SplineGra
 		FrameLayout ll = (FrameLayout)this.findViewById(R.id.graphLayout);
 		ll.getBackground().setAlpha(100);
 		ll.addView(mGraph, new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT));
+		mGraph.dataChanged();
 		mGraph.repaint();
+		mGraph.moveToPoint(null);
 	}
 	
 	
@@ -127,6 +129,7 @@ public class GraphActivity extends Activity implements SplineGraphView.SplineGra
 				if ( mIsLineChart ) {
 				 mGraph.dataChanged();
 				 mGraph.repaint();
+				 mGraph.moveToPoint(null);
 				} else {
 					updateBarChart();
 				}

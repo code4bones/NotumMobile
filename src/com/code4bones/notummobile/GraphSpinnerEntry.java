@@ -96,7 +96,6 @@ public class GraphSpinnerEntry {
 		dt.setMinutes(0);dt.setHours(0);dt.setSeconds(0);
 		long e = dt.getTime() / 1000;
 		boolean fOk = (from <= e && e <= to);
-		NetLog.v("Accept %s  : [%s] %s",mFrom.getTime().toLocaleString(),dt.toLocaleString(),fOk);
 		return fOk;
 	}
 	

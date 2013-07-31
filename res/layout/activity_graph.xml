@@ -18,7 +18,7 @@
             android:layout_gravity="center_horizontal"
             android:background="@drawable/title"
             android:gravity="center_vertical|center_horizontal"
-            android:text="График"
+            android:text="Динамика"
  	        android:shadowColor="#000000"
 	        android:shadowDx="5"
 	        android:shadowDy="5"
