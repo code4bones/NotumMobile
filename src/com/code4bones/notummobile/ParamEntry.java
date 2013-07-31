@@ -365,17 +365,21 @@ public class ParamEntry extends Object implements Parcelable {
 	
 	public void getLastDate() {
 		String sid = String.valueOf(this.paramId);
-		Cursor curs = ProfileList.getInstance().getDB().rawQuery("select max(changed) from hist where paramId = ?",new String[]{sid});
+		SQLiteDatabase db = ProfileList.getInstance().getDB();  
+
+		Cursor curs = db.rawQuery("select max(changed) from hist where paramId = ?",new String[]{sid});
 		if ( curs.moveToFirst() ) {
 			this.changed = new Date(curs.getLong(0));
 		}
 		if ( curs != null )
 			curs.close();
+		db.close();
 	}
 	
 	public int populateHist(boolean fAsc) {
 		String sid = String.valueOf(this.paramId);
-		Cursor curs = ProfileList.getInstance().getDB().rawQuery("select * from hist where paramId = ? order by changed "+(fAsc?"asc":"desc"),new String[]{sid});
+		SQLiteDatabase db = ProfileList.getInstance().getDB();  
+		Cursor curs = db.rawQuery("select * from hist where paramId = ? order by changed "+(fAsc?"asc":"desc"),new String[]{sid});
 		this.mLastHist = null;
 		this.mActiveHist = null;
 		this.mFirstHist = null;
@@ -388,7 +392,7 @@ public class ParamEntry extends Object implements Parcelable {
 		}
 		if ( curs != null )
 			curs.close();
-		
+		db.close();
 		
 		if ( mList.isEmpty() ) {
 			this.mActiveHist = new HistEntry(this);

@@ -19,8 +19,44 @@
             android:background="@drawable/title"
             android:gravity="center_vertical|center_horizontal"
             android:text="График"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#0000ff" />
+ 	        android:shadowColor="#000000"
+	        android:shadowDx="5"
+	        android:shadowDy="5"
+	        android:shadowRadius="5"
+	        android:textColor="#0000ff"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+      />
+
+        <LinearLayout
+            android:id="@+id/layoutSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/tooltip" >
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="56dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal"
+	 	        android:shadowColor="#000000"
+		        android:shadowDx="5"
+		        android:shadowDy="5"
+		        android:shadowRadius="5"
+                android:text="Период"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="#FFFF00" />
+
+            <Spinner
+                android:id="@+id/spinner1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1" />
+
+        </LinearLayout>
 
         <FrameLayout
             android:id="@+id/graphLayout"

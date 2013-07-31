@@ -37,17 +37,17 @@ public class WeekStatsView extends View implements View.OnTouchListener {
 	public class DayCell extends Object {
 		
 		public RectF mRect = null;
-		public Paint mPaint = new Paint();
-		public Paint mDayPaint = new Paint();
-		public Paint mDayBgPaint = new Paint();
+		public Paint mPaint = PaintEx.create(true);
+		public Paint mDayPaint = PaintEx.create(true);
+		public Paint mDayBgPaint = PaintEx.create(true);
 		
-		public Paint mTextChangePaint = new Paint();
-		public Paint mTextValuePaint = new Paint();
-		public Paint mBgChangePaint = new Paint();
-		public Paint mBgValuePaint = new Paint();
-		public Paint mFrameInPaint = new Paint();
-		public Paint mFrameOutPaint = new Paint();
-		public Paint mSelectionPaint = new Paint();
+		public Paint mTextChangePaint = PaintEx.create(false);
+		public Paint mTextValuePaint = PaintEx.create(false);
+		public Paint mBgChangePaint = PaintEx.create(true);
+		public Paint mBgValuePaint = PaintEx.create(true);
+		public Paint mFrameInPaint = PaintEx.create(true);
+		public Paint mFrameOutPaint = PaintEx.create(false);
+		public Paint mSelectionPaint = PaintEx.create(false);
 		public Object mObject;
 		public String mChangeValue;
 		public String mValue;
@@ -66,8 +66,8 @@ public class WeekStatsView extends View implements View.OnTouchListener {
 			mToday = mCal.get(Calendar.DAY_OF_MONTH) == Calendar.getInstance().get(Calendar.DAY_OF_MONTH); 
 			mRect = new RectF(rc);
 			mPaint.setColor(Color.BLUE);
-			mPaint.setStyle(Style.FILL);
-			mDayBgPaint.setAntiAlias(true);
+			//mPaint.setStyle(Style.FILL);
+			//mDayBgPaint.setAntiAlias(true);
 			if ( mToday ) {
 				mDayPaint.setColor(Color.RED);
 				mDayBgPaint.setStyle(Style.FILL);
@@ -76,54 +76,67 @@ public class WeekStatsView extends View implements View.OnTouchListener {
 				mDayBgPaint.setStyle(Style.STROKE);
 				mDayPaint.setColor(Color.YELLOW);
 			}
-			mDayPaint.setAntiAlias(true);
+			//mDayPaint.setAntiAlias(true);
 			mDayPaint.setTypeface(Typeface.DEFAULT_BOLD);
-			mTextValuePaint.setAntiAlias(true);
+			//mTextValuePaint.setAntiAlias(true);
 			mTextValuePaint.setTextAlign(Align.CENTER);
 			mTextValuePaint.setTextSize(15);
 			mTextValuePaint.setTypeface(Typeface.DEFAULT_BOLD);
-			mTextChangePaint.setAntiAlias(true);
+			//mTextChangePaint.setAntiAlias(true);
 			mTextChangePaint.setTextAlign(Align.CENTER);
 			
 			mFrameOutPaint.setStrokeWidth(1);
-			mFrameOutPaint.setStyle(Style.STROKE);
+			//mFrameOutPaint.setStyle(Style.STROKE);
 			mFrameOutPaint.setColor(Color.YELLOW);
 
 			mValueFormat.setMinimumFractionDigits(2);
 			mValueFormat.setMaximumFractionDigits(2);
 			
 			mSelectionPaint.setColor(Color.RED);
-			mSelectionPaint.setStyle(Style.STROKE);
+			//mSelectionPaint.setStyle(Style.STROKE);
 			mSelectionPaint.setStrokeWidth(2);
 		}
 		
-		public void Draw(Canvas c) {
+		public void Draw(Canvas c,boolean fSelected) {
+			RectF oldRect = new RectF(mRect);
 			c.drawRect(mRect, mPaint);
-			
-			//Path f;
-			
 		
 			//draw delta
 			RectF rcDelta = new RectF(mRect.left+15,mRect.top+2,mRect.right-2,mRect.top+20);
+			mBgChangePaint.setShadowLayer(4, 3, 3, Color.BLACK);
 			drawInfo(c,mChangeValue,rcDelta,mBgChangePaint,mTextChangePaint);
-			
+			mBgChangePaint.clearShadowLayer();
 			// draw value
 			//c.save();
 			RectF rcValue = new RectF(mRect.left+2,mRect.top+21,mRect.right-2,mRect.bottom-2);
 			//c.rotate(-35,rcValue.left,rcValue.top);
 			drawInfo(c,mValue,rcValue,null,mTextValuePaint);
 			//c.restore();
-
-			if ( mToday ) {
-				c.drawCircle(mRect.left+7, mRect.top+6, 8, mDayBgPaint);
-			}
-			String day = String.format("%d",mCal.get(Calendar.DAY_OF_MONTH));
-			c.drawText(day, mRect.left, mRect.top+10, mDayPaint);
 			
+			if ( fSelected )
+				this.drawSelection(c);
+			
+			if ( mToday ) {
+				mDayBgPaint.setShadowLayer(4, 3, 3, Color.BLACK);
+				c.drawCircle(mRect.left+7, mRect.top+6, 8, mDayBgPaint);
+				mDayBgPaint.clearShadowLayer();
+			}
+			
+			String day = String.format("%d",mCal.get(Calendar.DAY_OF_MONTH));
+			if ( !mToday ) {
+				if ( mValue != null )
+					mDayPaint.setColor(Color.YELLOW);
+				else
+					mDayPaint.setColor(Color.DKGRAY);
+			}
+			c.drawText(day, mRect.left, mRect.top+10, mDayPaint);
+			mRect.set(oldRect);
 		}
 		
 		public void drawSelection(Canvas c) {
+			mSelectionPaint.setShadowLayer(5, 3, 3, Color.BLACK);
 			c.drawRect(mRect, mSelectionPaint);
+			mSelectionPaint.clearShadowLayer();
 		}
 		
 		public void drawInfo(Canvas c,String str,RectF rcBounds,Paint bg,Paint fg) {
@@ -224,17 +237,19 @@ public class WeekStatsView extends View implements View.OnTouchListener {
 			if ( mStyler != null )
 				mStyler.StyleTheDay(prevDay,cell);
 
+			boolean fSelected = false;
+			
 			if ( mSelectedCell != null ) {
-			if ( cell == mSelectedCell )
-				cell.drawSelection(c);
+				if ( cell == mSelectedCell )
+					fSelected = true;
+					//cell.drawSelection(c);
 			} else  if ( cell.mToday )
-				cell.drawSelection(c);
-				
-			cell.Draw(c);
+				fSelected = true;
+				//cell.drawSelection(c);
 
+			cell.Draw(c,fSelected);
 			
 			prevDay = cell;
-			//NetLog.v("Draw %s",cell);
 		}
 	}	
 

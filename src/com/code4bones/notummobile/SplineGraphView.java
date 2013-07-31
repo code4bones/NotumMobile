@@ -32,7 +32,7 @@ import android.view.View.MeasureSpec;
 public class SplineGraphView extends View implements View.OnTouchListener {
 
 	interface SplineGraphAdapter {
-		public String getXLabel(int item);
+		public String getXLabel(int item,Object data);
 		public ArrayList<Coord> getItems();
 	}
 
@@ -61,11 +61,16 @@ public class SplineGraphView extends View implements View.OnTouchListener {
 	@Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 		localInit();
-		this.setPoints(mAdapter.getItems());
-		getMinMax(SP,mPts);
-		getMinMax(LN,mLst);
+		dataChanged();
 		super.onSizeChanged(w, h, oldw, oldh);
     }	
+	
+	public void dataChanged() {
+		this.setPoints(mAdapter.getItems());
+		mOffsetX = 0;
+		getMinMax(SP,mPts);
+		getMinMax(LN,mLst);
+	}
 	
 	// X-Y Axis
 	public int mClrLabelY = 0;
@@ -144,14 +149,15 @@ public class SplineGraphView extends View implements View.OnTouchListener {
 		this.mClrLabelX = Color.parseColor("#6163c7");
 		this.mClrLabelY = Color.parseColor("#6163c7");
 		
-		this.mClrLimitsStartBg = Color.parseColor("#200000bb");
-		this.mClrLimitsStartText = Color.parseColor("#ff8030");
-		this.mClrLimitsTargetBg = Color.parseColor("#200000bb");
+		this.mClrLimitsStartBg = Color.parseColor("#eebb0000");
+		this.mClrLimitsStartText = Color.parseColor("#ffffff");
+		this.mClrLimitsTargetBg = Color.parseColor("#eebb0000");
 		this.mClrLimitsTargetText = Color.parseColor("#ffffff");
 	
 		this.mPntLabel.setTypeface(Typeface.DEFAULT_BOLD);
 	//	this.mPntLabel.setShadowLayer(6, 4, 4, Color.WHITE);
 		this.mPntLimits.setTypeface(Typeface.DEFAULT_BOLD);
+		this.mPntLimits.setStrokeWidth(3);
 	//		this.mPntLimits.setShadowLayer(6, 4, 4, Color.WHITE);
 	}
 	
@@ -162,8 +168,11 @@ public class SplineGraphView extends View implements View.OnTouchListener {
 	
 	public void setPoints(ArrayList<Coord> lst) {
 		mLst = lst;
-		BSpline bs = new BSpline(lst);
-		mPts = bs.getInterpolated();
+		if ( mLst.size() >= 4) {
+			BSpline bs = new BSpline(lst);
+			mPts = bs.getInterpolated();
+		} else
+			mPts = null;
 	}
 	
 	public void setLimitsValue(float start,float target) {
@@ -174,6 +183,10 @@ public class SplineGraphView extends View implements View.OnTouchListener {
 	
 	
 	public void getMinMax(int id,List<Coord> lst) {
+		
+		if ( lst == null )
+			return;
+		
 		mMax[id].y = Float.MIN_VALUE;
 		mMax[id].x = Float.MIN_VALUE;
 		mMin[id].y = Float.MAX_VALUE;
@@ -186,9 +199,6 @@ public class SplineGraphView extends View implements View.OnTouchListener {
 			mMax[id].x = Math.max(mMax[id].x,c.x);
 		}
 		
-		if ( mStartValue < mMin[id].y ) {
-			mMin[id].y = mStartValue;
-		}
 		
 		if ( mTargetValue != Float.MAX_VALUE  ) {
 			if ( mTargetValue <= mMin[id].y )
@@ -196,10 +206,16 @@ public class SplineGraphView extends View implements View.OnTouchListener {
 			else if ( mTargetValue >= mMax[id].y )
 				mMax[id].y = mTargetValue+((1+mTargetValue * 0.005f));
 		}
+
+		if ( mStartValue <= mMin[id].y ) {
+			mMin[id].y = mStartValue - ((1+mStartValue * 0.5f));
+		} else if ( mStartValue > mMax[id].y) {
+			mMax[id].y = mStartValue + ((1+mStartValue * 0.005f));
+		} 
+	
 		
-		
-		mMin[id].y -=  (1+mMin[id].y * 0.005f);
-		mMax[id].y +=  (1+mMax[id].y * 0.005f);
+		mMin[id].y -=  (1+mMin[id].y * 0.02f);
+		mMax[id].y +=  (1+mMax[id].y * 0.009f);
 		
 		mRangeY[id] = mMax[id].y - mMin[id].y;
 		mRangeX[id] = mMax[id].x - mMin[id].x;
@@ -231,24 +247,29 @@ public class SplineGraphView extends View implements View.OnTouchListener {
 		return res;
 	}
 
-	public int mXLabelWidth = 40;
+	//public int mXLabelWidth = 40;
 	
-	public int getDrawWidth() {
-		return mLst.size() * mXLabelWidth;
+	public int getLabelWidth() {
+		if ( mLst.size() * 40  < mRect.width() )
+			return mRect.width() / (mLst.size()>0?mLst.size():1);
+		return 40;
 	}
 	
-	public void drawLabel(Canvas c,float x,int idx) {
+	public int getDrawWidth() {
+		
+		return mLst.size() * getLabelWidth();
+	}
+	
+	public void drawLabel(Canvas c,float x,int idx,Object data) {
 		if ( idx > mLst.size()-1 )
 			return;
-		RectF rc = new RectF(/*mRect.left+40*/x,mRect.bottom-13,x+mXLabelWidth,mRect.bottom);
+		RectF rc = new RectF(x,mRect.bottom-13,x+getLabelWidth(),mRect.bottom);
 
 		this.mPntLabel.setColor(this.mClrLabelBgX);
 		rc.left -= 15;
 		rc.right -=4;
-		//mPntLabel.setStyle(Style.STROKE);
-		//c.drawRoundRect(rc, 3, 3, this.mPntLabel);
 		this.mPntLabel.setColor(this.mClrLabelX);
-		String str = this.mAdapter.getXLabel(idx);
+		String str = this.mAdapter.getXLabel(idx,data);
 		c.drawText(str,rc.left,rc.bottom-2,this.mPntLabel);
 	}
 	
@@ -281,11 +302,7 @@ public class SplineGraphView extends View implements View.OnTouchListener {
 			this.mPntLabel.setTextAlign(Align.LEFT);
 			c.drawText(sVal, mRect.left, y-rowHeight+5 ,this.mPntLabel);
 			startVal-=step;
-		}/*
-		c.drawLine(mRect.left+40, cr.y, mRect.right, cr.y, mBgPaintGrid);
-		String sVal = String.format("%.2f",mMinY);
-		c.drawText(sVal, mRect.left, cr.y+5 ,mBgPaintY);
-		*/
+		}
 	}
 	
 	public Rect mClipRect = new Rect();
@@ -294,9 +311,6 @@ public class SplineGraphView extends View implements View.OnTouchListener {
 	@Override
 	public void onDraw(Canvas c) {
 		
-		//c.save();
-		//c.translate(0,15);
-
 		c.getClipBounds(mRect);
 		mClipRect.set(mRect);
 	
@@ -305,38 +319,37 @@ public class SplineGraphView extends View implements View.OnTouchListener {
 		c.clipRect(mClipRect);
 		
 		Coord prev = null;
-		
-		Path mark = null;
-
-		mGraphPath.rewind();
-		int sY = 2;
-		for ( Coord pt : mPts) {
-			Coord cr = translateXY(SP,pt);
-			if ( cr.x < 0 || cr.x > mClipRect.right )
-				continue;
-			//////
-			if ( prev == null ) {
+		Coord cr = null;
+		if ( mPts != null ) {
+			mGraphPath.rewind();
+			int sY = 2;
+			for ( Coord pt : mPts) {
+				cr = translateXY(SP,pt);
+				if ( cr.x < 0 || cr.x > mClipRect.right )
+					continue;
+				//////
+				if ( prev == null ) {
+					prev = cr;
+					mGraphPath.moveTo((float)cr.x, sY+(float)cr.y);
+					continue;
+				}
+				mGraphPath.quadTo((float)prev.x, sY+(float)prev.y, (float)cr.x, sY+(float)cr.y);
 				prev = cr;
-				mGraphPath.moveTo((float)cr.x, sY+(float)cr.y);
-				continue;
 			}
-			mGraphPath.quadTo((float)prev.x, sY+(float)prev.y, (float)cr.x, sY+(float)cr.y);
-			prev = cr;
-		}
-		
-		// enclose the path
-		Coord cr = translateXY(SP,mPts.get(0));
-		mGraphPath.lineTo(prev.x, mCrMin.y-15);
-		mGraphPath.lineTo(cr.x, mCrMin.y-15);
-		mGraphPath.lineTo(cr.x, cr.y);
-		this.mPntGraph.setColor(this.mClrGraphFill);
-		mPntGraph.setStyle(Style.FILL_AND_STROKE);
-		this.mPntGraph.setStrokeWidth(3);
-		
-		mPntGraph.setShadowLayer(5, 2, -3, Color.parseColor("#cc00ffff"));
-		c.drawPath(mGraphPath, this.mPntGraph);
-		mPntGraph.clearShadowLayer();
-
+			
+			// enclose the path
+			cr = translateXY(SP,mPts.get(0));
+			mGraphPath.lineTo(prev.x, mCrMin.y-15);
+			mGraphPath.lineTo(cr.x, mCrMin.y-15);
+			mGraphPath.lineTo(cr.x, cr.y);
+			this.mPntGraph.setColor(this.mClrGraphFill);
+			mPntGraph.setStyle(Style.FILL_AND_STROKE);
+			this.mPntGraph.setStrokeWidth(3);
+			
+			mPntGraph.setShadowLayer(5, 2, -3, Color.parseColor("#cc00ffff"));
+			c.drawPath(mGraphPath, this.mPntGraph);
+			mPntGraph.clearShadowLayer();
+		} // mPts != null
 		
 		// Simple Line Graph
 		mGraphPath.rewind();
@@ -346,7 +359,8 @@ public class SplineGraphView extends View implements View.OnTouchListener {
 		for ( Coord pt : mLst ) {
 			itemIndex++;
 			cr = translateXY(LN,pt);
-			if ( cr.x < 0 || cr.x > mClipRect.right )
+			
+			if ( cr.x < 0 || (prev!=null && prev.x > mClipRect.right) )
 				continue;
 			
 			if ( prev == null ) {
@@ -358,32 +372,13 @@ public class SplineGraphView extends View implements View.OnTouchListener {
 			mPointPath.addCircle(cr.x, cr.y, 4,Path.Direction.CW);
 			
 			prev = cr;
-			this.drawLabel(c, cr.x,itemIndex-1);
+			this.drawLabel(c, cr.x,itemIndex-1,pt.mData);
 		}
 		
-		
-		Coord tr;
 		// Target Value
-		if ( mTargetValue != Float.MAX_VALUE ) {
-			tr = translateXY(LN,1,mTargetValue);
-			this.mPntLimits.setColor(this.mClrLimitsTargetBg);
-			c.drawLine(mRect.left+40, tr.y, mRect.right, tr.y, this.mPntLimits);
-			this.mPntLimits.setColor(this.mClrLimitsTargetText);
-			mRcIcon.set(mRect.left+40, tr.y-16, mRect.left+56, tr.y);
-			c.drawBitmap(this.mBmpTarget,null,mRcIcon, this.mPntLimits);
-			c.drawText(String.format("%.2f",mTargetValue), mRcIcon.right+2, tr.y-2, this.mPntLimits);
-		}
+		drawLimits(c,mTargetValue,mClrLimitsTargetText,mClrLimitsTargetBg,mBmpTarget);
+		drawLimits(c,mStartValue,mClrLimitsStartText,mClrLimitsStartBg,mBmpStart);
 		
-		// Start Value
-		tr = translateXY(LN,1,mStartValue);
-		this.mPntLimits.setColor(this.mClrLimitsStartBg);
-		c.drawLine(mRect.left+40, tr.y, mRect.right, tr.y, this.mPntLimits);
-		this.mPntLimits.setColor(this.mClrLimitsStartText);
-		mRcIcon.set(mRect.left+40, tr.y-16, mRect.left+56, tr.y);
-		c.drawBitmap(this.mBmpStart,null,mRcIcon, this.mPntLimits);
-		c.drawText(String.format("%.2f",mStartValue), mRcIcon.right+2, tr.y-2, this.mPntLimits);
-		
-
 		//Line
 		mPntGraph.setStyle(Style.STROKE);
 		mPntGraph.setColor(this.mClrGraphLine);
@@ -395,7 +390,28 @@ public class SplineGraphView extends View implements View.OnTouchListener {
 		this.mPntGraph.setColor(this.mClrGraphPoint);
 		c.drawPath(mPointPath, mPntGraph);
 		mPntGraph.clearShadowLayer();
+
 		
+		
+		//MinMax
+		//drawLimits(c,mMin[LN].y,mClrLimitsTargetText,Color.GREEN,null);
+		//drawLimits(c,mMax[LN].y,mClrLimitsStartText,Color.YELLOW,null);
+		
+	}
+	
+	public void drawLimits(Canvas c,float value,int textColor,int bgColor,Bitmap img) {
+		if ( value == Float.MAX_VALUE )
+			return;
+		Coord tr = translateXY(LN,1,value);
+		this.mPntLimits.setColor(bgColor);
+		this.mPntLimits.setShadowLayer(5, 4, 6, Color.BLUE);
+		c.drawLine(mRect.left+40, tr.y, mRect.right, tr.y, this.mPntLimits);
+		this.mPntLimits.clearShadowLayer();
+		this.mPntLimits.setColor(textColor);
+		mRcIcon.set(mRect.left+40, tr.y-16, mRect.left+56, tr.y);
+		c.drawText(String.format("%.2f",value), mRcIcon.right+2, tr.y-4, this.mPntLimits);
+		if ( img != null )
+			c.drawBitmap(img,null,mRcIcon, this.mPntLimits);
 	}
 	
 	public void repaint() {
@@ -409,7 +425,7 @@ public class SplineGraphView extends View implements View.OnTouchListener {
 
 	public float mTouchX = 0;
 	public float mMoveX = 0;
-	public float mOffsetX = 0;
+	public float mOffsetX = 20;
 	
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {		
@@ -421,10 +437,10 @@ public class SplineGraphView extends View implements View.OnTouchListener {
 		boolean fLeft = this.mMoveX > x;
 		if ( fLeft ) {
 			if ( getDrawWidth() + mOffsetX > mRect.width() - 40)
-			mOffsetX-=this.mXLabelWidth/2;
+			mOffsetX-= 20;//this.mXLabelWidth/2;
 		} else {
 			if ( mOffsetX <= 0 )
-				mOffsetX+=this.mXLabelWidth/2;
+				mOffsetX+= 20;//this.mXLabelWidth/2;
 		}
 		//NetLog.v("Ofs %f, %d,%d",mOffsetX,getDrawWidth(),mRect.width());
 		this.repaint();

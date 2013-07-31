@@ -1,5 +1,7 @@
 package com.code4bones.notummobile;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -27,6 +29,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -48,25 +51,31 @@ import android.widget.TextView;
 
 public class ParamListActivity extends Activity implements OnDateSetListener,DirectionalGestureListener {
 
-	public final ProfileList mProfiles = ProfileList.getInstance();
+	public ProfileList mProfiles = null;//ProfileList.getInstance();
 	public ProfileEntry mProfile;
 	
 	TextView mTvParamName;
 	TextView mTvParamDate;
 	TextView mTvCurrentValue;
 	RibbonView mParamList;
-	//BarChartView mChart = null;
 	WeekStatsView mWeekStatsView = null;
-	final NumberFormat mNfmt = NumberFormat.getInstance();
+	final DecimalFormat mNfmt = (DecimalFormat)DecimalFormat.getInstance();
 	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_param_list);
+		
+		mProfiles = ProfileList.getInstance(this);// getInstance();
+		
 		mProfile = mProfiles.getCurrentProfile();
 		mNfmt.setMaximumFractionDigits(2);
 		mNfmt.setMinimumFractionDigits(2);
+		
+		DecimalFormatSymbols decFmt = new DecimalFormatSymbols();
+		decFmt.setDecimalSeparator('.');
+		mNfmt.setDecimalFormatSymbols(decFmt);
 		
 		this.setTitle("Просмотр профиля \"" + mProfile.profileName+"\"");
 		
@@ -127,38 +136,28 @@ public class ParamListActivity extends Activity implements OnDateSetListener,Dir
 			ParamEntry param = mProfile.currentParam();
 			HistEntry entry = param.getOnDate(day.mCal);
 			if ( entry == null ) {
-				day.mValue = null;
 				day.mChangeValue = null;
-				if ( prevDay != null )
-					day.mObject = prevDay.mObject;
-				if ( day.mObject == null )
+				day.mValue = null;
+				if(day.mCal.before(Calendar.getInstance())) {
+					day.mPaint.setColor(Color.parseColor("#ccff0000"));
+					day.mValue = "Забыли!";
+					day.mTextValuePaint.setColor(Color.YELLOW);
+				} else
 					day.mPaint.setColor(Color.parseColor("#200000ff"));
-				else {
-					if(day.mCal.before(Calendar.getInstance())) {
-						day.mPaint.setColor(Color.parseColor("#ccff0000"));
-						day.mValue = "Забыли!";
-						day.mTextValuePaint.setColor(Color.YELLOW);
-					} else
-						day.mPaint.setColor(Color.parseColor("#200000ff"));
-				}
 				return;
-			}
+			} 
+				
+			HistEntry pentry = param.getBeforeEntry(entry);
+			if ( pentry == null )
+				pentry = entry;
 			day.mObject = entry;
-			
-			HistEntry prev = null;
-			if ( prevDay != null ) {
-				prev = (HistEntry)prevDay.mObject;
-			}
-			
-			prev = (HistEntry)(prevDay!=null?prevDay.mObject:entry);
-			if ( prev == null )
-				prev = entry;
-			double diff = entry.value - prev.value;
+
+			double diff = entry.value - pentry.value;
 			boolean isRed = false;
 			day.mChangeValue = (diff>0?"+":"")+day.mValueFormat.format(diff);
 			if ( param.hasTargetVal() ) {
 				double val = param.getHistValue(entry);
-				double pval = param.getHistValue(prev);
+				double pval = param.getHistValue(pentry);
 				isRed = pval > val; 
 			} else {
 				isRed = diff < 0;
@@ -293,7 +292,8 @@ public class ParamListActivity extends Activity implements OnDateSetListener,Dir
 			if ( v.getId() == R.id.ibValueApply )
 				applyParamValue();
 			else if ( v.getId() == R.id.ibShowDetail )
-				showDetails();
+				selectChart();
+				//showDetails();
 			else if ( v.getId() == R.id.ibSelectDate )
 				selectParamValueDate();
 			else {
@@ -500,13 +500,13 @@ public class ParamListActivity extends Activity implements OnDateSetListener,Dir
 
 	@Override
 	public void onSwipeLeft() {
-		this.showGraph();
+		selectChart();
 	}
 
 
 	@Override
 	public void onSwipeRight() {
-		this.showGraph();
+		selectChart();
 	}
 
 
@@ -523,14 +523,39 @@ public class ParamListActivity extends Activity implements OnDateSetListener,Dir
 		
 	}
 	
-	public void showGraph() {
-		if ( mProfile.currentParam().mList.size() < 3  )
-			NetLog.MsgBox(this, "Внимание", "Для просмотра графика, нужно как минимум 3-и записи...");
-		else {
-			Intent i = new Intent(ParamListActivity.this,GraphActivity.class);
-			startActivity(i);
-		}
-	}
 	
+	public void selectChart() {
+		
+		LayoutInflater li = LayoutInflater.from(this);
+		View view = li.inflate(R.layout.dlg_select_chart, null);
+		
+		final AlertDialog.Builder dlg = new AlertDialog.Builder(this);
+		
+		dlg.setView(view);
+		dlg.setCancelable(true);
+		final AlertDialog passDlg = dlg.create();
+	
+		OnClickListener onClick = new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if ( v.getId() != R.id.ibHistButton ) {
+					Intent i = new Intent(ParamListActivity.this,GraphActivity.class);
+					i.putExtra("type", v.getId());
+					startActivity(i);
+				} else {
+					showDetails();
+				}
+				passDlg.dismiss();
+			}
+			
+		};
+
+		view.findViewById(R.id.ibBarButton).setOnClickListener(onClick);
+		view.findViewById(R.id.ibLineButton).setOnClickListener(onClick);
+		view.findViewById(R.id.ibHistButton).setOnClickListener(onClick);
+		
+		
+		passDlg.show();
+	}
 	
 }

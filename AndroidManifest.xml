@@ -18,7 +18,7 @@
         android:theme="@style/app_theme" >
         <activity
             android:name="com.code4bones.notummobile.MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,11 +27,11 @@
         </activity>
         <activity
             android:name="com.code4bones.notummobile.ProfileActivity"
-            android:label="@string/title_activity_profile" >
+            android:label="@string/title_activity_profile" android:screenOrientation="portrait">
         </activity>
         <activity
             android:name="com.code4bones.notummobile.ParamActivity"
-            android:label="@string/title_activity_param" >
+            android:label="@string/title_activity_param" android:screenOrientation="portrait">
         </activity>
         <activity
             android:name="com.code4bones.notummobile.NewParamActivity"
@@ -39,7 +39,7 @@
         </activity>
         <activity
             android:name="com.code4bones.notummobile.ParamListActivity"
-            android:label="@string/title_activity_param_list" >
+            android:label="@string/title_activity_param_list" android:screenOrientation="portrait">
         </activity>
         <activity
             android:name="com.code4bones.notummobile.HistActivity"
@@ -51,7 +51,7 @@
         </activity>
         <activity
             android:name="com.code4bones.notummobile.GraphActivity"
-            android:label="@string/title_activity_graph" >
+            android:label="@string/title_activity_graph">
         </activity>
     </application>
 
