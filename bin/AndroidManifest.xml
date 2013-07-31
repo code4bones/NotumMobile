@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.code4bones.notummobile"
-    android:versionCode="14"
-    android:versionName="9.0.5" >
+    android:versionCode="15"
+    android:versionName="9.0.6" >
 
     <uses-sdk
         android:minSdkVersion="10"
@@ -18,7 +18,7 @@
         android:theme="@style/app_theme" >
         <activity
             android:name="com.code4bones.notummobile.MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,31 +27,27 @@
         </activity>
         <activity
             android:name="com.code4bones.notummobile.ProfileActivity"
-            android:label="@string/title_activity_profile" >
-        </activity>
-        <activity
-            android:name="com.code4bones.notummobile.ParamActivity"
-            android:label="@string/title_activity_param" >
+            android:label="@string/title_activity_profile" android:screenOrientation="portrait">
         </activity>
         <activity
             android:name="com.code4bones.notummobile.NewParamActivity"
-            android:label="@string/title_activity_new_param" >
+            android:label="@string/title_activity_new_param" android:screenOrientation="portrait">
         </activity>
         <activity
             android:name="com.code4bones.notummobile.ParamListActivity"
-            android:label="@string/title_activity_param_list" >
+            android:label="@string/title_activity_param_list" android:screenOrientation="portrait">
         </activity>
         <activity
             android:name="com.code4bones.notummobile.HistActivity"
-            android:label="@string/title_activity_hist" >
+            android:label="@string/title_activity_hist" android:screenOrientation="portrait">
         </activity>
         <activity
             android:name="com.code4bones.notummobile.SettingsActivity"
-            android:label="@string/title_activity_settings" >
+            android:label="@string/title_activity_settings" android:screenOrientation="portrait">
         </activity>
         <activity
             android:name="com.code4bones.notummobile.GraphActivity"
-            android:label="@string/title_activity_graph" >
+            android:label="@string/title_activity_graph">
         </activity>
     </application>
 
