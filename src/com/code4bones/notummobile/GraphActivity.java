@@ -152,7 +152,7 @@ public class GraphActivity extends Activity implements SplineGraphView.SplineGra
 	
 		final DatePicker fromDate = (DatePicker)view.findViewById(R.id.datePicker1);
 		final DatePicker toDate = (DatePicker)view.findViewById(R.id.datePicker2);
-		Button btn = (Button)view.findViewById(R.id.button1);
+		Button btn = (Button)view.findViewById(R.id.btnNotNow);
 		final AlertDialog passDlg = dlg.create();
 		btn.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -192,7 +192,6 @@ public class GraphActivity extends Activity implements SplineGraphView.SplineGra
 	@Override
 	public ArrayList<Coord> getItems() {
 		ArrayList<Coord> res = new ArrayList<Coord>();
-		NetLog.v("Reloading %s",this.mPeriod);
 		int idx = 0;
 		for ( HistEntry e : mParamEntry.mList ) {
 			if ( acceptEntry(e) )

@@ -1,6 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item android:id="@+id/add_profile" android:title="Добавить профиль"></item>
     <item android:id="@+id/mi_settings" android:title="Пароль..."></item><item android:id="@+id/mi_about" android:title="О Сервисе"></item>
+    <item android:id="@+id/mi_feedback" android:title="Оставить отзыв"></item>
     
 
 </menu>

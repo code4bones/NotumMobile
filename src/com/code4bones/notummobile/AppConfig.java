@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -68,6 +69,54 @@ public class AppConfig {
 	
 	public boolean needPassword() {
 		return mPrefs.contains(PASSWD_USER);
+	}
+	
+	public boolean showFeedback(final Handler handler) {
+		LayoutInflater li = LayoutInflater.from(mContext);
+		View view = li.inflate(R.layout.dlg_feedback, null);
+		int limit = 16;
+		
+		final SharedPreferences.Editor edit = mPrefs.edit();
+
+		int count = mPrefs.getInt("feedback", 1);
+		count++;
+		edit.putInt("feedback",count);
+		edit.remove("feedback.skip");
+		edit.commit();
+
+		if ( mPrefs.contains("feedback.skip"))
+			return false;
+
+		if (  (count % limit) != 0 )
+			return false;
+		
+		
+		
+		final AlertDialog.Builder dlg = new AlertDialog.Builder(mContext);
+		dlg.setView(view);
+		dlg.setCancelable(true);
+		
+		final TextView tvMessage = (TextView)view.findViewById(R.id.tvFeedBack);
+		final CheckBox chFeed = (CheckBox)view.findViewById(R.id.chkNoFeedBack);
+		tvMessage.setText(R.string.feed_back);
+		final AlertDialog passDlg = dlg.create();
+		passDlg.show();
+		View.OnClickListener listener = new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if ( chFeed.isChecked() ) {
+					edit.putBoolean("feedback.skip",true);
+					edit.commit();
+				}
+				handler.sendEmptyMessage(v.getId());
+				passDlg.cancel();
+			}
+		};
+		
+		view.findViewById(R.id.btnLeaveFeedBack).setOnClickListener(listener);
+		view.findViewById(R.id.btnNotNow).setOnClickListener(listener);
+		
+		return true;
 	}
 	
 	public boolean showDialog(final Handler handler) {

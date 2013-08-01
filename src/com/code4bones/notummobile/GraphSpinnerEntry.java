@@ -41,13 +41,16 @@ public class GraphSpinnerEntry {
 		
 	}
 	
+	public void clearTime(Calendar c) {
+		c.set(Calendar.HOUR,0);
+		c.set(Calendar.MINUTE,0);
+		c.set(Calendar.SECOND,0);
+	}
+	
 	public String toString() {
 		String str = "";
 		Calendar now = Calendar.getInstance();
-		now.set(Calendar.HOUR,0);
-		now.set(Calendar.MINUTE,0);
-		now.set(Calendar.SECOND,0);
-		
+		clearTime(now);
 		if ( mType == WEEK ) {
 			now.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 			mFrom.setTime(now.getTime());
@@ -85,7 +88,8 @@ public class GraphSpinnerEntry {
 		}  else {
 			str = "Показать все";
 		}
-			
+		clearTime(mFrom);
+		clearTime(mTo);
 		return str;
 	}
 	
@@ -93,9 +97,10 @@ public class GraphSpinnerEntry {
 	public boolean compare(Date dt) {
 		long from = mFrom.getTimeInMillis() / 1000;
 		long to = mTo.getTimeInMillis() / 1000;
-		dt.setMinutes(0);dt.setHours(0);dt.setSeconds(0);
+		dt.setMinutes(0);dt.setHours(12);dt.setSeconds(0);
 		long e = dt.getTime() / 1000;
 		boolean fOk = (from <= e && e <= to);
+		//NetLog.v("compare %s < %s [%d < %d] %s",mFrom.getTime().toLocaleString(),dt.toLocaleString(),from,e,fOk);
 		return fOk;
 	}
 	

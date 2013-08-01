@@ -14,5 +14,6 @@
     <string name="title_activity_hist">HistActivity</string>
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="title_activity_graph">GraphActivity</string>
+    <string name="feed_back">Нам очень важно знать Ваше мнение. Пожалуйста, уделите пару минут и оставьте свой отзыв или пожелания. Спасибо !</string>
 
 </resources>

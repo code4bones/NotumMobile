@@ -24,7 +24,7 @@
         />
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/tvFeedBack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/cbUsePassword"
@@ -43,8 +43,8 @@
         android:id="@+id/etSettingsPassword1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView1"
-        android:layout_below="@+id/textView1"
+        android:layout_alignLeft="@+id/tvFeedBack"
+        android:layout_below="@+id/tvFeedBack"
         android:background="@drawable/edit_text_shape"
         android:ems="10"
         android:inputType="textPassword" >

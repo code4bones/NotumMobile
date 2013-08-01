@@ -183,6 +183,7 @@ public class SplineGraphView extends View implements View.OnTouchListener {
 	
 	public void setPoints(ArrayList<Coord> lst) {
 		mLst = lst;
+		//NetLog.v("SET POINTS %d", mLst.size());
 		if ( mLst.size() >= 4) {
 			BSpline bs = new BSpline(lst);
 			mPts = bs.getInterpolated();
@@ -278,8 +279,10 @@ public class SplineGraphView extends View implements View.OnTouchListener {
 	}
 	
 	public void moveToPoint(Coord lc) {
-		if ( lc == null )
+		if ( lc == null && mLst.size() >= 1)
 			lc = mLst.get(mLst.size()-1);
+		else
+			return;
 		Coord c = translateXY(LN,lc);
 		mOffsetX = -c.x;
 		mOffsetX += mRect.width()-10;

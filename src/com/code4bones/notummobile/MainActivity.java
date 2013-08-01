@@ -44,7 +44,7 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		AppConfig appCfg = new AppConfig(this);
+		final AppConfig appCfg = new AppConfig(this);
 		
 		setContentView(R.layout.activity_main);
 		
@@ -95,19 +95,37 @@ public class MainActivity extends Activity {
 			  "ЗАПИШИТЕ МАСТЕР-ПАРОЛЬ:%s\nВы можете защитить Ваши данные установив свой пароль в \"Меню->Настройки\"",appCfg.getPassword(AppConfig.PASSWD_MASTER));
 		} else
 		*/
+
+		
 		if ( appCfg.needPassword() ) {
 			appCfg.showDialog(new Handler() {
 				public void handleMessage(Message msg) {
 					if ( msg.what == R.id.btnPasswordCancel )
 						finish();
-					else
+					else {
+						showFeedBack(appCfg);
 						updateList();
+					}
 				}
 			}); 
-			} else
+			} else {
+				showFeedBack(appCfg);
 				updateList();
+			}
 	}
      
+	
+	public void showFeedBack(AppConfig appCfg) {
+		appCfg.showFeedback(new Handler() {
+			public void handleMessage(Message msg) {
+				if ( msg.what == R.id.btnLeaveFeedBack ) {
+					Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.code4bones.notummobile"));
+					startActivity(browserIntent);
+				}
+			}
+		});
+	}
+	
 	public void updateList() {
 		if ( mProfiles.populateProfiles() == 1 ) {
 			editProfile(null,ProfileActivity.NEW_PROFILE);
@@ -149,14 +167,20 @@ public class MainActivity extends Activity {
 		case R.id.add_profile:
 			this.editProfile(null, ProfileActivity.NEW_PROFILE);
 			break;
-		case R.id.mi_about:
+		case R.id.mi_about: {
 			Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://lk.notum.pro/category/13"));
 			startActivity(browserIntent);
+			}
 			break;
 		case R.id.mi_settings:
 			Intent set = new Intent(this,SettingsActivity.class);
 			this.startActivity(set);
 			//this.startActivityForResult(set, ProfileActivity.SETTINGS);
+			break;
+		case R.id.mi_feedback: {
+			Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.code4bones.notummobile"));
+			startActivity(browserIntent);
+			}
 			break;
 		}
 		return true;
