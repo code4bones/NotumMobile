@@ -97,6 +97,7 @@ public class ParamListActivity extends Activity implements OnDateSetListener,Dir
 				if ( entry.profileId != -1 ) {
 					//toggleItem(item);
 					entry.resetDate(null);
+					mWeekStatsView.mSelectedCell = null;
 					showParam(entry);
 				} else {
 					Intent i = new Intent(ParamListActivity.this,NewParamActivity.class);
@@ -110,9 +111,10 @@ public class ParamListActivity extends Activity implements OnDateSetListener,Dir
 		mWeekStatsView.setOnWeekDayClicked(mOnWeekDayClicked);
 		mWeekStatsView.setSwipeHandler(this);
 		item.addView(mWeekStatsView,new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT));
-
+		
 		setParamValueListener(new int[] {R.id.ibShowDetail,R.id.ibValueDec,R.id.ibValueInc,R.id.ibValueApply,R.id.ibSelectDate});
-		this.updateParamList();
+	
+		//this.updateParamList();
 		
 		Drawable d = item.getBackground();
 		d.setAlpha(100);
@@ -123,8 +125,12 @@ public class ParamListActivity extends Activity implements OnDateSetListener,Dir
 
 		mTvCurrentValue.setOnClickListener(mOnValueClicked);
 		
+		
+		updateParamList();
+		
 	} // onCreate
 
+	
 	
 	//XXX WEEK STYLE
 	private WeekStatsView.WeekDayStyler mWeekDayStyler = new WeekStatsView.WeekDayStyler() {
@@ -132,24 +138,30 @@ public class ParamListActivity extends Activity implements OnDateSetListener,Dir
 		public void StyleTheDay(DayCell prevDay,DayCell day) {
 			ParamEntry param = mProfile.currentParam();
 			HistEntry entry = param.getOnDate(day.mCal);
+			day.mFirstDay = day.compare(param.startDate.getTime()/1000);
+//			NetLog.v("%s is %s",day,day.mFirstDay);
+
 			if ( entry == null ) {
 				day.mChangeValue = null;
 				day.mValue = null;
 				day.mObject = null;
-				if(day.mCal.before(Calendar.getInstance())) {
+				if(day.after(param.startDate) && day.before(new Date())) {
 					day.mPaint.setColor(Color.parseColor("#ccff0000"));
 					day.mValue = "Забыли!";
 					day.mTextValuePaint.setColor(Color.YELLOW);
-				} else
-					day.mPaint.setColor(Color.parseColor("#200000ff"));
+				} else if ( day.before(param.startDate))
+					day.mPaint.setColor(Color.parseColor("#80000000"));
+					else
+						day.mPaint.setColor(Color.parseColor("#200000ff"));
 				return;
 			} 
 				
 			HistEntry pentry = param.getBeforeEntry(entry);
 			if ( pentry == null )
 				pentry = entry;
+			
 			day.mObject = entry;
-
+			
 			double diff = entry.value - pentry.value;
 			boolean isRed = false;
 			day.mChangeValue = (diff>0?"+":"")+day.mValueFormat.format(diff);
@@ -234,6 +246,8 @@ public class ParamListActivity extends Activity implements OnDateSetListener,Dir
 				}
 			});
 		} else {
+			if ( mSelectedHist.changed.before(paramEntry.startDate) )
+				paramEntry.startDate = mSelectedHist.changed;
 			mSelectedHist.Save();
 			showParam(paramEntry);
 		}
@@ -247,20 +261,21 @@ public class ParamListActivity extends Activity implements OnDateSetListener,Dir
 			return;
 		}
 		this.mProfile.setCurrentParam(entry);
-
 		entry.populateHist(true);
 		
 		String sTitle = String.format("%s / %s", this.mProfile.profileName,entry.name);
 		this.mTvParamName.setText(sTitle);
-		//this.mTvParamDate.setText(ProfileList.dateStr(entry.changed));
+		
+		//this.mSelectedCell = mWeekStatsView.selectToDay();
 		
 		mWeekStatsView.mModified = true;
 		mWeekStatsView.repaint();
-
+		
 		updateValue(entry,mSelectedHist);
 	}
 	
 	public void updateParamList() {
+		NetLog.v("updateParamList");
 		if ( mProfile.populateParams(mProfiles.getDB() ) > 0) {
 			mProfile.mParams.add(new ParamEntry(this,-1));
 			mParamList.reset();
@@ -274,9 +289,7 @@ public class ParamListActivity extends Activity implements OnDateSetListener,Dir
 			ParamEntry pe = mProfile.currentParam();
 			pe.resetDate(null);
 			this.showParam(pe);
-			//TODO:
 			this.mParamList.selectByObject(mProfile.currentParam());
-			
 		} else {
 			Intent i = new Intent(this,NewParamActivity.class);
 			i.putExtra(NewParamActivity.NEW_LIST, true);
